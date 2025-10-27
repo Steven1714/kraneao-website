@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Cuestionarios que desafían tu mente</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        // Configuración de Tailwind CSS con la paleta de colores de marca
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-blue': '#0056FF',       // Azul royal
+                        'brand-yellow': '#FFD600',     // Amarillo neón
+                        'brand-gray': '#C9C9C9',       // Gris suave
+                        'brand-dark-blue': '#021059',  // Azul oscuro
+                        'brand-bg': '#0E0E0E',         // Negro profundo
+                    },
+                    animation: { // Animación para el botón de Early Access
+                        pulseGlow: 'pulseGlow 2s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { 
+                                transform: 'scale(1)', 
+                                boxShadow: '0 0 5px rgba(255, 214, 0, 0.3), 0 0 10px rgba(255, 214, 0, 0.2)',
+                                backgroundColor: '#FFD600' // Amarillo neón
+                            },
+                            '50%': { 
+                                transform: 'scale(1.05)', 
+                                boxShadow: '0 0 15px rgba(255, 214, 0, 0.7), 0 0 25px rgba(255, 214, 0, 0.5)',
+                                backgroundColor: '#fff000' // Amarillo más brillante
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Estilo base para el cuerpo */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF; /* Fondo blanco */
+            color: #021059; /* Texto principal en Azul oscuro */
+        }
+        /* Ajuste para tarjetas de cuestionario en fondo claro */
+        .quiz-card {
+            background-color: #ffffff; 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+            display: flex; 
+            flex-direction: column; 
+            border-radius: 1rem; 
+            overflow: hidden; 
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 86, 255, 0.1); 
+        }
+        .quiz-card .card-content {
+             flex-grow: 1; 
+             display: flex;
+             flex-direction: column;
+             padding: 1.5rem; 
+        }
+        .quiz-card .card-content p {
+             flex-grow: 1; 
+             margin-bottom: 1.5rem; 
+        }
+        /* Estilos para los botones dentro de la tarjeta */
+        .quiz-card .button-container {
+             margin-top: auto; 
+             display: flex; 
+             flex-direction: column; 
+             gap: 0.5rem; 
+             padding: 1rem 1.5rem 1.5rem; 
+        }
+         .quiz-card .button-container a, .quiz-card .button-container span {
+             display: block; 
+             text-align: center;
+             padding: 0.75rem 1rem; 
+             border-radius: 0.5rem; 
+             font-weight: bold;
+             transition: background-color 0.3s, color 0.3s;
+         }
+         .quiz-card .button-container a.normal-level {
+             background-color: #E0F2FE; 
+             color: #0056FF; 
+             border: 1px solid #0056FF;
+         }
+          .quiz-card .button-container a.normal-level:hover {
+              background-color: #B9E5FC;
+          }
+         .quiz-card .button-container a.expert-level {
+             background-color: #FFD600; 
+             color: #021059; 
+         }
+          .quiz-card .button-container a.expert-level:hover {
+              background-color: #FACC15; 
+          }
+         .quiz-card .button-container span { 
+             background-color: #E5E7EB; 
+             color: #6B7280; 
+             cursor: not-allowed;
+         }
+        /* Estilo para los iconos de la sección "Cómo funciona" */
+        .step-icon {
+            background-color: rgba(0, 86, 255, 0.1); 
+            color: #0056FF; 
+            border-radius: 50%;
+            width: 4rem; 
+            height: 4rem; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="text-brand-dark-blue"> 
+
+    <!-- Encabezado -->
+    <header class="relative z-30 p-4 bg-white shadow-sm sticky top-0">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo del encabezado -->
+            <a href="index.html">
+                <img src="logo-final.png" alt="Logo de Kraneao" class="h-10 md:h-12"> 
+            </a>
+            
+            <!-- Botón de Early Access -->
+            <div>
+                <a href="registro.html" class="font-bold text-brand-dark-blue bg-brand-yellow px-5 py-2 rounded-lg transition-colors duration-300 animate-pulseGlow">
+                    ¡Únete como Usuario Fundador!
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección Principal (Hero) -->
+    <main class="relative z-10">
+        <section class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16 md:py-20"> 
+            <div class="max-w-4xl mx-auto">
+                 <!-- Logo Central -->
+                 <div class="mb-6 md:mb-8"> 
+                    <img src="logo-principal-color.png" alt="Kraneao" class="h-20 md:h-28 mx-auto"> 
+                 </div>
+
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-brand-blue leading-tight">
+                    El lugar donde el <span class="text-brand-yellow">conocimiento</span> se pone a prueba.
+                </h1>
+                <p class="text-lg md:text-xl text-brand-dark-blue mt-6 max-w-2xl mx-auto">
+                    Sumérgete en cuestionarios fascinantes, desafía tus límites y demuestra cuánto sabes. ¿Estás listo para el reto?
+                </p>
+                <div class="mt-10">
+                    <a href="#cuestionarios" class="bg-brand-yellow text-brand-dark-blue font-bold py-4 px-10 rounded-lg text-lg hover:bg-yellow-300 transition-colors duration-300 shadow-md hover:shadow-lg">
+                        ¡Empezar un Cuestionario!
+                    </a>
+                </div>
+            </div>
+        </section>
+
+         <!-- Sección Cómo Funciona -->
+        <section class="py-16 md:py-20 px-4 bg-gray-50">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-brand-blue mb-12">¿Cómo Funciona Kraneao?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+                    <!-- Paso 1 -->
+                    <div class="flex flex-col items-center">
+                        <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-brand-dark-blue mb-2">1. Elige tu Materia</h3>
+                        <p class="text-brand-dark-blue/80">Navega por nuestra biblioteca organizada por materias y lapsos académicos.</p>
+                    </div>
+                    <!-- Paso 2 -->
+                    <div class="flex flex-col items-center">
+                         <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                         </div>
+                        <h3 class="text-xl font-bold text-brand-dark-blue mb-2">2. Responde el Reto</h3>
+                        <p class="text-brand-dark-blue/80">Enfréntate a preguntas desafiantes en diversos formatos (selección, V/F, completar).</p>
+                    </div>
+                    <!-- Paso 3 -->
+                    <div class="flex flex-col items-center">
+                         <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                         </div>
+                        <h3 class="text-xl font-bold text-brand-dark-blue mb-2">3. Refuerza y Domina</h3>
+                        <p class="text-brand-dark-blue/80">Recibe tu puntaje, revisa tus fallos y obtén una guía personalizada para mejorar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE FOTO ELIMINADA -->
+
+        <!-- Biblioteca de Cuestionarios -->
+        <section id="cuestionarios" class="py-16 md:py-20 px-4 bg-gray-50"> <!-- Fondo gris claro -->
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-brand-blue text-center mb-16">
+                    Biblioteca de Cuestionarios (1er Año)
+                </h2>
+                
+                <!-- GRUPO: Anatomía -->
+                <div class="mb-16">
+                    <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
+                        Anatomía
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Cuestionario Anatomía -->
+                        <div class="quiz-card">
+                             <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Drenaje Venoso Craneal</h4>
+                                    <span class="text-xs font-semibold bg-brand-blue/10 text-brand-blue px-2 py-1 rounded-full">Lapso 1</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Pon a prueba tu conocimiento sobre los senos venosos durales y las venas clave del cráneo. (10 Preguntas)
+                                </p>
+                             </div>
+                             <div class="button-container"> 
+                                <a href="quiz.html" class="expert-level"> <!-- Estilo amarillo/experto -->
+                                    Jugar Ahora
+                                </a>
+                            </div>
+                        </div>
+                         <!-- Más cuestionarios de Anatomía (Próximamente) -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Pares Craneales</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 2</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Origen, recorrido y función de los 12 pares craneales. ¡Un clásico!
+                                </p>
+                            </div>
+                             <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRUPO: Histología -->
+                <div class="mb-16">
+                     <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
+                        Histología
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <!-- Cuestionario Histología (Próximamente) -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Tejido Epitelial</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 1</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Clasificación, funciones y características de los epitelios de revestimiento y glandulares.
+                                </p>
+                            </div>
+                            <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRUPO: Historia de la Medicina -->
+                 <div class="mb-16">
+                     <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
+                        Historia de la Medicina 
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <!-- Cuestionario Historia de la Medicina (Ahora con DOS botones) -->
+                         <div class="quiz-card">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Venezuela: Lapso 3</h4>
+                                    <span class="text-xs font-semibold bg-brand-blue/10 text-brand-blue px-2 py-1 rounded-full">Lapso 3</span> 
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Desde la medicina indígena hasta los hitos del siglo XX. ¡Elige tu nivel!
+                                </p>
+                            </div>
+                            <!-- Contenedor para los dos botones -->
+                            <div class="button-container"> 
+                                <a href="quiz-historia-150.html" class="normal-level"> 
+                                    Nivel Normal (150 Preguntas)
+                                </a>
+                                <a href="quiz-historia-completo.html" class="expert-level"> 
+                                    Nivel Experto (300 Preguntas)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 
+                 <!-- GRUPO: Antropología -->
+                 <div class="mb-16"> <!-- Añadido margen inferior -->
+                     <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
+                        Antropología
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <!-- Cuestionario Antropología (Próximamente) -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Conceptos Fundamentales</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 1</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Cultura, sociedad, etnocentrismo y relativismo cultural. ¿Los diferencias bien?
+                                </p>
+                            </div>
+                            <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== NUEVO GRUPO: Arte y Cultura ===== -->
+                <div>
+                     <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
+                        Arte y Cultura
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <!-- Tarjeta Lapso 1 -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Arte Prehispánico</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 1</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Explora las manifestaciones artísticas de los pueblos originarios de Venezuela.
+                                </p>
+                            </div>
+                            <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Tarjeta Lapso 2 -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Arte Colonial</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 2</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Comprende la influencia religiosa y europea en el arte de la colonia.
+                                </p>
+                            </div>
+                            <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Tarjeta Lapso 3 -->
+                         <div class="quiz-card opacity-70">
+                            <div class="card-content">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xl font-bold text-brand-dark-blue">Arte Moderno y S.XX</h4>
+                                    <span class="text-xs font-semibold bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Lapso 3</span>
+                                </div>
+                                <p class="text-brand-dark-blue/80">
+                                    Desde el Círculo de Bellas Artes hasta el arte cinético. ¿Conoces a los maestros?
+                                </p>
+                            </div>
+                            <div class="button-container">
+                                <span class="cursor-not-allowed">
+                                    Próximamente
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ===== FIN DEL NUEVO GRUPO ===== -->
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="w-full text-center p-8 text-brand-dark-blue/70 bg-gray-100">
+        &copy; 2025 Kraneao.com
+    </footer>
+    
+    <!-- Modal de Early Access -->
+    <div id="early-access-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div id="modal-overlay" class="absolute inset-0 bg-brand-dark-blue opacity-80"></div>
+        <div class="relative z-10 bg-white text-brand-dark-blue p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="text-2xl font-bold text-brand-blue">¡Sé un Usuario Fundador!</h2>
+                <button id="modal-close-btn" class="text-3xl font-light leading-none text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <p class="mb-6 text-brand-dark-blue/80">Regístrate para obtener acceso anticipado, beneficios exclusivos y ser parte de nuestra comunidad privada.</p>
+            <form action="https://formsubmit.co/esteban.ceo@kraneao.com" method="POST">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-brand-dark-blue mb-1">Nombre Completo</label>
+                    <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-brand-dark-blue mb-1">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue" required>
+                </div>
+                <div class="mb-4">
+                    <label for="university" class="block text-sm font-medium text-brand-dark-blue mb-1">Universidad (Opcional)</label>
+                    <input type="text" id="university" name="university" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                </div>
+                <div class="mb-6">
+                    <label for="study_year" class="block text-sm font-medium text-brand-dark-blue mb-1">Año de Estudio</label>
+                    <select id="study_year" name="study_year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue bg-white" required>
+                        <option value="">Selecciona tu año...</option>
+                        <option value="1er Año">1er Año</option>
+                        <option value="2do Año">2do Año</option>
+                        <option value="3er Año">3er Año</option>
+                        <option value="4to Año">4to Año</option>
+                        <option value="5to Año">5to Año</option>
+                        <option value="6to Año (Internado)">6to Año (Internado)</option>
+                        <option value="Profesional/Egresado">Profesional/Egresado</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <input type="hidden" name="_next" value="https://kraneao.com/gracias.html"> 
+                <input type="hidden" name="_subject" value="¡Nuevo Usuario Fundador de Kraneao!">
+                <input type="text" name="_gotcha" style="display:none">
+                <button type="submit" class="w-full bg-brand-yellow text-brand-dark-blue font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-300 transition-colors duration-300">
+                    ¡Quiero mi Acceso!
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- FIN Modal -->
+
+    <!-- Script simple SÓLO para abrir y cerrar el modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('early-access-modal');
+            const overlay = document.getElementById('modal-overlay');
+            const openBtn = document.getElementById('early-access-btn');
+            const closeBtn = document.getElementById('modal-close-btn');
+
+            if (modal && openBtn && closeBtn && overlay) {
+                openBtn.addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                });
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+                overlay.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

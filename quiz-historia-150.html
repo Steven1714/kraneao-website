@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Cuestionario Historia de la Medicina (Normal)</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        // Configuración de Tailwind CSS con la paleta de colores de marca
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-blue': '#0056FF',       // Azul royal
+                        'brand-yellow': '#FFD600',     // Amarillo neón
+                        'brand-gray': '#C9C9C9',       // Gris suave
+                        'brand-dark-blue': '#021059', // Azul oscuro
+                        'brand-bg': '#0E0E0E',         // Negro profundo
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* Fondo gris muy claro */
+            color: #021059; /* Texto principal azul oscuro */
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Estilos botones de opción */
+        .option-btn, .checkbox-label {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #d1d5db; /* Borde gris claro */
+            background-color: #ffffff; /* Fondo blanco */
+            color: #021059; /* Texto azul oscuro */
+            cursor: pointer;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem; /* Reducido padding vertical */
+            min-height: 50px; /* Asegurar altura mínima */
+            display: flex; /* Para alinear contenido verticalmente si es necesario */
+            align-items: center;
+        }
+        .option-btn:hover, .checkbox-label:hover {
+            border-color: #FFD600; /* Borde amarillo al pasar */
+            background-color: #FFFBEB; /* Fondo amarillo muy claro */
+        }
+        /* Added focus styles for accessibility */
+        .option-btn:focus, .checkbox-label:focus {
+            border-color: #0056FF;
+            box-shadow: 0 0 0 2px rgba(0, 86, 255, 0.2);
+            outline: none;
+        }
+        .option-btn.selected, .checkbox-label.selected {
+            background-color: #0056FF; /* Fondo azul */
+            border-color: #004ADF; /* Borde azul más oscuro */
+            color: white; /* Texto blanco */
+        }
+        /* Estilos feedback */
+        .correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .almost-correct { background-color: #F59E0B !important; color: white !important; border-color: #D97706 !important; }
+        .incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .disabled { pointer-events: none; opacity: 0.8; }
+        .completion-input {
+            transition: all 0.2s ease-in-out;
+            background-color: #f3f4f6; /* Fondo gris claro */
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem; /* Reducido padding vertical */
+            color: #021059; /* Ensure text color is dark */
+        }
+        .completion-input:focus {
+            border-color: #0056FF;
+            box-shadow: 0 0 0 2px rgba(0, 86, 255, 0.2);
+            outline: none;
+        }
+        /* Botones principales (Verificar, Siguiente) */
+        .main-action-button {
+            background-color: #FFD600; /* Amarillo */
+            color: #021059; /* Azul oscuro */
+            transition: background-color 0.2s ease-in-out;
+            border-radius: 0.5rem;
+        }
+         .main-action-button:hover:enabled {
+            background-color: #FACC15; /* Amarillo más oscuro */
+        }
+        .main-action-button:disabled {
+            background-color: #E5E7EB; /* Gris claro */
+            color: #9CA3AF; /* Gris oscuro */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        /* Botón secundario (Volver al inicio, Copiar datos) */
+        .secondary-action-button {
+            background-color: #0056FF; /* Azul */
+            color: white;
+            transition: background-color 0.2s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .secondary-action-button:hover {
+            background-color: #004ADF; /* Azul más oscuro */
+        }
+
+        /* Barra de progreso */
+        .progress-bar-fill {
+            background-color: #0056FF; /* Azul */
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Estilos de impresión */
+        @media print {
+            body { background-color: white !important; color: black !important; }
+            body * { visibility: hidden; }
+            #study-guide-container, #study-guide-container * { visibility: visible; color: black !important; }
+            #quiz-container { border: none !important; box-shadow: none !important; }
+            #study-guide-container { position: absolute; left: 0; top: 0; width: 100%; background-color: white !important; padding: 2rem; border: none !important; box-shadow: none !important; }
+            #study-guide-container h2, #study-guide-container p { color: black !important; }
+            .print-hidden { display: none; }
+            .guide-item { background-color: #f3f4f6 !important; border: 1px solid #d1d5db !important; page-break-inside: avoid; }
+            .guide-item p span { color: black !important; }
+            header { display: none !important;} /* Ocultar header al imprimir */
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Encabezado -->
+    <header class="w-full bg-white shadow-sm sticky top-0 z-20 p-4 print-hidden">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="index.html"> <!-- Enlace corregido a index.html -->
+                 <!-- ***** CORREGIDO: Usando el nombre de archivo local de tu logo *** -->
+                 <img src="logo-final.png" alt="Logo de Kraneao" class="h-10 md:h-12">
+            </a>
+
+            <!-- Enlace de Iniciar Sesión -->
+            <div>
+                <a href="#" class="font-semibold text-brand-dark-blue bg-brand-blue/10 hover:bg-brand-blue/20 px-5 py-2 rounded-lg transition-colors">
+                    Iniciar Sesión
+                </a>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Contenedor Principal del Cuestionario -->
+    <div id="quiz-container" class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-6 md:p-8 relative border border-gray-200 my-8 mx-auto flex-grow flex flex-col">
+
+        <!-- Pantalla del Cuestionario (visible por defecto) -->
+        <div id="quiz-screen" class="flex flex-col flex-grow">
+            <!-- Logo Central Añadido -->
+            <div class="flex justify-center mb-4 print-hidden">
+                 <!-- ***** CORREGIDO: Usando el nombre de archivo local de tu logo *** -->
+                 <img src="logo-principal-color.png" alt="Logo Kraneao" class="h-16 md:h-20">
+            </div>
+
+            <h1 class="text-xl md:text-2xl font-bold text-brand-blue mb-4 text-center">
+                 Historia de la Medicina - Nivel Normal <!-- Título actualizado -->
+            </h1>
+            <!-- Progreso y Puntaje -->
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                     <!-- Contador actualizado para 150 -->
+                    <span id="question-counter-text" class="text-sm font-semibold text-brand-blue">Pregunta <span id="question-counter">1</span> de 150</span>
+                    <span id="score" class="text-sm font-semibold text-brand-dark-blue">Puntaje: 0</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progress-bar" class="progress-bar-fill h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Pregunta y Opciones -->
+            <div class="flex-grow">
+                <p id="question-type" class="text-sm font-bold text-yellow-600 mb-2"></p>
+                <h2 id="question" class="text-lg md:text-xl font-bold mb-4 text-brand-dark-blue">Cargando pregunta...</h2>
+                <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+            </div>
+
+            <!-- Feedback -->
+            <div id="feedback-container" class="min-h-[40px]">
+                 <p id="feedback" class="text-sm md:text-base text-gray-600 mb-4"></p>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="mt-auto pt-4 print-hidden">
+                <button id="check-btn" class="main-action-button w-full font-bold py-3 px-6 rounded-lg text-lg hidden disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Verificar Respuesta
+                </button>
+                <button id="next-btn" class="main-action-button w-full font-bold py-3 px-6 rounded-lg text-lg hidden">
+                    Siguiente Pregunta
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Resultados (oculta inicialmente) -->
+        <div id="result-screen" class="hidden text-center">
+             <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 print-hidden">¡Reto Completado!</h1>
+             <p class="text-2xl text-brand-dark-blue mb-6 print-hidden">Tu puntaje final es:</p>
+             <p id="final-score" class="text-6xl font-extrabold text-brand-blue mb-8 print-hidden"></p>
+             <p id="final-message" class="text-lg text-brand-dark-blue/80 mb-8 print-hidden"></p>
+
+             <!-- Botón Volver al Inicio (Ahora recarga la página) -->
+             <button id="restart-btn" class="secondary-action-button w-full font-bold py-3 px-6 rounded-lg text-lg mb-6 print-hidden">
+                 Volver a Jugar
+             </button>
+
+             <!-- ******** SECCIÓN DE APOYO / GUÍA PDF ******** -->
+             <div class="mt-10 border-t pt-6 print-hidden bg-blue-50 p-6 rounded-lg border border-brand-blue">
+                 <h3 class="text-xl font-bold text-brand-blue mb-3">¡Consigue tu Guía de Refuerzo en PDF!</h3>
+                 <p class="text-brand-dark-blue/90 mb-4">
+                     Si este cuestionario te fue útil, apoya nuestro proyecto con un pequeño aporte. Como agradecimiento, te enviaremos por correo la **Guía de Refuerzo Personalizada en formato PDF**, ideal para repasar.
+                 </p>
+                 <p class="text-brand-dark-blue/90 mb-4">
+                     **Pasos:**
+                     <ol class="list-decimal list-inside text-left ml-4 mb-4">
+                         <li>Copia nuestros datos de Pago Móvil.</li>
+                         <li>Realiza tu aporte.</li>
+                         <li>Envía el capture de pantalla a <strong class="text-brand-blue">esteban.ceo@kraneao.com</strong> junto con tu correo electrónico.</li>
+                     </ol>
+                 </p>
+                 <button id="copy-payment-data-btn" class="secondary-action-button font-bold py-3 px-6 rounded-lg mb-2">
+                    Copiar Datos para Pago Móvil
+                 </button>
+                 <div id="copy-message" class="text-sm text-green-600 font-medium mt-1 hidden">¡Datos copiados!</div>
+                 <!-- Datos de Pago (Ocultos inicialmente, solo como referencia en el código) -->
+                 <div id="payment-data" class="hidden">Datos para Pago Móvil - Kraneao: Banco: Bancamiga, Nombre: Esteban Garcia, C.I.: V-17.404.104, Teléfono: 04267619312</div>
+             </div>
+             <!-- ******** FIN DE LA SECCIÓN DE APOYO ******** -->
+
+
+             <!-- Contenedor Guía de Refuerzo (Ahora después de la sección de apoyo) -->
+             <div id="study-guide-container" class="mt-8 text-left">
+                 <!-- La guía se generará aquí (aún visible en pantalla por ahora) -->
+             </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="w-full text-center p-4 text-brand-dark-blue/70 bg-gray-100 mt-auto print-hidden">
+         &copy; 2025 Kraneao.com
+    </footer>
+
+
+    <!-- Script Principal del Cuestionario -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { // Esperar a que el DOM esté listo
+
+            // --- INICIO: DATOS DEL CUESTIONARIO (150 Preguntas) ---
+             const quizData = [
+                 // Módulo 1 (20 preguntas)
+                 { type: 'single', question: "¿Cuál era el nombre más común para la figura que era médico, sacerdote y adivino en las sociedades indígenas?", options: ["Cacique", "Piache", "Boratio", "Guerrero"], answer: "Piache", explanation: "El Piache era la figura central de la medicina indígena, actuando como intermediario entre el mundo físico y el espiritual." },
+                 { type: 'tf', question: "Verdadero o Falso: Los indígenas consideraban todas las enfermedades como castigos de espíritus malignos.", answer: false, explanation: "Falso. Distinguían entre enfermedades Malignas (`wanûlûû`), de origen espiritual, y Benignas (`ayulee`), de causa natural." },
+                 { type: 'completion', question: "Para tratar fracturas, los indígenas usaban tablillas hechas con la corteza de la planta de ____.", answer: "maguey", explanation: "Usaban la corteza de plantas como el maguey para inmovilizar fracturas, un método similar al entablillado moderno." }, // Corregido: moguey a maguey
+                 { type: 'multiple', question: "Selecciona todos los métodos 'quirúrgicos' practicados por los pueblos indígenas.", options: ["Amputación por mordedura de serpiente", "Reducción de luxaciones", "Cirugía a corazón abierto", "Cauterización de heridas"], answer: ["Amputación por mordedura de serpiente", "Reducción de luxaciones", "Cauterización de heridas"], explanation: "Realizaban procedimientos prácticos como amputaciones de emergencia, reducción de luxaciones y cauterización, pero no cirugías complejas como a corazón abierto." },
+                 { type: 'single', question: "El misionero José Gumilla describió que los Otomacos del Guárico practicaban la geofagia, que es el consumo de...", options: ["Insectos", "Raíces venenosas", "Arcilla", "Peces crudos"], answer: "Arcilla", explanation: "La geofagia, o consumo de tierra o arcilla, era una práctica cultural y posiblemente nutricional de algunos pueblos como los Otomacos." },
+                 { type: 'single', question: "El veneno que los indígenas Cumanagotos usaban en sus flechas, y que hoy tiene uso farmacológico, es el...", options: ["Cianuro", "Arsénico", "Curare", "Estricnina"], answer: "Curare", explanation: "El curare es un potente relajante muscular que usaban para la caza y que hoy se utiliza en anestesiología." },
+                 { type: 'completion', question: "Las maracas sagradas usadas por el Piache para ahuyentar espíritus eran llamadas ____.", answer: "mataro", explanation: "Las maracas o 'mataro' eran herramientas rituales fundamentales para el Piache en sus ceremonias de curación." },
+                 { type: 'tf', question: "Verdadero o Falso: Los pueblos indígenas no tenían métodos de prevención, solo curaban las enfermedades una vez aparecían.", answer: false, explanation: "Falso. Usaban métodos de profilaxis mágica (amuletos) y empírica (onoto como repelente)." },
+                 { type: 'single', question: "Para calmar dolores, los indígenas aplicaban una técnica que consistía en quemaduras superficiales, conocida como...", options: ["Acupuntura", "Puntos de fuego", "Sangría", "Masajes"], answer: "Puntos de fuego", explanation: "Los 'puntos de fuego' o moxibustión eran una técnica de contrairritación para aliviar diversos dolores." },
+                 { type: 'single', question: "El soldado español que fue capturado por los indios quiriquires y se convirtió en Piache fue...", options: ["Diego de Ordaz", "Francisco Martín", "Alonso de Ojeda", "Juan de Castellanos"], answer: "Francisco Martín", explanation: "Francisco Martín es el ejemplo más claro de la adaptación y fusión cultural, al ser un español que adoptó el rol de chamán indígena." },
+                 { type: 'single', question: "El Piache de los Pemón (Estado Bolívar) se llama...", options: ["Piasán", "Yupia", "Auktschi", "Mohanes"], answer: "Piasán", explanation: "Cada etnia tenía su propio nombre para el chamán; entre los Pemón, era el Piasán." },
+                 { type: 'tf', question: "Verdadero o Falso: Según la leyenda Guajira, el 'Seyúu' es un espíritu maligno que causa enfermedades.", answer: false, explanation: "Falso. El 'Seyúu' es el espíritu protector de cada persona que ayuda a combatir el mal." },
+                 { type: 'completion', question: "Los Otomacos usaban como anestésico unos polvos llamados ____, aplicados en las fosas nasales.", answer: "yupa", explanation: "La 'yupa' (Piptadenia peregrina) es una planta estupefaciente que usaban como anestésico primitivo." }, // Corregido: yupaz a yupa
+                 { type: 'single', question: "El chamán de los Yanomami, llamado Shapori, inhala un alucinógeno conocido como ____ para sus ceremonias.", options: ["Peyote", "Ayahuasca", "Yopo", "Tabaco"], answer: "Yopo", explanation: "El yopo es un potente alucinógeno que permite al chamán Yanomami contactar con el mundo de los espíritus (hekura)." },
+                 { type: 'multiple', question: "Selecciona las plantas que los indígenas usaban para tratar las diarreas.", options: ["Hoja de guayabo", "Uña de danta", "Merey", "Pringamoza"], answer: ["Hoja de guayabo", "Merey"], explanation: "Tanto las hojas de guayabo como el merey tienen propiedades astringentes conocidas en la medicina tradicional." },
+                 { type: 'single', question: "La enfermedad 'wanûlûû' entre los guajiros necesitaba ser curada por...", options: ["El propio enfermo", "Un familiar", "El Piache", "Cualquier miembro de la tribu"], answer: "El Piache", explanation: "Al ser de origen espiritual, solo el Piache tenía el poder de enfrentar a las fuerzas que causaban la enfermedad 'wanûlûû'." },
+                 { type: 'tf', question: "Verdadero o Falso: Los indígenas venezolanos practicaban la trepanación craneal de forma rutinaria.", answer: false, explanation: "Falso. Aunque practicaban cirugías menores, la trepanación no está documentada como una práctica común en los manuales." },
+                 { type: 'completion', question: "Los indígenas del Orinoco usaban ____ masticado para las mordeduras de serpiente.", answer: "tabaco", explanation: "El tabaco era una planta multipropósito, usada tanto en rituales como en aplicaciones medicinales directas, como en mordeduras." },
+                 { type: 'single', question: "Para los indígenas Kariña (Monagas), el chamán que se comunicaba con el dios Maavare se llamaba...", options: ["Piasán", "Puddai", "Maraquero", "Yuatpu"], answer: "Puddai", explanation: "El 'puddai' era la figura chamánica de la etnia Kariña, habitantes ancestrales de estados como Monagas." },
+                 { type: 'single', question: "El uso de la uña de danta como amuleto se asociaba a la protección contra enfermedades del...", options: ["Hígado", "Corazón", "Estómago", "Pulmón"], answer: "Corazón", explanation: "La medicina indígena asignaba propiedades simbólicas a partes de animales; la uña de danta se relacionaba con el corazón." },
+
+                 // Módulo 2 (20 preguntas)
+                 { type: 'single', question: "¿En qué año ocurrió la primera gran epidemia de viruela documentada, traída por un barco de esclavos?", options: ["1498", "1580", "1620", "1527"], answer: "1580", explanation: "El año 1580 marca un hito trágico con la primera gran epidemia de viruela, descrita por Oviedo y Baños, que diezmó a la población indígena." },
+                 { type: 'tf', question: "Verdadero o Falso: Los cirujanos españoles estaban bien preparados para tratar las heridas de flechas envenenadas.", answer: false, explanation: "Falso. Fue su principal desafío médico y tuvieron que recurrir a métodos brutales como la cauterización." },
+                 { type: 'completion', question: "El cronista que escribió en verso sobre la medicina de la conquista fue ____ de Castellanos.", answer: "Juan", explanation: "Juan de Castellanos, en su obra 'Elegías de varones ilustres de Indias', es una fuente clave sobre la medicina de la conquista." },
+                 { type: 'single', question: "El primer hospital documentado en Venezuela (1565) fue el Hospital de Santiago en la ciudad de...", options: ["Caracas", "Coro", "Cumaná", "Barquisimeto"], answer: "Barquisimeto", explanation: "El Hospital de Santiago en Barquisimeto (1565) es considerado el inicio de la medicina institucional en Venezuela." },
+                 { type: 'single', question: "La primera ciudad fundada en tierra firme de Venezuela y del continente americano fue...", options: ["Coro", "Caracas", "Cumaná", "El Tocuyo"], answer: "Cumaná", explanation: "Cumaná, fundada en 1501, fue el primer asentamiento español permanente en tierra firme del continente." },
+                 { type: 'multiple', question: "Selecciona las enfermedades que los conquistadores trajeron a América y que causaron gran mortalidad indígena.", options: ["Sífilis", "Viruela", "Sarampión", "Mal de Chagas"], answer: ["Viruela", "Sarampión"], explanation: "La viruela y el sarampión fueron las dos enfermedades infecciosas más devastadoras para la población indígena, que no tenía inmunidad." },
+                 { type: 'tf', question: "Verdadero o Falso: Cristóbal Colón llegó a las costas de Venezuela en su tercer viaje acompañado por un equipo médico completo.", answer: false, explanation: "Falso. El manual destaca que Colón llegó sin médicos y él mismo padecía de una afección ocular." },
+                 { type: 'completion', question: "El cirujano que realizó una autopsia experimental en un indio para saber cómo curar a Felipe de Hutten fue Diego de ____.", answer: "Montes", explanation: "La historia de Diego de Montes es un ejemplo extremo de la medicina experimental y brutal de la conquista." },
+                 { type: 'single', question: "La isla de Curazao recibió su nombre porque unos marineros abandonados allí se curaron de ____ comiendo frutas.", options: ["Viruela", "Escorbuto", "Paludismo", "Tifus"], answer: "Escorbuto", explanation: "El escorbuto, causado por la deficiencia de vitamina C, era una enfermedad común en largos viajes por mar. 'Curazao' significa 'curación'." },
+                 { type: 'single', question: "La primera autopsia documentada en Venezuela (1696) fue practicada por el cirujano...", options: ["Lorenzo Campins", "Francisco Guerra Martínez", "Diego de Montes", "José María Vargas"], answer: "Francisco Guerra Martínez", explanation: "El cirujano canario Francisco Guerra Martínez realizó la primera autopsia en una persona fallecida por fiebre amarilla." },
+                 { type: 'single', question: "Alonso de Ojeda, en su primer viaje, trajo a un cirujano español llamado...", options: ["Maestre Bernal", "Alonso", "Diego de Montes", "Hernán Pérez"], answer: "Alonso", explanation: "El cirujano Alonso, junto al boticario Maestre Bernal, fueron de los primeros profesionales de la salud en llegar con Ojeda." },
+                 { type: 'tf', question: "Verdadero o Falso: El primer obispo de Venezuela, Rodrigo de Bastidas, procesó a un enfermo de lepra y lo envió a Puerto Rico.", answer: true, explanation: "Verdadero. La lepra era considerada un pecado y un asunto de la inquisición en esa época." },
+                 { type: 'completion', question: "El historiador que describió la primera epidemia de viruela de 1580 fue José de Oviedo y ____.", answer: "Baños", explanation: "José de Oviedo y Baños, en su 'Historia de la conquista y población...', dejó un testimonio clave de la devastación de la viruela." },
+                 { type: 'single', question: "La enfermedad conocida como 'tabardillo', que sufrió Lope de Aguirre, es hoy en día conocida como...", options: ["Malaria", "Insolación", "Tifus", "Dengue"], answer: "Insolación", explanation: "'Tabardillo' era el término antiguo para fiebres altas y delirio, a menudo asociadas a la insolación o al tifus." },
+                 { type: 'multiple', question: "Además de médicos, las expediciones de la conquista solían incluir a:", options: ["Cirujanos", "Boticarios", "Abogados", "Herbolarios"], answer: ["Cirujanos", "Boticarios", "Herbolarios"], explanation: "El equipo de salud era variado e incluía a cirujanos para heridas, boticarios para medicinas y herbolarios por su conocimiento de plantas." },
+                 { type: 'tf', question: "Verdadero o Falso: Las 'niguas' (Tunga penetrans) son un tipo de mosquito que transmitía enfermedades.", answer: false, explanation: "Falso. Son un tipo de pulga que se mete bajo la piel, descritas por Juan de Castellanos." },
+                 { type: 'completion', question: "El primer médico en ejercer en Caracas, en 1583, fue Don Miguel ____.", answer: "Gerónimo", explanation: "Don Miguel Gerónimo fue el pionero del ejercicio médico en la recién fundada ciudad de Caracas." },
+                 { type: 'single', question: "Los Welser eran conquistadores de origen...", options: ["Español", "Portugués", "Alemán", "Italiano"], answer: "Alemán", explanation: "Los Welser, una familia de banqueros alemanes, recibieron la concesión para explorar y colonizar parte de Venezuela." },
+                 { type: 'single', question: "El primer caso de sífilis historiado en Venezuela fue el del bachiller médico Pedro ____ Guevara.", options: ["Freytes", "Salias", "Isnardi", "Díaz"], answer: "Freytes", explanation: "La trágica historia del Dr. Pedro Freytes Guevara es el primer registro detallado de la sífilis en el territorio." },
+                 { type: 'single', question: "El principal método que usaban los cirujanos españoles para tratar las heridas de flechas envenenadas era la...", options: ["Sangría", "Aplicación de hierbas", "Cauterización", "Sutura"], answer: "Cauterización" , explanation: "La cauterización con un hierro al rojo vivo era un método brutal pero considerado necesario para destruir el veneno en la herida."},
+                 
+                 // Módulo 3 (15 preguntas)
+                 { type: 'single', question: "La 'Expedición Real de la Vacuna' llegó a Venezuela para introducir la vacuna de Jenner en el año...", options: ["1763", "1810", "1799", "1804"], answer: "1804", explanation: "En 1804, la expedición dirigida por el Dr. Francisco de Balmis trajo la vacuna contra la viruela a Venezuela, un hito en la salud pública." },
+                 { type: 'completion', question: "La primera Cátedra de Medicina en Venezuela fue fundada el 10 de octubre de ____ por Lorenzo Campins y Ballester.", answer: "1763", explanation: "El 10 de octubre de 1763 es la fecha oficial del inicio de los estudios médicos universitarios en Venezuela." },
+                 { type: 'tf', question: "Verdadero o Falso: El Protomedicato, creado en 1777, era una institución para financiar la construcción de hospitales.", answer: false, explanation: "Falso. Era un tribunal médico para examinar, licenciar y regular a los profesionales de la salud." },
+                 { type: 'single', question: "El primer médico graduado en la universidad en Venezuela fue...", options: ["Felipe Tamariz", "José Francisco Molina Sierra", "Vicente Salias", "José María Vargas"], answer: "José Francisco Molina Sierra", explanation: "José Francisco Molina Sierra, de Puerto Cabello, fue el primer discípulo de Campins y Ballester en obtener su título." },
+                 { type: 'single', question: "En Guárico, el científico autodidacta ____ fue un colaborador clave de la Expedición de la Vacuna en Calabozo.", options: ["Francisco Lazo Martí", "Carlos del Pozo", "José Gumilla", "Adolfo Rodríguez"], answer: "Carlos del Pozo", explanation: "Carlos del Pozo, conocido por sus experimentos con la electricidad, fue fundamental en la campaña de vacunación en los llanos." },
+                 { type: 'single', question: "El método antiguo y riesgoso de inocular pus de viruela para generar inmunidad se llama...", options: ["Vacunación", "Inmunización", "Variolización", "Seroterapia"], answer: "Variolización", explanation: "La variolización precedió a la vacuna de Jenner y consistía en inocular el virus de la viruela humana." },
+                 { type: 'completion', question: "El famoso poeta ____ Bello escribió una oda en honor a la llegada de la vacuna.", answer: "Andrés", explanation: "Andrés Bello, una de las mentes más brillantes de la época, celebró el hito científico de la vacuna con un poema." },
+                 { type: 'tf', question: "Verdadero o Falso: Los Cirujanos Romancistas eran aquellos que estudiaban los textos médicos en latín.", answer: false, explanation: "Falso. Estudiaban en lengua romance (español), a diferencia de los médicos universitarios que usaban el latín." },
+                 { type: 'single', question: "La primera universidad de Venezuela, donde se fundó la Cátedra de Medicina, fue la...", options: ["Universidad de Los Andes", "Universidad del Zulia", "Universidad Real y Pontificia de Caracas", "Universidad de Carabobo"], answer: "Universidad Real y Pontificia de Caracas", explanation: "Esta universidad, precursora de la UCV, fue el centro de la educación superior en la colonia." },
+                 { type: 'multiple', question: "El Protomedicato tenía autoridad para examinar y licenciar a:", options: ["Médicos", "Boticarios", "Abogados", "Cirujanos"], answer: ["Médicos", "Boticarios", "Cirujanos"], explanation: "El Protomedicato regulaba a todos los que practicaban alguna rama del arte de curar." },
+                 { type: 'single', question: "El primer libro formal para la enseñanza de la medicina en Venezuela fue 'Elementos de Medicina Práctica' de...", options: ["Hipócrates", "Galeno", "Guillermo Cullen", "Lorenzo Campins"], answer: "Guillermo Cullen", explanation: "Felipe Tamariz introdujo este texto del médico escocés Guillermo Cullen, modernizando la enseñanza." },
+                 { type: 'completion', question: "El primer hospital de Caracas, iniciado en 1590, fue el Hospital de ____.", answer: "San Pablo", explanation: "El Hospital de San Pablo fue el principal centro asistencial de Caracas durante la colonia." },
+                 { type: 'tf', question: "Verdadero o Falso: El obispo Mariano Martí documentó la ausencia de hospitales en Calabozo durante su visita en el siglo XVIII.", answer: true, explanation: "Verdadero. Martí constató la falta de hospitales en Calabozo, Villa de Cura y otros pueblos del Guárico y ordenó su fundación." },
+                 { type: 'single', question: "La primera trepanación craneana en Caracas fue practicada en 1736 por cirujanos de origen...", options: ["Español", "Italiano", "Francés", "Alemán"], answer: "Francés", explanation: "Cirujanos franceses como Juan Pellerín y Pedro Bigot trajeron técnicas quirúrgicas avanzadas a la Caracas colonial." },
+                 { type: 'single', question: "El primer Protomédico nacido en Venezuela fue...", options: ["Lorenzo Campins", "José María Vargas", "Felipe Tamariz", "José Francisco Molina Sierra"], answer: "José Francisco Molina Sierra", explanation: "Tras la muerte de su maestro, Campins y Ballester, Molina Sierra asumió la jefatura del Protomedicato." },
+
+                 // Módulo 4 (15 preguntas)
+                 { type: 'single', question: "¿Qué política, decretada en 1813, excluía la asistencia médica a los heridos del bando contrario?", options: ["El Armisticio", "El Decreto de Guerra a Muerte", "La Ley de Sanidad Militar", "El Tratado de Regularización"], answer: "El Decreto de Guerra a Muerte", explanation: "Este decreto, proclamado por Bolívar en Trujillo, endureció la guerra y tuvo graves consecuencias sanitarias." },
+                 { type: 'multiple', question: "¿Cuáles de los siguientes médicos fueron firmantes del Acta de Independencia de 1811?", options: ["José Ángel Álamo", "Manuel Palacio Fajardo", "Francisco Isnardi", "José Gregorio Hernández"], answer: ["José Ángel Álamo", "Manuel Palacio Fajardo", "Francisco Isnardi"], explanation: "José Ángel Álamo, Manuel Palacio Fajardo y Francisco Isnardi son 3 de los 4 médicos que firmaron el Acta. El cuarto fue José Luis Cabrera." },
+                 { type: 'single', question: "El grupo de voluntarios extranjeros que mejoró la sanidad militar patriota a partir de 1817 fue...", options: ["La Legión Francesa", "La Legión Alemana", "La Legión Británica", "Los Mercenarios Suizos"], answer: "La Legión Británica", explanation: "La Legión Británica trajo médicos con experiencia en las guerras napoleónicas, profesionalizando la sanidad militar patriota." },
+                 { type: 'completion', question: "El autor de la letra del Himno Nacional, 'Gloria al Bravo Pueblo', fue el Dr. Vicente ____.", answer: "Salias", explanation: "Vicente Salias, médico y periodista, compuso la letra del canto patriótico que se convertiría en el Himno Nacional." },
+                 { type: 'tf', question: "Verdadero o Falso: El Dr. Richard Murphy, jefe de los médicos en Carabobo, era un médico venezolano.", answer: false, explanation: "Falso. Era un médico irlandés, parte de la Legión Británica." },
+                 { type: 'single', question: "La primera cesárea del continente americano fue realizada en Cumaná en 1820 por el Dr...", options: ["José María Vargas", "Alonso Ruíz Moreno", "Vicente Salias", "José Domingo Díaz"], answer: "Alonso Ruíz Moreno", explanation: "El médico español Alonso Ruíz Moreno realizó este hito quirúrgico en Cumaná, aunque la madre falleció días después." },
+                 { type: 'completion', question: "El médico realista, editor de la Gazeta de Caracas y enemigo de la independencia fue José Domingo ____.", answer: "Díaz", explanation: "José Domingo Díaz usó su pluma y su conocimiento médico al servicio de la causa realista." },
+                 { type: 'single', question: "Debido a la escasez de médicos, los 21 estudiantes de medicina en 1810...", options: ["Se graduaron de forma acelerada", "Fueron enviados a Europa", "Abandonaron sus estudios para unirse al ejército", "Crearon el primer hospital de campaña"], answer: "Abandonaron sus estudios para unirse al ejército", explanation: "Este hecho demuestra la precariedad de la situación: el futuro del cuerpo médico del país se fue a la guerra como soldados." },
+                 { type: 'tf', question: "Verdadero o Falso: Los ejércitos patriotas contaron desde el inicio de la guerra con un cuerpo de sanidad bien organizado.", answer: false, explanation: "Falso. La asistencia médica era prácticamente inexistente al principio de la guerra, basada en la improvisación." },
+                 { type: 'single', question: "En 1818, en el Rincón de los Toros (Guárico), Simón Bolívar sufrió de una afección cutánea conocida como...", options: ["Viruela", "Lepra", "Carbuncos (ántrax)", "Escorbuto"], answer: "Carbuncos (ántrax)", explanation: "Bolívar menciona en su correspondencia esta dolencia (infección por ántrax), que lo afectó durante la Campaña del Centro." },
+                 { type: 'single', question: "El Dr. John Ross, nombrado Cirujano Mayor del ejército en 1814, fue el primer nombramiento de...", options: ["Médico general", "Médico militar", "Director de hospital", "Protomédico"], answer: "Médico militar", explanation: "Este nombramiento por parte de Bolívar marca el inicio de la formalización de la sanidad militar en el bando patriota." },
+                 { type: 'tf', question: "Verdadero o Falso: El Tratado de Regularización de la Guerra (1820) mantuvo la exclusión de asistencia médica al enemigo.", answer: false, explanation: "Falso. Este tratado, firmado por Bolívar y Morillo, fue un paso crucial para humanizar la guerra y permitió la atención a heridos de ambos bandos." },
+                 { type: 'completion', question: "El jefe realista ____, famoso por su crueldad, perpetró una masacre en San Juan de los Morros en 1813.", answer: "Antoñanzas", explanation: "La masacre de Antoñanzas en San Juan de los Morros es uno de los episodios más oscuros de la Guerra a Muerte." },
+                 { type: 'single', question: "Durante la Batalla de Carabobo, el General José Antonio Páez sufrió un ataque de...", options: ["Paludismo", "Epilepsia", "Disentería", "Tifus"], answer: "Epilepsia", explanation: "Páez padecía de ataques epilépticos que se manifestaban en momentos de alta tensión, como ocurrió en Carabobo." },
+                 { type: 'single', question: "El primer Hospital de Sangre (de campaña) fue creado por Bolívar en 1814 en la ciudad de...", options: ["Caracas", "Valencia", "La Victoria", "Calabozo"], answer: "La Victoria", explanation: "Tras la Batalla de La Victoria, Bolívar ordenó la creación de este hospital, el primero de su tipo." },
+
+                 // Módulo 5 (15 preguntas)
+                 { type: 'single', question: "¿Quién es considerado el 'Padre de la medicina moderna venezolana' por su reforma educativa en 1827?", options: ["Simón Bolívar", "Luis Razetti", "José María Vargas", "Lorenzo Campins y Ballester"], answer: "José María Vargas", explanation: "La reforma universitaria de 1827, liderada por Vargas, sentó las bases de la medicina científica en Venezuela." },
+                 { type: 'tf', question: "Verdadero o Falso: La práctica revolucionaria que introdujo José María Vargas en su Cátedra de Anatomía fue el uso del microscopio.", answer: false, explanation: "Falso. Fue la disección de cadáveres, un paso fundamental para el estudio práctico de la anatomía." },
+                 { type: 'single', question: "El Dr. Luis Daniel Beauperthuy, en 1854, fue el pionero mundial en proponer que la fiebre amarilla era transmitida por...", options: ["El aire contaminado", "El agua", "Un mosquito", "El contacto directo"], answer: "Un mosquito", explanation: "Este descubrimiento, hecho en Cumaná, se adelantó casi 30 años al reconocimiento mundial de Carlos Finlay." },
+                 { type: 'completion', question: "El médico que descubrió científicamente la presencia del árbol de la ____ en Venezuela fue José María Benítez.", answer: "quina", explanation: "El descubrimiento de José María Benítez en 1825 fue crucial para el tratamiento del paludismo en la región." },
+                 { type: 'single', question: "El poeta y médico Francisco Lazo Martí fue profesor de Patología Interna en el Colegio Nacional de...", options: ["Zaraza", "San Juan de los Morros", "Valle de la Pascua", "Calabozo"], answer: "Calabozo", explanation: "Calabozo fue el centro de los estudios médicos del Guárico en el siglo XIX, con figuras como Lazo Martí." },
+                 { type: 'single', question: "La 'peste boba' o derrengadera del ganado en los llanos guariqueños fue estudiada por Vargas, Hernández y finalmente identificada por...", options: ["Jacinto Convit", "Rafael Rangel", "Luis Dao", "Arnoldo Gabaldón"], answer: "Rafael Rangel", explanation: "Rangel identificó el Trypanosoma venezuelense como el causante de la enfermedad que diezmaba a los caballos." },
+                 { type: 'tf', question: "Verdadero o Falso: En 1827, Simón Bolívar decretó la creación del Protomedicato para modernizar la medicina.", answer: false, explanation: "Falso. En 1827 Bolívar abolió el Protomedicato y en su lugar creó la Facultad Médica de Caracas." },
+                 { type: 'completion', question: "El último médico que atendió a Simón Bolívar y realizó su autopsia fue el Dr. Alejandro Próspero ____.", answer: "Reverend", explanation: "El Dr. Reverend, médico francés, dejó un diario detallado ('boletines') de la última enfermedad del Libertador." },
+                 { type: 'multiple', question: "Selecciona las cátedras que José María Vargas fundó o regentó en la UCV.", options: ["Anatomía", "Cirugía", "Bacteriología", "Química"], answer: ["Anatomía", "Cirugía", "Química"], explanation: "Vargas fue un polímata que impulsó la enseñanza de la anatomía, la cirugía y la química, escribiendo manuales para cada una." },
+                 { type: 'single', question: "La enfermedad principal que causó la muerte del Libertador Simón Bolívar fue...", options: ["Fiebre Amarilla", "Cólera", "Tuberculosis", "Paludismo"], answer: "Tuberculosis", explanation: "La autopsia realizada por el Dr. Reverend confirmó que la causa de muerte fue una tuberculosis pulmonar avanzada." },
+                 { type: 'single', question: "El Hospital Vargas de Caracas, un hito en la medicina venezolana, fue inaugurado en el año...", options: ["1827", "1854", "1891", "1904"], answer: "1891", explanation: "La inauguración del Hospital Vargas marcó el inicio de la era de la medicina hospitalaria moderna en Venezuela." },
+                 { type: 'tf', question: "Verdadero o Falso: El primer rector del Colegio Nacional de Calabozo fue el poeta Francisco Lazo Martí.", answer: false, explanation: "Falso. Los dos primeros rectores fueron médicos: Bartolomé Liendo y José de Briceño." },
+                 { type: 'completion', question: "El primer médico en recibir el título de Doctor en Ciencias Médicas en el Colegio de Calabozo fue Antonio María ____.", answer: "Parra", explanation: "En 1883, Antonio María Parra se convirtió en el primer médico graduado en el estado Guárico." },
+                 { type: 'single', question: "Simón Rodríguez, el maestro de Bolívar, tenía un peculiar método para enseñar anatomía, que consistía en...", options: ["Usar modelos de cera", "Disecar animales", "Mostrar su propio cuerpo desnudo", "Dibujar en la arena"], answer: "Mostrar su propio cuerpo desnudo", explanation: "Esta anécdota resalta el carácter excéntrico y pragmático de Simón Rodríguez como educador." },
+                 { type: 'single', question: "La Facultad Médica de Caracas, creada en 1827, estableció la Sociedad Médica de...", options: ["Caracas", "Venezuela", "Instrucción", "Ciencias"], answer: "Instrucción", explanation: "La Sociedad Médica de Instrucción fue el brazo de extensión de la nueva Facultad, para la discusión científica." },
+                 
+                 // Módulo 6 (20 preguntas)
+                 { type: 'single', question: "¿Quién es considerado el padre de la parasitología en Venezuela, famoso por su estudio del anquilostomo?", options: ["Jacinto Convit", "Rafael Rangel", "Humberto Fernández Morán", "Arnoldo Gabaldón"], answer: "Rafael Rangel", explanation: "Rafael Rangel es el pionero de la investigación científica en Venezuela, especialmente en parasitología." },
+                 { type: 'tf', question: "Verdadero o Falso: La Academia Nacional de Medicina se fundó en 1945.", answer: false, explanation: "Falso. Se fundó en 1904. La que se fundó en 1945 fue la Federación Médica Venezolana (FMV)." },
+                 { type: 'single', question: "El inventor del bisturí de diamante fue el Dr...", options: ["Humberto Fernández Morán", "Jacinto Convit", "Rafael Rangel", "Luis Razetti"], answer: "Humberto Fernández Morán", explanation: "Este invento de Fernández Morán revolucionó la ultramicrotomía y la microscopía electrónica." },
+                 { type: 'single', question: "El Dr. Jacinto Convit recibió reconocimiento mundial por desarrollar una vacuna contra...", options: ["La Viruela", "La Fiebre Amarilla", "La Lepra", "El Paludismo"], answer: "La Lepra", explanation: "Jacinto Convit dedicó su vida a la lucha contra la lepra, logrando un tratamiento y una vacuna que cambiaron la vida de miles." },
+                 { type: 'completion', question: "José Gregorio Hernández es el fundador de la medicina ____ en Venezuela, al crear las cátedras de histología y bacteriología en 1891.", answer: "experimental", explanation: "J.G. Hernández modernizó la medicina venezolana introduciendo el método científico de laboratorio." },
+                 { type: 'single', question: "El primer caso de Chagas congénito en el mundo fue descubierto en 1948 en Chaguaramas, Guárico, por el Dr...", options: ["José F. Torrealba", "Arnoldo Gabaldón", "Luis Dao", "Héctor Landaeta"], answer: "Luis Dao", explanation: "El Dr. Luis Dao hizo este importante descubrimiento mundial mientras trabajaba como médico rural en Guárico." },
+                 { type: 'single', question: "La primera mujer en obtener un título de médico en Venezuela (1936) fue...", options: ["Sara Bendahan", "Virginia Pereira", "Lya Imber de Coronil", "María de Baduel"], answer: "Lya Imber de Coronil", explanation: "Lya Imber de Coronil, de origen ucraniano, fue la primera mujer en graduarse de medicina en la UCV." },
+                 { type: 'completion', question: "El Dr. ____ fue el líder de la campaña que erradicó la malaria en Venezuela en el siglo XX.", answer: "Arnoldo Gabaldón", explanation: "Arnoldo Gabaldón dirigió la División de Malariología y su campaña con DDT fue un modelo mundial." },
+                 { type: 'tf', question: "Verdadero o Falso: El Instituto Venezolano de Investigaciones Científicas (IVIC) fue fundado originalmente por Jacinto Convit.", answer: false, explanation: "Falso. Fue fundado por Humberto Fernández Morán con el nombre de IVNIC (Instituto Venezolano de Neurología e Investigaciones Cerebrales)." },
+                 { type: 'multiple', question: "Selecciona los logros sanitarios más importantes del siglo XX en Venezuela.", options: ["Erradicación de la viruela", "Control del paludismo", "Descubrimiento de la penicilina", "Disminución de la mortalidad infantil"], answer: ["Erradicación de la viruela", "Control del paludismo", "Disminución de la mortalidad infantil"], explanation: "La erradicación de la viruela, el control del paludismo y la drástica reducción de la mortalidad infantil fueron hitos de la salud pública venezolana." },
+                 { type: 'single', question: "El Dr. Francisco Antonio Rísquez, cuyos restos reposan en el Panteón Nacional, fue un gran impulsor de...", options: ["La cirugía cardíaca", "Los estudios de enfermería", "La psiquiatría", "La radiología"], answer: "Los estudios de enfermería", explanation: "Rísquez fue clave en la creación de la primera Escuela de Enfermería del país en 1912." },
+                 { type: 'completion', question: "El primer microscopio fue introducido a la UCV por el Dr. ____.", answer: "José Gregorio Hernández", explanation: "J.G. Hernández trajo el microscopio de París y lo convirtió en una herramienta fundamental para la enseñanza y el diagnóstico." },
+                 { type: 'tf', question: "Verdadero o Falso: El Dr. Rafael Rangel completó sus estudios y se graduó como Doctor en Ciencias Médicas.", answer: false, explanation: "Falso. A pesar de su genialidad, nunca se graduó formalmente de médico, una de las tragedias de su vida." },
+                 { type: 'single', question: "El Dr. Humberto Fernández-Morán trabajó en el programa Apolo de la NASA analizando...", options: ["Muestras de sangre de astronautas", "Rocas lunares", "El efecto de la gravedad cero", "Alimentos para el espacio"], answer: "Rocas lunares", explanation: "Su experticia en microscopía electrónica fue utilizada por la NASA para analizar las muestras traídas de la Luna." },
+                 { type: 'single', question: "La beatificación de José Gregorio Hernández en 2021 se debió al milagro de la curación de...", options: ["Un paciente con cáncer", "Yaxury Solórzano", "Un enfermo de lepra", "Un niño con polio"], answer: "Yaxury Solórzano", explanation: "La curación inexplicable de la niña Yaxury Solórzano tras recibir un disparo fue el milagro aprobado por el Vaticano." },
+                 { type: 'single', question: "La Gaceta Médica de Caracas, órgano oficial de la Academia Nacional de Medicina, fue fundada en 1893 por el Dr...", options: ["José Gregorio Hernández", "Luis Razetti", "Francisco A. Rísquez", "Pablo Acosta Ortiz"], answer: "Luis Razetti" , explanation: "Luis Razetti fue una figura central en la institucionalización de la medicina, fundando la Academia y su Gaceta."},
+                 { type: 'tf', question: "Verdadero o Falso: El 10 de marzo se celebra el Día del Médico en Venezuela en honor a José Gregorio Hernández.", answer: false, explanation: "Falso. Se celebra en honor al natalicio del Dr. José María Vargas, el gran reformador de los estudios médicos." },
+                 { type: 'completion', question: "El político y general ____, oriundo de Guárico, decretó la reforma de los estudios médicos en 1895 y 1896.", answer: "Joaquín Crespo", explanation: "Joaquín Crespo, a finales del siglo XIX, impulsó una importante modernización de los estudios de medicina en la UCV." },
+                 { type: 'single', question: "El primer caso de brucelosis humana en Venezuela fue diagnosticado en 1939 en la ciudad de...", options: ["Zaraza", "Calabozo", "San Juan de los Morros", "Caracas"], answer: "Calabozo", explanation: "Los doctores Héctor Landaeta Payares y Antonio Ortiz hicieron este importante diagnóstico en Calabozo, Guárico." },
+                 { type: 'single', question: "El Dr. ____, de Chaguaramas, fue el introductor del método aséptico en la cirugía venezolana.", options: ["Hermógenes Rivero", "Pedro del Corral", "Miguel Antonio Seco", "Julio De Armas"], answer: "Miguel Antonio Seco", explanation: "Miguel Antonio Seco, uno de los fundadores de la Academia de Medicina, trajo de Europa los principios de la asepsia de Lister." },
+            
+                 // Módulo 7 y otros regionales (25 preguntas)
+                 { type: 'single', question: "El naturalista y entomólogo Dr. Manuel Núñez Tovar es la figura médica más importante de la historia del estado...", options: ["Guárico", "Bolívar", "Monagas", "Anzoátegui"], answer: "Monagas", explanation: "Manuel Núñez Tovar es el epónimo del hospital de Maturín y un reconocido científico, especialmente por sus estudios de insectos." },
+                 { type: 'tf', question: "Verdadero o Falso: El Colegio de Médicos del estado Monagas se fundó el 10 de junio de 1945.", answer: true, explanation: "Verdadero. La primera junta directiva fue presidida por el Dr. Víctor Brito." },
+                 { type: 'completion', question: "Los indígenas Chaimas, del estado Monagas, usaban las semillas del ____ para tratar dolores de estómago.", answer: "guácharo", explanation: "El guácharo, ave emblemática de la cueva, era una fuente de recursos para los Chaimas, incluyendo medicinales." },
+                 { type: 'single', question: "El primer caso de Kala-azar en Venezuela fue descubierto en 1941 en la población guariqueña de...", options: ["Calabozo", "Las Mercedes del Llano", "Maturín", "Zaraza"], answer: "Las Mercedes del Llano", explanation: "Este descubrimiento fue realizado por los doctores Adolfo Pons y Arminio Martínez Niochet." },
+                 { type: 'tf', question: "Verdadero o Falso: El Hospital principal de San Juan de los Morros lleva el nombre del Dr. José Francisco Torrealba.", answer: false, explanation: "Falso. Lleva el nombre del Dr. Israel Ranuárez Balza. El programa de Medicina de la UNERG lleva el nombre de Torrealba." },
+                 { type: 'completion', question: "El Dr. ____, médico de Zaraza, fue el primero en diagnosticar la peste bubónica en La Guaira en 1908.", answer: "Rosendo Gómez Peraza", explanation: "Rosendo Gómez Peraza hizo el diagnóstico clínico inicial de la peste, lo que le valió ser encarcelado brevemente." },
+                 { type: 'single', question: "La novela 'Casas Muertas' de Miguel Otero Silva está ambientada en la epidemia de ____ que asoló a Ortiz, Guárico.", options: ["Cólera", "Fiebre Amarilla", "Tuberculosis", "Paludismo"], answer: "Paludismo", explanation: "Esta novela es un testimonio literario de la devastación causada por la malaria en los pueblos del llano." },
+                 { type: 'single', question: "El primer Hospital Militar de Maturín, un centro de campaña, fue fundado en el año...", options: ["1810", "1814", "1816", "1821"], answer: "1816", explanation: "Fue fundado por el General José Francisco Bermúdez durante la Guerra de Independencia." },
+                 { type: 'tf', question: "Verdadero o Falso: El Dr. Gaetano Supinii, posiblemente el primer médico en Maturín, era de origen español.", answer: false, explanation: "Falso. Era de origen italiano y se estableció en la ciudad en 1843." },
+                 { type: 'completion', question: "La primera mujer ginecóloga del estado Monagas fue la Dra. ____ Aguilar.", answer: "Candelaria", explanation: "La Dra. Candelaria Aguilar fue una de las pioneras en la ginecología del estado Monagas." },
+                 { type: 'single', question: "El Dr. José Francisco Torrealba es mundialmente conocido por sus investigaciones sobre...", options: ["La Lepra", "La Fiebre Amarilla", "El Mal de Chagas", "La Tuberculosis"], answer: "El Mal de Chagas", explanation: "Torrealba dedicó su vida al estudio del Mal de Chagas en San Juan de los Morros, logrando avances reconocidos mundialmente." },
+                 { type: 'single', question: "La primera apendicectomía en Venezuela fue realizada en 1896 en el Hospital Vargas por el Dr...", options: ["Pablo Acosta Ortiz", "Luis Razetti", "Miguel Ruiz", "Emilio Conde Flores"], answer: "Miguel Ruiz", explanation: "El Dr. Miguel Ruiz, pionero de la ginecología, también realizó la primera apendicectomía del país." },
+                 { type: 'tf', question: "Verdadero o Falso: El Dr. Julio De Armas (h), rector de la UCV, nació en Calabozo.", answer: false, explanation: "Falso. Nació en Guayabal, estado Guárico." },
+                 { type: 'single', question: "¿Qué médico guariqueño inventó el 'estilo Isturiz' para vacunar contra la viruela?", options: ["Rafael Zamora Arévalo", "Jesús María Isturiz", "Héctor Landaeta Payares", "Pedro María Arévalo Cedeño"], answer: "Jesús María Isturiz", explanation: "El Dr. Isturiz, de Valle de la Pascua, patentó un instrumento que facilitaba la vacunación antivariólica." },
+                 { type: 'completion', question: "El Dr. ____, de Altagracia de Orituco, fue un pionero de la ofidiología (estudio de serpientes) en Venezuela.", answer: "Benito Gutiérrez López", explanation: "Gutiérrez López combinó su práctica médica en Orituco con el estudio científico de las serpientes venenosas." },
+                 { type: 'single', question: "El 'Mago de la cirugía' y uno de los fundadores de la Academia Nacional de Medicina fue el Dr...", options: ["Luis Razetti", "Pablo Acosta Ortiz", "Emilio Conde Flores", "Miguel Ruiz"], answer: "Pablo Acosta Ortiz", explanation: "Pablo Acosta Ortiz, nacido en Barquisimeto, es una de las figuras más legendarias de la cirugía venezolana." },
+                 { type: 'multiple', question: "Selecciona a los médicos nacidos en Guárico que fueron Individuos de Número de la Academia Nacional de Medicina.", options: ["Pedro del Corral", "Julio De Armas (h)", "Francisco Lazo Martí", "Hermógenes Rivero"], answer: ["Julio De Armas (h)", "Hermógenes Rivero"], explanation: "Julio De Armas (h) y Hermógenes Rivero Saldivia son dos de los guariqueños que alcanzaron el máximo honor académico." },
+                 { type: 'single', question: "La primera cesárea realizada en el estado Monagas fue en el año 1912 por el Dr...", options: ["Víctor Brito", "Manuel Navarro", "Domingo Urbina", "Manuel Núñez Tovar"], answer: "Manuel Núñez Tovar", explanation: "Este hito quirúrgico fue realizado por el Dr. Manuel Núñez Tovar, el médico más insigne de Monagas." },
+                 { type: 'tf', question: "Verdadero o Falso: El actual Hospital 'Manuel Núñez Tovar' de Maturín fue inaugurado en 1910.", answer: false, explanation: "Falso. El actual hospital se inauguró en 1965. El de 1910 fue el primer hospital que llevó su nombre, pero en otra sede." },
+                 { type: 'completion', question: "El primer caso de ____ congénito en el mundo fue descrito por el Dr. Luis Dao en Chaguaramas, Guárico.", answer: "Chagas|Mal de Chagas", explanation: "El Dr. Luis Dao, trabajando en Chaguaramas, Guárico, hizo este descubrimiento de importancia mundial en 1948." },
+                 { type: 'single', question: "El Dr. ____, de Altagracia de Orituco, fue uno de los fundadores de los estudios de Psiquiatría en Venezuela.", options: ["Jesús Mata de Gregorio", "Pedro del Corral", "Miguel Antonio Seco", "Luis Pérez Bustamante"], answer: "Jesús Mata de Gregorio", explanation: "El Dr. Mata de Gregorio fue jefe de la Cátedra de Psiquiatría en la Escuela Vargas de la UCV." },
+                 { type: 'single', question: "¿Qué eminente médico y filólogo, autor del 'Glosario de Voces Indígenas', ejerció en Zaraza durante la epidemia de gripe de 1918?", options: ["Arístides Rojas", "Lisandro Alvarado", "Julio De Armas", "Vicente Peña"], answer: "Lisandro Alvarado", explanation: "Lisandro Alvarado vivió en Zaraza entre 1917 y 1920, donde combinó su trabajo médico con sus investigaciones lingüísticas." },
+                 { type: 'tf', question: "Verdadero o Falso: El Hospital de San Pablo fue el primer hospital de Maturín.", answer: false, explanation: "Falso. El Hospital de San Pablo fue el primero de Caracas. El primero de Maturín fue el Hospital Militar de campaña en 1816." },
+                 { type: 'completion', question: "El Dr. Pedro ____ Hurtado fue pionero en la pesquisa de cáncer de cuello uterino en Monagas en 1963.", answer: "Aristimuño", explanation: "El Dr. Pedro Aristimuño Hurtado fue una figura clave en la ginecología y la salud pública de Monagas." },
+                 { type: 'single', question: "¿Quién fue el primer presidente del Colegio de Médicos del Estado Guárico en 1948?", options: ["José Francisco Torrealba", "Luis Dao", "Ramón Augusto Mayobre", "Alberto Rodríguez Morales"], answer: "Ramón Augusto Mayobre", explanation: "El Dr. Ramón Augusto Mayobre presidió la primera junta directiva del Colegio de Médicos de Guárico, con Torrealba como presidente honorario." },
+                 
+                 // Preguntas de Integración y Fechas Clave (20 preguntas)
+                 { type: 'single', question: "¿En qué año se abolió el Protomedicato y se creó la Facultad Médica de Caracas?", options: ["1763", "1810", "1827", "1904"], answer: "1827", explanation: "En 1827, la reforma de José María Vargas modernizó los estudios médicos, aboliendo el Protomedicato." },
+                 { type: 'multiple', question: "Selecciona los eventos que ocurrieron en el siglo XIX (1801-1900).", options: ["Llegada de la Expedición de la Vacuna", "Descubrimiento del vector de la fiebre amarilla por Beauperthuy", "Fundación de la Federación Médica Venezolana", "Introducción de la disección de cadáveres por Vargas"], answer: ["Llegada de la Expedición de la Vacuna", "Descubrimiento del vector de la fiebre amarilla por Beauperthuy", "Introducción de la disección de cadáveres por Vargas"], explanation: "La FMV se fundó en el siglo XX (1945). Los otros tres eventos son hitos del siglo XIX." },
+                 { type: 'single', question: "¿En qué año se fundó la Academia Nacional de Medicina?", options: ["1891", "1904", "1928", "1945"], answer: "1904", explanation: "La Academia Nacional de Medicina fue fundada por Luis Razetti en 1904." },
+                 { type: 'multiple', question: "Selecciona a los médicos que fueron Rectores de la Universidad Central de Venezuela.", options: ["José Gregorio Hernández", "José María Vargas", "Julio De Armas", "Luis Razetti"], answer: ["José María Vargas", "Julio De Armas"], explanation: "Vargas y De Armas fueron rectores. Razetti y Hernández fueron profesores muy influyentes pero no ocuparon el rectorado." },
+                 { type: 'single', question: "¿Cuál de estos médicos guariqueños fue también un destacado poeta autor de la 'Silva Criolla'?", options: ["Francisco Lazo Martí", "Julio De Armas", "Hermógenes Rivero", "Lisandro Alvarado"], answer: "Francisco Lazo Martí", explanation: "Francisco Lazo Martí es una de las figuras más importantes de la poesía venezolana, además de su carrera médica." },
+                 { type: 'single', question: "El Dr. Israel Ranuárez Balza, epónimo del hospital de San Juan de los Morros, fue pionero en la especialidad de...", options: ["Cardiología", "Anestesiología", "Pediatría", "Cirugía"], answer: "Anestesiología", explanation: "Ranuárez Balza fue uno de los introductores de la anestesiología moderna en Venezuela." },
+                 { type: 'single', question: "¿Qué médico, al diagnosticar la peste bubónica en La Guaira, fue encarcelado por orden de Cipriano Castro?", options: ["Luis Razetti", "Rafael Rangel", "Rosendo Gómez Peraza", "Pablo Acosta Ortiz"], answer: "Rosendo Gómez Peraza", explanation: "El Dr. Rosendo Gómez Peraza, de Zaraza, fue encarcelado por dar la alarma sobre la peste, aunque luego se demostró que tenía razón." },
+                 { type: 'single', question: "La primera Cátedra de Clínica Quirúrgica fue dirigida por...", options: ["José María Vargas", "Miguel Ruiz", "Luis Razetti", "Pablo Acosta Ortiz"], answer: "Pablo Acosta Ortiz", explanation: "Pablo Acosta Ortiz, el 'mago de la cirugía', fue el primer profesor de esta cátedra fundamental." },
+                 { type: 'single', question: "¿Qué médico fue el primer director del Hospital Vargas en 1893?", options: ["Francisco A. Rísquez", "Luis Razetti", "Miguel Ruiz", "José Gregorio Hernández"], answer: "Miguel Ruiz", explanation: "El Dr. Miguel Ruiz, pionero de la ginecología, fue el primer director del recién inaugurado Hospital Vargas." },
+                 { type: 'tf', question: "Verdadero o Falso: El primer presidente de la Federación Médica Venezolana (1945) fue Luis Razetti.", answer: false, explanation: "Falso. Fue J.T. Rojas Contreras. Razetti ya había fallecido para esa fecha." },
+                 { type: 'single', question: "El primer hospital de Venezuela se fundó en la ciudad de...", options: ["Coro", "Cumaná", "Caracas", "Barquisimeto"], answer: "Barquisimeto", explanation: "El Hospital de Santiago en Barquisimeto (1565) es el primer hospital del que se tiene registro en Venezuela." },
+                 { type: 'single', question: "¿Qué médico fue el primero en usar éter sulfúrico como anestésico general en Venezuela en 1847?", options: ["José María Vargas", "Blas Valbuena", "Eliseo Acosta", "Carlos Arvelo"], answer: "Blas Valbuena", explanation: "El Dr. Blas Valbuena en Maracaibo fue el pionero de la anestesia moderna en Venezuela, poco después de su descubrimiento." },
+                 { type: 'single', question: "El Hospital 'Juana Ramírez' inaugurado en 1940 en Maturín, es una institución de tipo...", options: ["Hospital General", "Maternidad", "Hospital Pediátrico", "Hospital Militar"], answer: "Maternidad", explanation: "La Maternidad 'Juana Ramírez', hoy Maternidad 'Mamá Rosa', fue una institución clave para la salud materno-infantil en Monagas." },
+                 { type: 'single', question: "¿En qué año fue beatificado José Gregorio Hernández?", options: ["1986", "2010", "2021", "1999"], answer: "2021", explanation: "La ceremonia de beatificación del Dr. José Gregorio Hernández se realizó el 30 de abril de 2021." },
+                 { type: 'single', question: "La Oficina de Sanidad Nacional, precursora del Ministerio de Sanidad, fue creada en el año...", options: ["1891", "1904", "1911", "1936"], answer: "1911", explanation: "La creación de la Oficina de Sanidad Nacional en 1911 fue el primer paso hacia un sistema de salud pública centralizado en Venezuela." },
+                 { type: 'single', question: "¿Qué médico y político de Altagracia de Orituco fue Senador por el estado Guárico en 1917?", options: ["Jesús Mata de Gregorio", "Luis Pérez Bustamante", "Benito Gutiérrez López", "Pedro del Corral"], answer: "Luis Pérez Bustamante", explanation: "Luis Pérez Bustamante fue una figura destacada que combinó el ejercicio de la medicina con una importante carrera política." },
+                 { type: 'single', question: "El Dr. José Francisco Torrealba realizó la mayor parte de sus investigaciones sobre el Mal de Chagas en...", options: ["Calabozo", "Zaraza", "San Juan de los Morros", "Las Mercedes del Llano"], answer: "San Juan de los Morros", explanation: "Aunque su trabajo abarcó todo Guárico, su centro de operaciones y donde hizo sus hallazgos más importantes fue San Juan de los Morros." },
+                 { type: 'single', question: "¿En qué año se fundó el Colegio de Médicos del Estado Guárico?", options: ["1936", "1945", "1948", "1951"], answer: "1948", explanation: "El Colegio de Médicos de Guárico se fundó el 25 de abril de 1948." },
+                 { type: 'single', question: "¿Qué médico guariqueño fue rector de la UCV durante el período 1948-1951?", options: ["Hermógenes Rivero", "Julio De Armas (h)", "Pedro del Corral", "Francisco Lazo Martí"], answer: "Julio De Armas (h)", explanation: "El Dr. Julio De Armas (hijo), nacido en Guayabal, fue rector de la UCV en un período políticamente convulso." },
+                 { type: 'single', question: "El Dr. Humberto Fernández Morán, además de sus inventos, fundó en 1954 el instituto que hoy conocemos como...", options: ["IVIC", "IDEA", "CONICIT", "FUNDACITE"], answer: "IVIC", explanation: "Fundó el Instituto Venezolano de Neurología e Investigaciones Cerebrales (IVNIC), que luego se convertiría en el IVIC." }
+             ];
+            // --- FIN: DATOS DEL CUESTIONARIO ---
+
+            // --- INICIO: LÓGICA DEL CUESTIONARIO ---
+            const quizScreen = document.getElementById('quiz-screen');
+            const resultScreen = document.getElementById('result-screen');
+            const restartBtn = document.getElementById('restart-btn');
+            const questionCounterText = document.getElementById('question-counter-text'); // Elemento span completo
+            const progressBar = document.getElementById('progress-bar');
+            const scoreDisplay = document.getElementById('score');
+            const questionTypeDisplay = document.getElementById('question-type');
+            const questionText = document.getElementById('question');
+            const optionsContainer = document.getElementById('options');
+            const feedbackText = document.getElementById('feedback');
+            const checkBtn = document.getElementById('check-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const finalScoreDisplay = document.getElementById('final-score');
+            const finalMessage = document.getElementById('final-message');
+            const studyGuideContainer = document.getElementById('study-guide-container');
+            const copyPaymentDataBtn = document.getElementById('copy-payment-data-btn');
+            const paymentDataDiv = document.getElementById('payment-data');
+            const copyMessageDiv = document.getElementById('copy-message');
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let shuffledQuestions = [];
+            let selectedAnswer = null;
+            let selectedAnswersMultiple = [];
+            let incorrectlyAnsweredQuestions = [];
+            
+            // Validate quizData exists and has questions
+            if (typeof quizData === 'undefined' || !Array.isArray(quizData) || quizData.length === 0) {
+                 console.error("¡ERROR! Los datos del cuestionario (quizData) no están definidos o están vacíos.");
+                 quizScreen.innerHTML = `<p class="text-red-500 font-bold text-center">Error crítico al cargar las preguntas.</p>`;
+                 return; // Stop execution
+            }
+
+            const TOTAL_QUESTIONS_AVAILABLE = quizData.length;
+            const QUESTIONS_PER_QUIZ = TOTAL_QUESTIONS_AVAILABLE; // Use all 150 questions
+
+            // Normalize strings (remove accents, lowercase, trim)
+            function normalizeString(str) {
+                if (typeof str !== 'string') return '';
+                // Handle boolean conversion explicitly for tf questions
+                if (str === 'true' || str === true) return 'verdadero';
+                if (str === 'false' || str === false) return 'falso';
+
+                const normalized = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+                // Specific common corrections (add more if needed)
+                return normalized
+                            .replace(/\banordo\b/g, 'arnoldo')
+                            .replace(/\bnunez\b/g, 'nuñez')
+                            .replace(/\bvargas$/g, 'jose maria vargas') // Handle just surname
+                            .replace(/\brazetti$/g, 'luis razetti')
+                            .replace(/\bhernandez$/g, 'jose gregorio hernandez');
+            }
+
+
+            // Shuffle array (Fisher-Yates)
+            function shuffleArray(array) {
+                const shuffled = [...array]; // Create a copy
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            }
+
+            // Start the quiz
+            function startQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                incorrectlyAnsweredQuestions = [];
+                // Shuffle all questions, then take the desired number
+                shuffledQuestions = shuffleArray(quizData).slice(0, QUESTIONS_PER_QUIZ);
+                resultScreen.classList.add('hidden');
+                quizScreen.classList.remove('hidden');
+                scoreDisplay.textContent = `Puntaje: ${score}`;
+                // Update total in counter text dynamically
+                questionCounterText.innerHTML = `Pregunta <span id="question-counter">1</span> de ${QUESTIONS_PER_QUIZ}`;
+                showQuestion();
+            }
+
+            // Display the current question
+            function showQuestion() {
+                resetState();
+                const currentQuestion = shuffledQuestions[currentQuestionIndex];
+                const questionNumber = currentQuestionIndex + 1;
+
+                // Update counter number and total dynamically
+                questionCounterText.innerHTML = `Pregunta <span id="question-counter">${questionNumber}</span> de ${QUESTIONS_PER_QUIZ}`;
+                progressBar.style.width = `${(questionNumber / QUESTIONS_PER_QUIZ) * 100}%`;
+                questionText.textContent = currentQuestion.question;
+
+                let optionsToRender = [];
+                 // Render options based on question type
+                switch(currentQuestion.type) {
+                    case 'single':
+                        questionTypeDisplay.textContent = 'Selección Simple';
+                        optionsContainer.classList.add('md:grid-cols-2'); // Use 2 columns
+                        optionsToRender = shuffleArray([...currentQuestion.options]); // Shuffle options
+
+                        optionsToRender.forEach(optionText => {
+                            const button = document.createElement('button');
+                            button.textContent = optionText;
+                            // Store the *text* of the option as its value
+                            button.dataset.answerValue = optionText;
+                            button.classList.add('option-btn', 'w-full', 'text-left');
+                            button.addEventListener('click', () => {
+                                Array.from(optionsContainer.children).forEach(btn => btn.classList.remove('selected'));
+                                button.classList.add('selected');
+                                // Save the *text* of the selected answer
+                                selectedAnswer = button.dataset.answerValue;
+                                checkBtn.disabled = false;
+                                checkBtn.classList.remove('hidden');
+                            });
+                            optionsContainer.appendChild(button);
+                        });
+                        break;
+
+                    case 'tf': // True/False
+                        questionTypeDisplay.textContent = 'Verdadero o Falso';
+                        optionsToRender = ['Verdadero', 'Falso']; // Fixed options
+                        optionsContainer.classList.remove('md:grid-cols-2');
+
+                        optionsToRender.forEach(optionText => {
+                            const button = document.createElement('button');
+                            button.textContent = optionText;
+                            // Store boolean true/false based on text
+                            button.dataset.answerValue = (optionText === 'Verdadero');
+                            button.classList.add('option-btn', 'w-full', 'text-left');
+                            button.addEventListener('click', () => {
+                                Array.from(optionsContainer.children).forEach(btn => btn.classList.remove('selected'));
+                                button.classList.add('selected');
+                                // Retrieve the boolean value
+                                selectedAnswer = button.dataset.answerValue === 'true';
+                                checkBtn.disabled = false; // Enable verify button
+                                checkBtn.classList.remove('hidden');
+                            });
+                            optionsContainer.appendChild(button);
+                        });
+                        break;
+
+                    case 'multiple': // Multiple Choice
+                        questionTypeDisplay.textContent = 'Selección Múltiple (elige todas las correctas)';
+                        optionsContainer.classList.add('md:grid-cols-2');
+                        selectedAnswersMultiple = []; // Reset selected for this question
+
+                        optionsToRender = shuffleArray([...currentQuestion.options]); // Shuffle provided options
+
+                        optionsToRender.forEach(optionText => {
+                            const label = document.createElement('label');
+                            label.classList.add('checkbox-label', 'flex', 'items-center');
+
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = optionText; // Store the actual text value
+                            checkbox.classList.add('hidden'); // Hide default checkbox
+
+                            const customCheckbox = document.createElement('div');
+                            customCheckbox.classList.add('w-5', 'h-5', 'border-2', 'border-gray-400', 'rounded', 'mr-2', 'flex-shrink-0', 'flex', 'items-center', 'justify-center');
+                            customCheckbox.innerHTML = `<svg class="w-3 h-3 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+
+                            const span = document.createElement('span');
+                            span.textContent = optionText;
+
+                            label.appendChild(checkbox);
+                            label.appendChild(customCheckbox);
+                            label.appendChild(span);
+
+                            label.addEventListener('click', (e) => {
+                                e.preventDefault(); // Prevent default label behavior
+                                checkbox.checked = !checkbox.checked; // Toggle check state
+                                label.classList.toggle('selected');
+                                customCheckbox.classList.toggle('bg-brand-blue');
+                                customCheckbox.querySelector('svg').classList.toggle('hidden');
+
+                                // Update selectedAnswersMultiple based on check state
+                                if (checkbox.checked) {
+                                    selectedAnswersMultiple.push(checkbox.value);
+                                } else {
+                                    selectedAnswersMultiple = selectedAnswersMultiple.filter(val => val !== checkbox.value);
+                                }
+                                // Show check button only if at least one option is selected
+                                checkBtn.disabled = selectedAnswersMultiple.length === 0;
+                                checkBtn.classList.remove('hidden');
+                            });
+                            optionsContainer.appendChild(label);
+                        });
+                        break;
+
+                    case 'completion': // Fill-in-the-blank / Short Answer
+                         questionTypeDisplay.textContent = 'Completación';
+                         optionsContainer.classList.remove('md:grid-cols-2');
+                         const input = document.createElement('input');
+                         input.type = 'text';
+                         input.id = 'completion-answer';
+                         input.placeholder = 'Escribe tu respuesta aquí...';
+                         input.classList.add('completion-input', 'w-full', 'text-brand-dark-blue', 'focus:outline-none');
+                         input.addEventListener('input', () => {
+                             const hasText = input.value.trim() !== '';
+                             checkBtn.disabled = !hasText; // Enable verify if text exists
+                             checkBtn.classList.remove('hidden');
+                         });
+                         optionsContainer.appendChild(input);
+                         break;
+
+                    // Default case for handling unexpected types (optional)
+                    default:
+                        console.error("Tipo de pregunta desconocido:", currentQuestion.type);
+                        questionText.textContent = "Error: Tipo de pregunta no soportado.";
+                }
+            }
+
+            // Reset state between questions
+            function resetState() {
+                optionsContainer.innerHTML = '';
+                feedbackText.textContent = '';
+                feedbackText.className = 'text-sm md:text-base text-gray-600 mb-4'; // Reset feedback color
+                nextBtn.classList.add('hidden');
+                checkBtn.classList.add('hidden');
+                checkBtn.disabled = true; // Disable verify button by default
+                selectedAnswer = null;
+                selectedAnswersMultiple = [];
+            }
+
+            // Event listener for Verify button
+            checkBtn.addEventListener('click', () => {
+                 const currentQuestion = shuffledQuestions[currentQuestionIndex];
+                 switch(currentQuestion.type){
+                     case 'single':
+                         checkSingleOrTfAnswer();
+                         break;
+                     case 'tf':
+                         checkSingleOrTfAnswer();
+                         break;
+                     case 'multiple':
+                         checkMultipleAnswer();
+                         break;
+                     case 'completion':
+                         checkCompletionAnswer();
+                         break;
+                 }
+            });
+
+             // Check Single Choice or True/False answers
+             function checkSingleOrTfAnswer(){
+                 const currentQuestion = shuffledQuestions[currentQuestionIndex];
+                 let isCorrect = false;
+                 let correctAnswerText = ''; // For displaying the correct text
+
+                 if (currentQuestion.type === 'tf') {
+                     // Logic for True/False (compare booleans)
+                     isCorrect = (selectedAnswer === currentQuestion.answer);
+                     correctAnswerText = currentQuestion.answer ? 'Verdadero' : 'Falso';
+                 } else { // 'single' type
+                     // Logic for Single Choice (compare normalized strings)
+                     const normalizedSelected = normalizeString(selectedAnswer);
+                     const normalizedCorrect = normalizeString(currentQuestion.answer);
+                     isCorrect = (normalizedSelected === normalizedCorrect);
+                     correctAnswerText = currentQuestion.answer;
+                 }
+
+                 // Disable all options
+                 Array.from(optionsContainer.children).forEach(btn => btn.classList.add('disabled'));
+
+                 // Score feedback
+                 if (isCorrect) {
+                     score++;
+                     scoreDisplay.textContent = `Puntaje: ${score}`;
+                     feedbackText.textContent = "¡Correcto!";
+                     feedbackText.classList.remove('text-gray-600');
+                     feedbackText.classList.add('text-green-500', 'font-semibold');
+                 } else {
+                     // If incorrect, add to study guide and show explanation/correct answer
+                     incorrectlyAnsweredQuestions.push(currentQuestion);
+                     let feedback = `Incorrecto. `;
+                     if (currentQuestion.explanation) {
+                         feedback += `${currentQuestion.explanation}`;
+                     } else {
+                         // Use the 'correctAnswerText' defined above
+                         feedback += `La respuesta correcta era: ${correctAnswerText}`;
+                     }
+                     feedbackText.textContent = feedback;
+                     feedbackText.classList.remove('text-gray-600');
+                     feedbackText.classList.add('text-red-500', 'font-semibold');
+                 }
+
+                 // Visual feedback on buttons
+                 Array.from(optionsContainer.children).forEach(btn => {
+                     let btnValue;
+                     // Get button value (boolean for TF, string for Single)
+                     if (currentQuestion.type === 'tf') {
+                         btnValue = btn.dataset.answerValue === 'true'; // Convert back to boolean
+                     } else {
+                         btnValue = btn.dataset.answerValue; // It's a string
+                     }
+
+                     // Compare with correct answer (works for both types)
+                     if (btnValue === currentQuestion.answer) {
+                         btn.classList.add('correct');
+                     } else if (btn.classList.contains('selected')) {
+                         // If the button was selected but is incorrect
+                         btn.classList.add('incorrect');
+                     }
+                 });
+
+                 checkBtn.classList.add('hidden');
+                 nextBtn.classList.remove('hidden');
+             }
+
+
+            // Check Multiple Choice answers
+            function checkMultipleAnswer() {
+                const currentQuestion = shuffledQuestions[currentQuestionIndex];
+                // Normalize both correct answers and selected answers for comparison
+                const correctAnswersNormalized = new Set(currentQuestion.answer.map(normalizeString));
+                const selectedAnswersNormalized = new Set(selectedAnswersMultiple.map(normalizeString));
+
+                const isPerfect = selectedAnswersNormalized.size === correctAnswersNormalized.size &&
+                                   [...selectedAnswersNormalized].every(answer => correctAnswersNormalized.has(answer));
+
+                Array.from(optionsContainer.children).forEach(label => label.classList.add('disabled'));
+
+                if (isPerfect) {
+                    score++;
+                    scoreDisplay.textContent = `Puntaje: ${score}`;
+                    feedbackText.textContent = "¡Correcto!";
+                    feedbackText.classList.remove('text-gray-600');
+                    feedbackText.classList.add('text-green-500', 'font-semibold');
+                } else {
+                    incorrectlyAnsweredQuestions.push(currentQuestion);
+                    let feedback = `Incorrecto. `;
+                     if (currentQuestion.explanation) {
+                         feedback += `${currentQuestion.explanation} `;
+                     }
+                    feedback += `Las respuestas correctas eran: ${currentQuestion.answer.join(', ')}.`;
+                    feedbackText.textContent = feedback;
+                    feedbackText.classList.remove('text-gray-600');
+                    feedbackText.classList.add('text-red-500', 'font-semibold');
+                }
+
+                // Visual feedback on labels/checkboxes
+                Array.from(optionsContainer.children).forEach(label => {
+                    const checkbox = label.querySelector('input');
+                    const checkboxValueNormalized = normalizeString(checkbox.value);
+                    if (correctAnswersNormalized.has(checkboxValueNormalized)) {
+                        // If it's a correct answer, mark the label green
+                        label.classList.add('correct');
+                        // Ensure 'selected' is removed if it wasn't checked by user but is correct
+                        if (!selectedAnswersNormalized.has(checkboxValueNormalized)) {
+                             label.classList.remove('selected');
+                             const customCheckbox = label.querySelector('div');
+                             customCheckbox.classList.remove('bg-brand-blue');
+                             customCheckbox.querySelector('svg').classList.add('hidden');
+                        }
+                    } else if (selectedAnswersNormalized.has(checkboxValueNormalized)) {
+                        // If it was selected by user but is incorrect, mark red
+                        label.classList.add('incorrect');
+                    }
+                });
+
+
+                checkBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+            }
+
+            // Check Completion answers
+            function checkCompletionAnswer() {
+                const userAnswer = document.getElementById('completion-answer').value;
+                const currentQuestion = shuffledQuestions[currentQuestionIndex];
+                const normalizedUserAnswer = normalizeString(userAnswer);
+                // Allow multiple correct answers separated by |
+                const correctAnswers = currentQuestion.answer.toString().split('|');
+                const primaryCorrectAnswer = correctAnswers[0]; // Use the first one for feedback
+                const normalizedCorrectAnswers = correctAnswers.map(ans => normalizeString(ans));
+
+                const inputField = document.getElementById('completion-answer');
+                inputField.disabled = true;
+
+                // Check if user answer includes any part of any correct answer (flexible)
+                const isConceptuallyCorrect = normalizedCorrectAnswers.some(normAns => {
+                    if (normAns.length === 0 || normalizedUserAnswer.length === 0) return false;
+                     // Case 1: User includes correct (e.g., "El Piache" vs "Piache")
+                     const userIncludesCorrect = normalizedUserAnswer.includes(normAns);
+                     // Case 2: Correct includes user (e.g., "Vargas" vs "Jose Maria Vargas"), ignore short words
+                     const correctIncludesUser = normAns.includes(normalizedUserAnswer) && normalizedUserAnswer.length >= 3;
+                     // Case 3: Exact match (most important)
+                     const exactMatch = normAns === normalizedUserAnswer;
+                    return exactMatch || userIncludesCorrect || correctIncludesUser;
+                });
+
+                // Check for exact match separately for better feedback
+                const isExactlyCorrect = normalizedCorrectAnswers.some(normAns => normAns === normalizedUserAnswer);
+
+
+                if (isConceptuallyCorrect) {
+                    score++;
+                    scoreDisplay.textContent = `Puntaje: ${score}`;
+                    if (isExactlyCorrect || normalizedUserAnswer === normalizeString(primaryCorrectAnswer)) { // Check against primary too
+                        inputField.classList.add('correct');
+                        feedbackText.textContent = "¡Correcto!";
+                        feedbackText.classList.remove('text-gray-600');
+                        feedbackText.classList.add('text-green-500', 'font-semibold');
+                    } else {
+                        inputField.classList.add('almost-correct');
+                        feedbackText.textContent = `¡Correcto! Solo un detalle: la respuesta más común o completa es "${primaryCorrectAnswer}".`;
+                        feedbackText.classList.remove('text-gray-600');
+                        feedbackText.classList.add('text-yellow-500', 'font-semibold');
+                    }
+                } else {
+                    incorrectlyAnsweredQuestions.push(currentQuestion);
+                    inputField.classList.add('incorrect');
+                     let feedback = `Incorrecto. `;
+                     if (currentQuestion.explanation) {
+                         feedback += `${currentQuestion.explanation} `;
+                     }
+                    feedback += `La respuesta correcta era: ${primaryCorrectAnswer}`;
+                    feedbackText.textContent = feedback;
+                    feedbackText.classList.remove('text-gray-600');
+                    feedbackText.classList.add('text-red-500', 'font-semibold');
+                }
+
+                checkBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+            }
+
+
+            // Event listener for Next button
+            nextBtn.addEventListener('click', () => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < QUESTIONS_PER_QUIZ) { // Use QUESTIONS_PER_QUIZ (150)
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            });
+
+            // Show results screen
+            function showResults() {
+                quizScreen.classList.add('hidden');
+                resultScreen.classList.remove('hidden');
+                const percentage = Math.round((score / QUESTIONS_PER_QUIZ) * 100); // Use 150 for percentage
+                finalScoreDisplay.textContent = `${percentage}%`;
+
+                let message = '';
+                if (percentage >= 95) {
+                    message = "¡Extraordinario! Tienes un dominio total del tema.";
+                } else if (percentage >= 80) {
+                    message = "¡Excelente trabajo! Has asimilado la mayor parte.";
+                } else if (percentage >= 60) {
+                    message = "¡Buen esfuerzo! Repasa la guía de refuerzo.";
+                } else {
+                    message = "¡No te desanimes! Usa la guía para mejorar.";
+                }
+                finalMessage.textContent = message;
+
+                generateStudyGuide();
+            }
+
+            // Generate Study Guide HTML for screen
+            function generateStudyGuide() {
+                let screenGuideHTML = '';
+                if (incorrectlyAnsweredQuestions.length > 0) {
+                     screenGuideHTML = '<h2 class="text-2xl font-bold text-brand-dark-blue mb-4">Guía de Refuerzo</h2>';
+                     screenGuideHTML += '<p class="mb-4 text-brand-dark-blue/80 print-hidden">Repasa las preguntas que respondiste incorrectamente:</p>';
+                     screenGuideHTML += '<div classF="border-t-2 border-brand-blue pt-6">'; // Container start
+
+                    incorrectlyAnsweredQuestions.forEach((q, index) => {
+                        let correctAnswerText = '';
+                        if (q.type === 'tf') {
+                             correctAnswerText = q.answer ? 'Verdadero' : 'Falso';
+                        } else if (Array.isArray(q.answer)) {
+                             correctAnswerText = q.answer.join(', '); // For multiple choice
+                        } else {
+                             correctAnswerText = q.answer.toString().split('|')[0]; // For completion, show primary
+                        }
+
+                        screenGuideHTML += `
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 guide-item">
+                                <p class="font-semibold text-gray-700 mb-2">Pregunta: <span class="font-normal">${q.question}</span></p>
+                                <p class="font-semibold text-green-600">Respuesta Correcta: <span class="font-normal text-gray-800">${correctAnswerText}</span></p>
+                                ${q.explanation ? `<p class="font-semibold mt-2 text-blue-600">Repaso Clave: <span class="font-normal text-gray-700">${q.explanation}</span></p>` : ''}
+                            </div>`;
+                    });
+                    screenGuideHTML += '</div>'; // Container end
+
+                    studyGuideContainer.innerHTML = screenGuideHTML;
+
+                } else {
+                    studyGuideContainer.innerHTML = `
+                        <div class="border-t-2 border-brand-blue pt-6 text-center">
+                            <p class="text-lg font-semibold text-green-600">¡Felicidades! ¡Respondiste todo correctamente!</p>
+                        </div>`;
+                }
+            }
+
+
+            // Event listener for "Volver a Jugar" button (reloads page)
+            restartBtn.addEventListener('click', () => {
+                location.reload();
+            });
+
+             // --- Logic for Copying Payment Data ---
+            copyPaymentDataBtn.addEventListener('click', () => {
+                 const paymentText =
+`Datos para Pago Móvil - Kraneao:
+Banco: Bancamiga
+Nombre: Esteban Garcia
+C.I.: V-17.404.104
+Teléfono: 04267619312`;
+
+                // Use modern clipboard API first
+                navigator.clipboard.writeText(paymentText).then(() => {
+                    copyMessageDiv.textContent = "¡Datos de Pago Móvil copiados!";
+                    copyMessageDiv.classList.remove('hidden');
+                    setTimeout(() => {
+                        copyMessageDiv.classList.add('hidden');
+                    }, 3000);
+                }).catch(err => {
+                    console.error('Error al copiar el texto con API moderna: ', err);
+                    // Fallback to execCommand
+                    try {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = paymentText;
+                        textArea.style.position = 'fixed'; textArea.style.top = '-9999px'; textArea.style.left = '-9999px';
+                        document.body.appendChild(textArea); textArea.focus(); textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+
+                        copyMessageDiv.textContent = "¡Datos de Pago Móvil copiados!";
+                        copyMessageDiv.classList.remove('hidden');
+                        setTimeout(() => {
+                            copyMessageDiv.classList.add('hidden');
+                        }, 3000);
+                    } catch (e) {
+                        console.error('Error al copiar con execCommand: ', e);
+                        copyMessageDiv.textContent = "Error al copiar. Intenta manualmente.";
+                        copyMessageDiv.classList.remove('hidden', 'text-green-600');
+                        copyMessageDiv.classList.add('text-red-600');
+                    }
+                });
+            });
+
+
+            // Start the quiz on page load
+            startQuiz();
+            // --- FIN: LÓGICA DEL CUESTIONARIO ---
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>
+

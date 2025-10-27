@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Gracias! - Kraneao</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        // Configuración de Tailwind CSS con la paleta de colores de marca
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-blue': '#0056FF',       // Azul royal
+                        'brand-yellow': '#FFD600',     // Amarillo neón
+                        'brand-gray': '#C9C9C9',       // Gris suave
+                        'brand-dark-blue': '#021059',  // Azul oscuro
+                        'brand-bg': '#0E0E0E',         // Negro profundo
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF; 
+            color: #021059; 
+        }
+    </style>
+</head>
+<body class="text-brand-dark-blue flex flex-col min-h-screen"> 
+
+    <!-- Encabezado -->
+    <header class="relative z-10 p-4 bg-white shadow-sm sticky top-0">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo del encabezado -->
+            <a href="index.html">
+                <img src="logo-final.png" alt="Logo de Kraneao" class="h-10 md:h-12"> 
+            </a>
+        </nav>
+    </header>
+
+    <!-- Sección de Agradecimiento -->
+    <main class="relative z-10 flex-grow flex items-center justify-center text-center py-20 px-4">
+        <div class="max-w-xl mx-auto">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+             </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4">¡Bienvenido a Kraneao!</h1>
+            <p class="text-lg text-brand-dark-blue/80 mb-8">
+                Eres parte del grupo fundador. Revisa tu correo electrónico para conocer tus beneficios exclusivos y los próximos pasos.
+            </p>
+            <a href="index.html" class="bg-brand-yellow text-brand-dark-blue font-bold py-3 px-8 rounded-lg text-lg hover:bg-yellow-300 transition-colors duration-300">
+                Volver al Inicio
+            </a>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="w-full text-center p-8 text-brand-dark-blue/70 bg-gray-100">
+        &copy; 2025 Kraneao.com
+    </footer>
+
+</body>
+</html>

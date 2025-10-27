@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Fundadores - Kraneao</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        // Configuración de Tailwind CSS con la paleta de colores de marca
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-blue': '#0056FF',       // Azul royal
+                        'brand-yellow': '#FFD600',     // Amarillo neón
+                        'brand-gray': '#C9C9C9',       // Gris suave
+                        'brand-dark-blue': '#021059',  // Azul oscuro
+                        'brand-bg': '#0E0E0E',         // Negro profundo
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF; /* Fondo blanco */
+            color: #021059; /* Texto principal en Azul oscuro */
+        }
+    </style>
+</head>
+<body class="text-brand-dark-blue flex flex-col min-h-screen"> 
+
+    <!-- Encabezado -->
+    <header class="relative z-10 p-4 bg-white shadow-sm sticky top-0">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo del encabezado -->
+            <a href="index.html">
+                <img src="logo-final.png" alt="Logo de Kraneao" class="h-10 md:h-12"> 
+            </a>
+            
+            <!-- Enlace de Iniciar Sesión (opcional en esta página) -->
+            <div>
+                <a href="index.html" class="font-semibold text-brand-dark-blue hover:text-brand-blue transition-colors">
+                    Volver al Inicio
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección de Registro -->
+    <main class="relative z-10 flex-grow flex items-center justify-center py-12 px-4">
+        <div class="bg-white text-brand-dark-blue p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto border border-gray-200">
+            
+            <div class="text-center mb-6">
+                <img src="logo-principal-color.png" alt="Kraneao" class="h-16 mx-auto mb-4">
+                <h2 class="text-2xl font-bold text-brand-blue">¡Sé un Usuario Fundador!</h2>
+                <p class="mt-2 text-brand-dark-blue/80">Regístrate para obtener acceso anticipado y beneficios exclusivos.</p>
+            </div>
+            
+            <!--
+              ESTE ES EL FORMULARIO QUE FUNCIONA
+              - 'action' apunta a formsubmit.co con tu correo.
+              - 'method="POST"' es requerido.
+              - '_next' le dice a dónde redirigir al usuario después de enviar.
+              - '_subject' es el asunto del correo que recibirás.
+              - '_gotcha' es una trampa anti-spam.
+            -->
+            <form action="https://formsubmit.co/esteban.ceo@kraneao.com" method="POST">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-brand-dark-blue mb-1">Nombre Completo</label>
+                    <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-brand-dark-blue mb-1">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue" required>
+                </div>
+                <div class="mb-4">
+                    <label for="university" class="block text-sm font-medium text-brand-dark-blue mb-1">Universidad (Opcional)</label>
+                    <input type="text" id="university" name="university" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                </div>
+                <div class="mb-6">
+                    <label for="study_year" class="block text-sm font-medium text-brand-dark-blue mb-1">Año de Estudio</label>
+                    <select id="study_year" name="study_year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue bg-white" required>
+                        <option value="">Selecciona tu año...</option>
+                        <option value="1er Año">1er Año</option>
+                        <option value="2do Año">2do Año</option>
+                        <option value="3er Año">3er Año</option>
+                        <option value="4to Año">4to Año</option>
+                        <option value="5to Año">5to Año</option>
+                        <option value="6to Año (Internado)">6to Año (Internado)</option>
+                        <option value="Profesional/Egresado">Profesional/Egresado</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <!-- Campos ocultos de Formsubmit -->
+                <input type="hidden" name="_next" value="https://www.kraneao.com/gracias.html">
+                <input type="hidden" name="_subject" value="¡Nuevo Usuario Fundador de Kraneao!">
+                <input type="text" name="_gotcha" style="display:none">
+
+                <button type="submit" class="w-full bg-brand-yellow text-brand-dark-blue font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-300 transition-colors duration-300">
+                    ¡Quiero mi Acceso!
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="w-full text-center p-8 text-brand-dark-blue/70 bg-gray-100">
+        &copy; 2025 Kraneao.com
+    </footer>
+
+</body>
+</html>
