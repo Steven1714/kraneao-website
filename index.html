@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     
+    <!-- === NUEVO === Carga de Font Awesome (para iconos de redes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" xintegrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <script>
         // Configuración de Tailwind CSS con la paleta de colores de marca
         tailwind.config = {
@@ -21,7 +24,7 @@
                     },
                     colors: {
                         'brand-blue': '#0056FF',       // Azul royal
-                        'brand-yellow': '#FFD600',     // Amarillo neón
+                        'brand-yellow': '#FFD600',    // Amarillo neón
                         'brand-gray': '#C9C9C9',       // Gris suave
                         'brand-dark-blue': '#021059',  // Azul oscuro
                         'brand-bg': '#0E0E0E',         // Negro profundo
@@ -75,11 +78,11 @@
              display: flex;
              flex-direction: column;
              padding: 1.5rem; 
-        }
+         }
         .quiz-card .card-content p {
              flex-grow: 1; 
              margin-bottom: 1.5rem; 
-        }
+         }
         /* Estilos para los botones dentro de la tarjeta */
         .quiz-card .button-container {
              margin-top: auto; 
@@ -87,7 +90,7 @@
              flex-direction: column; 
              gap: 0.5rem; 
              padding: 1rem 1.5rem 1.5rem; 
-        }
+         }
          .quiz-card .button-container a, .quiz-card .button-container span {
              display: block; 
              text-align: center;
@@ -102,14 +105,14 @@
              border: 1px solid #0056FF;
          }
           .quiz-card .button-container a.normal-level:hover {
-              background-color: #B9E5FC;
+             background-color: #B9E5FC;
           }
          .quiz-card .button-container a.expert-level {
              background-color: #FFD600; 
              color: #021059; 
          }
           .quiz-card .button-container a.expert-level:hover {
-              background-color: #FACC15; 
+             background-color: #FACC15; 
           }
          .quiz-card .button-container span { 
              background-color: #E5E7EB; 
@@ -229,18 +232,18 @@
                         <!-- Cuestionario Anatomía -->
                         <div class="quiz-card">
                              <div class="card-content">
-                                <div class="flex justify-between items-center mb-3">
-                                    <h4 class="text-xl font-bold text-brand-dark-blue">Drenaje Venoso Craneal</h4>
-                                    <span class="text-xs font-semibold bg-brand-blue/10 text-brand-blue px-2 py-1 rounded-full">Lapso 1</span>
-                                </div>
-                                <p class="text-brand-dark-blue/80">
-                                    Pon a prueba tu conocimiento sobre los senos venosos durales y las venas clave del cráneo. (10 Preguntas)
-                                </p>
+                                 <div class="flex justify-between items-center mb-3">
+                                     <h4 class="text-xl font-bold text-brand-dark-blue">Drenaje Venoso Craneal</h4>
+                                     <span class="text-xs font-semibold bg-brand-blue/10 text-brand-blue px-2 py-1 rounded-full">Lapso 1</span>
+                                 </div>
+                                 <p class="text-brand-dark-blue/80">
+                                     Pon a prueba tu conocimiento sobre los senos venosos durales y las venas clave del cráneo. (10 Preguntas)
+                                 </p>
                              </div>
                              <div class="button-container"> 
-                                <a href="quiz.html" class="expert-level"> <!-- Estilo amarillo/experto -->
-                                    Jugar Ahora
-                                </a>
+                                 <a href="quiz.html" class="expert-level"> <!-- Estilo amarillo/experto -->
+                                     Jugar Ahora
+                                 </a>
                             </div>
                         </div>
                          <!-- Más cuestionarios de Anatomía (Próximamente) -->
@@ -255,9 +258,9 @@
                                 </p>
                             </div>
                              <div class="button-container">
-                                <span class="cursor-not-allowed">
-                                    Próximamente
-                                </span>
+                                 <span class="cursor-not-allowed">
+                                     Próximamente
+                                 </span>
                             </div>
                         </div>
                     </div>
@@ -292,7 +295,7 @@
                 <!-- GRUPO: Historia de la Medicina -->
                  <div class="mb-16">
                      <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
-                        Historia de la Medicina 
+                         Historia de la Medicina 
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                          <!-- Cuestionario Historia de la Medicina (Ahora con DOS botones) -->
@@ -317,12 +320,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                 
+                 </div>
+                
                  <!-- GRUPO: Antropología -->
                  <div class="mb-16"> <!-- Añadido margen inferior -->
                      <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
-                        Antropología
+                         Antropología
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                          <!-- Cuestionario Antropología (Próximamente) -->
@@ -343,12 +346,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                 </div>
 
-                <!-- ===== NUEVO GRUPO: Arte y Cultura ===== -->
-                <div>
+                 <!-- ===== NUEVO GRUPO: Arte y Cultura ===== -->
+                 <div>
                      <h3 class="text-2xl md:text-3xl font-bold text-brand-dark-blue mb-8 border-b-2 border-brand-yellow pb-2 inline-block">
-                        Arte y Cultura
+                         Arte y Cultura
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                          <!-- Tarjeta Lapso 1 -->
@@ -403,8 +406,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- ===== FIN DEL NUEVO GRUPO ===== -->
+                 </div>
+                 <!-- ===== FIN DEL NUEVO GRUPO ===== -->
 
             </div>
         </section>
@@ -412,6 +415,24 @@
 
     <!-- Pie de página -->
     <footer class="w-full text-center p-8 text-brand-dark-blue/70 bg-gray-100">
+        
+        <!-- ===== NUEVO: Iconos de Redes Sociales ===== -->
+        <div class="mb-4">
+            <a href="https://chat.whatsapp.com/BtYhufiiwLcGplM8Uw3hkD?mode=wwt" 
+               target="_blank" rel="noopener noreferrer" 
+               class="inline-block text-3xl text-brand-dark-blue hover:text-green-500 transition-colors duration-300 mx-4" 
+               aria-label="Comunidad de WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="https://www.instagram.com/kraneao.app?igsh=bTl2dXV1bW80cjl0" 
+               target="_blank" rel="noopener noreferrer" 
+               class="inline-block text-3xl text-brand-dark-blue hover:text-pink-600 transition-colors duration-300 mx-4" 
+               aria-label="Perfil de Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+        </div>
+        <!-- ============================================= -->
+
         &copy; 2025 Kraneao.com
     </footer>
     
@@ -485,4 +506,7 @@
     </script>
 </body>
 </html>
+
+
+
 
