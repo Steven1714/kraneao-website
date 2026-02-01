@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212; /* Fondo aún más oscuro */
+            background-color: #121212;
             color: white;
             display: flex;
             flex-direction: column;
@@ -65,16 +65,16 @@
         }
 
         .slot.finished {
-            background-color: #388E3C; /* Verde un poco más elegante */
+            background-color: #388E3C;
             color: white;
             border-left-color: #A5D6A7;
             transform: scale(1.02);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        /* Destacar ligeramente el puesto 2 (Estefany) sin ser obvio */
+        /* Destacar ligeramente el puesto 2 (Estefany) */
         .slot.special-highlight.finished {
-            background-color: #1976D2; /* Azul para el puesto 2 */
+            background-color: #1976D2;
             border-left-color: #90CAF9;
         }
 
@@ -120,22 +120,27 @@
 
 <div class="container">
     <h1>Sorteo Oficial</h1>
-    <p class="subtitle">(Puesto #1: Organizador)</p> <div class="slot-container" id="slotContainer">
-        </div>
+    <p class="subtitle">(Puesto #1: Organizador)</p>
+    <div class="slot-container" id="slotContainer">
+    </div>
     <button id="btnSortear" onclick="iniciarSorteo()">GIRAR</button>
 </div>
 
 <script>
-    // --- CONFIGURACIÓN DEL TRUCO (VERSIÓN 2) ---
+    // --- CONFIGURACIÓN DEL TRUCO (VERSIÓN 3) ---
 
-    // Puesto 2 FIJO (El público cree que es suerte)
+    // Puesto 2 FIJO: Estefany
     const nombrePuesto2 = "Estefany";
 
-    // Grupo de sorteo REAL (Se pelean del 3 al 7)
-    const grupoSorteo = ["Daniel", "Tato", "Amarilis", "Ricardo", "Celeida"];
+    // Puesto FINAL FIJO: Daniel
+    const nombreUltimo = "Daniel";
+
+    // Grupo de sorteo REAL (Resto de participantes)
+    // Nota: Quitamos a Daniel de aquí porque lo forzaremos al final
+    const grupoSorteo = ["Tato", "Amarilis", "Ricardo", "Celeida"];
 
     // Lista completa solo para la animación visual (ruido visual)
-    const todosLosNombres = [nombrePuesto2, ...grupoSorteo];
+    const todosLosNombres = [nombrePuesto2, nombreUltimo, ...grupoSorteo];
 
     // ------------------------------------------
 
@@ -144,7 +149,7 @@
     let slots = [];
 
     // Generar visualmente 6 huecos (Del #2 al #7)
-    // i=0 será el puesto #2, i=1 será el puesto #3, etc.
+    // Total personas: Estefany (1) + Daniel (1) + Grupo (4) = 6
     for (let i = 0; i < 6; i++) {
         let div = document.createElement('div');
         div.className = 'slot';
@@ -159,15 +164,18 @@
         btn.disabled = true;
 
         // 1. LÓGICA (BACKEND)
-        // Barajamos a los "mortales"
+        // Barajamos a los "mortales" (el grupo intermedio)
         let aleatorios = [...grupoSorteo];
         for (let i = aleatorios.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [aleatorios[i], aleatorios[j]] = [aleatorios[j], aleatorios[i]];
         }
 
-        // El orden final empieza con Estefany, seguido de los aleatorios
-        const ordenFinal = [nombrePuesto2, ...aleatorios];
+        // El orden final:
+        // 1. Estefany (Fijo)
+        // 2. Grupo barajado
+        // 3. Daniel (Fijo al final)
+        const ordenFinal = [nombrePuesto2, ...aleatorios, nombreUltimo];
 
         // 2. ANIMACIÓN (FRONTEND)
         let intervalIds = [];
@@ -189,7 +197,7 @@
         // 3. PARADA EN CASCADA
         ordenFinal.forEach((nombreGanador, index) => {
             // Tiempos de parada
-            const tiempoParada = 1000 + (index * 900); // 900ms entre cada uno para más suspenso
+            const tiempoParada = 1000 + (index * 900); // 900ms entre cada uno
 
             setTimeout(() => {
                 clearInterval(intervalIds[index]); // Frenar
