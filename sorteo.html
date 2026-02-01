@@ -201,8 +201,8 @@
     // Puesto 2 FIJO (El público cree que es suerte)
     const nombrePuesto2 = "Estefany";
 
-    // Grupo de sorteo REAL (Se pelean del 3 al 7)
-    const grupoSorteo = ["Daniel", "Tato", "Amarilis", "Ricardo", "Celeida"];
+    // Grupo de sorteo REAL (Se pelean del 3 al 8)
+    const grupoSorteo = ["Daniel", "Tato", "Amarilis", "Ricardo", "Celeida", "Daniel"];
 
     // Lista completa solo para la animación visual (ruido visual)
     const todosLosNombres = [nombrePuesto2, ...grupoSorteo];
@@ -213,8 +213,9 @@
     const btn = document.getElementById('btnSortear');
     let slots = [];
 
-    // Generar visualmente 6 huecos (Del #2 al #7)
-    for (let i = 0; i < 6; i++) {
+    // Generar visualmente los huecos necesarios (Del #2 en adelante)
+    const totalSlots = 1 + grupoSorteo.length; // Estefany + grupo
+    for (let i = 0; i < totalSlots; i++) {
         let div = document.createElement('div');
         div.className = 'slot';
         // Usamos una clase específica para el nombre para aplicarle efectos
@@ -275,7 +276,7 @@
                     slot.classList.add('special-highlight');
                 }
 
-                if(index === 5) {
+                if(index === ordenFinal.length - 1) {
                     btn.innerText = "Sorteo Finalizado";
                     // btn.disabled = false; // Descomentar si quieres permitir otro sorteo
                 }
