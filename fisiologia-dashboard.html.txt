@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Dashboard de Fisiología Médica</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- KaTeX para fórmulas iónicas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    },
+                    animation: { pulseGlow: 'pulseGlow 2s infinite ease-in-out' },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { transform: 'scale(1)', backgroundColor: '#FFD600' },
+                            '50%': { transform: 'scale(1.05)', backgroundColor: '#fff000' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f8fafc; color: #021059; }
+        .chart-container { position: relative; width: 100%; height: 45vh; max-height: 400px; }
+        .nav-btn.active { border-bottom: 4px solid #0056FF; color: #0056FF; font-weight: 800; }
+        .hide { display: none !important; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(0, 86, 255, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+
+    <!-- Encabezado con tu Branding -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <a href="index.html">
+                        <img src="logo-final.png" alt="Kraneao" class="h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+                    </a>
+                </div>
+                
+                <nav class="hidden md:flex space-x-6" id="desktop-nav">
+                    <button data-target="sec-bioelectricidad" class="nav-btn active text-gray-500 py-5 text-sm font-bold uppercase tracking-widest transition-all">Bioelectricidad</button>
+                    <button data-target="sec-farmacologia" class="nav-btn text-gray-500 py-5 text-sm font-bold uppercase tracking-widest transition-all">Farmacología</button>
+                    <button data-target="sec-constantes" class="nav-btn text-gray-500 py-5 text-sm font-bold uppercase tracking-widest transition-all">Constantes</button>
+                </nav>
+
+                <button onclick="document.getElementById('early-access-modal').classList.remove('hidden')" class="bg-brand-yellow text-brand-dark-blue font-black px-4 py-2 rounded-xl text-xs animate-pulseGlow">
+                    ¡SER FUNDADOR!
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- SECCIÓN 1: Bioelectricidad -->
+        <section id="sec-bioelectricidad" class="content-section animate-fade-in">
+            <div class="mb-10 text-center md:text-left">
+                <span class="text-brand-blue font-black tracking-widest text-xs uppercase bg-blue-50 px-3 py-1 rounded-full">Unidad I: Fisiología Celular</span>
+                <h1 class="text-4xl font-black text-brand-dark-blue mt-4 mb-4">Simulador de Potencial de Acción</h1>
+                <p class="text-lg text-gray-600 max-w-3xl">
+                    Analiza cómo la permeabilidad iónica al $Na^+$ y $K^+$ dicta el voltaje de membrana. Utiliza los bloqueadores para entender la fisiopatología.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                <!-- Gráfico -->
+                <div class="lg:col-span-2 bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
+                    <div class="chart-container">
+                        <canvas id="actionPotentialChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Controles -->
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-black text-brand-dark-blue uppercase text-sm tracking-tighter">Panel de Control</h3>
+                    <button id="btn-normal" class="p-4 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100 font-bold transition-all border-2 border-emerald-100 flex justify-between items-center">
+                        Estado Fisiológico Normal <span>✅</span>
+                    </button>
+                    <button id="btn-ttx" class="p-4 bg-red-50 text-red-700 rounded-2xl hover:bg-red-100 font-bold transition-all border-2 border-red-100 flex flex-col items-start">
+                        <div class="flex justify-between w-full">Aplicar Tetrodotoxina <span>🐡</span></div>
+                        <span class="text-[10px] font-medium uppercase mt-1">Bloquea $Na^+$ Voltaje-Dep</span>
+                    </button>
+                    <button id="btn-tea" class="p-4 bg-orange-50 text-orange-700 rounded-2xl hover:bg-orange-100 font-bold transition-all border-2 border-orange-100 flex flex-col items-start">
+                        <div class="flex justify-between w-full">Aplicar Tetraetilamonio <span>🧪</span></div>
+                        <span class="text-[10px] font-medium uppercase mt-1">Bloquea canales de $K^+$</span>
+                    </button>
+
+                    <div id="chart-explanation" class="mt-4 p-5 bg-brand-dark-blue text-white rounded-2xl text-sm leading-relaxed shadow-lg">
+                        <strong>Referencia Guyton:</strong> El potencial de reposo se mantiene en -90 mV gracias a la bomba $Na^+/K^+$ y los canales de fuga de potasio.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: Farmacología (Grid estilo Kraneao) -->
+        <section id="sec-farmacologia" class="content-section hide">
+            <div class="mb-10">
+                <h1 class="text-4xl font-black text-brand-dark-blue mb-4">Farmacología y Toxinas</h1>
+                <div class="flex flex-wrap gap-2" id="toxin-filters">
+                    <button data-filter="all" class="filter-btn active px-6 py-2 rounded-full border-2 border-brand-blue font-bold text-sm">Todos</button>
+                    <button data-filter="placa" class="filter-btn px-6 py-2 rounded-full border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-brand-blue transition-all">Placa Motora</button>
+                    <button data-filter="hematologia" class="filter-btn px-6 py-2 rounded-full border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-brand-blue transition-all">Hematología</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="toxins-grid"></div>
+        </section>
+
+        <!-- SECCIÓN 3: Constantes -->
+        <section id="sec-constantes" class="content-section hide">
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Límites Letales -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+                    <h3 class="text-2xl font-black text-brand-dark-blue mb-8">🩸 Límites Homeostáticos</h3>
+                    <div class="space-y-8" id="constantes-list">
+                        <!-- Generado por JS -->
+                    </div>
+                </div>
+
+                <!-- Flashcards -->
+                <div class="bg-brand-blue p-8 rounded-3xl shadow-xl text-white">
+                    <h3 class="text-2xl font-black mb-6">🧠 Repaso Rápido</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 p-5 rounded-2xl border border-white/20 cursor-pointer hover:bg-white/20 transition-all" onclick="toggleAnswer('f1')">
+                            <p class="text-sm font-bold opacity-80 mb-2">Mecanismo de la Ouabaína:</p>
+                            <p id="f1" class="font-black text-xl hidden">Inhibe la bomba Na+/K+ ATPasa, aumentando el calcio intracelular (Inotropismo +).</p>
+                        </div>
+                        <div class="bg-white/10 p-5 rounded-2xl border border-white/20 cursor-pointer hover:bg-white/20 transition-all" onclick="toggleAnswer('f2')">
+                            <p class="text-sm font-bold opacity-80 mb-2">Principal Buffer del ECF:</p>
+                            <p id="f2" class="font-black text-xl hidden">Sistema Bicarbonato ($HCO_3^-$ / $CO_2$).</p>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+    </main>
+
+    <!-- Modal de Registro (Igual al de index) -->
+    <div id="early-access-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+        <div onclick="document.getElementById('early-access-modal').classList.add('hidden')" class="absolute inset-0 bg-brand-dark-blue/80 backdrop-blur-sm"></div>
+        <div class="relative z-10 bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border border-brand-blue/20 text-center">
+            <h2 class="text-3xl font-black text-brand-blue mb-2">¡Sigue Kraneando!</h2>
+            <p class="text-gray-500 mb-6 text-sm">Accede a más herramientas de 2do año registrándote gratis.</p>
+            <form action="https://formsubmit.co/esteban.ceo@kraneao.com" method="POST" class="space-y-4">
+                <input type="text" name="name" placeholder="Tu nombre" required class="w-full p-4 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:border-brand-blue">
+                <input type="email" name="email" placeholder="Tu correo" required class="w-full p-4 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:border-brand-blue">
+                <button type="submit" class="w-full bg-brand-yellow text-brand-dark-blue font-black py-4 rounded-xl shadow-lg hover:bg-yellow-300">¡Obtener Acceso!</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const toxinsData = [
+            { name: "Tetrodotoxina (TTX)", filter: "membrana", target: "Canales de $Na^+$", effect: "Parálisis flácida. Impide la fase 0 del PA.", icon: "🐡" },
+            { name: "Toxina Botulínica", filter: "placa", target: "Proteínas SNARE", effect: "Bloquea liberación de Acetilcolina. Parálisis.", icon: "🥫" },
+            { name: "Digoxina", filter: "membrana", target: "Bomba $Na^+/K^+$", effect: "Aumenta contractilidad cardíaca.", icon: "❤️" },
+            { name: "Curare", filter: "placa", target: "Receptor Nicotínico", effect: "Antagonista competitivo. Relajación muscular.", icon: "🌿" },
+            { name: "Warfarina", filter: "hematologia", target: "Vitamina K", effect: "Inhibe factores II, VII, IX y X.", icon: "🩸" }
+        ];
+
+        const constantes = [
+            { name: "Potasio ($K^+$)", val: "4.2", range: "3.8 - 5.0", letal: "L: < 1.5 | H: > 9.0" },
+            { name: "pH Sanguíneo", val: "7.4", range: "7.35 - 7.45", letal: "L: < 6.9 | H: > 8.0" },
+            { name: "Glucosa", val: "85", range: "70 - 110", letal: "L: < 20 | H: > 600" }
+        ];
+
+        let apChart;
+
+        function init() {
+            // Chart Potencial Acción
+            const ctx = document.getElementById('actionPotentialChart').getContext('2d');
+            apChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                    datasets: [{
+                        label: 'mV',
+                        data: [-90, -90, -65, 35, 10, -70, -95, -90, -90],
+                        borderColor: '#0056FF',
+                        borderWidth: 5,
+                        fill: true,
+                        backgroundColor: 'rgba(0, 86, 255, 0.05)',
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: -110, max: 50, grid: { color: '#f1f5f9' } },
+                        x: { display: false }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            renderToxins();
+            renderConstantes();
+            setupNav();
+        }
+
+        function updateChart(type) {
+            let newData, text;
+            if(type === 'normal') {
+                newData = [-90, -90, -65, 35, 10, -70, -95, -90, -90];
+                text = "<strong>Normal:</strong> Despolarización por $Na^+$ y repolarización por $K^+$.";
+            } else if(type === 'ttx') {
+                newData = [-90, -90, -90, -90, -90, -90, -90, -90, -90];
+                text = "<strong>TTX:</strong> El canal de Sodio está bloqueado. No hay despolarización.";
+            } else if(type === 'tea') {
+                newData = [-90, -90, -65, 35, 35, 35, 35, 30, 20];
+                text = "<strong>TEA:</strong> Bloqueo de Potasio. Repolarización extremadamente lenta.";
+            }
+            apChart.data.datasets[0].data = newData;
+            apChart.update();
+            document.getElementById('chart-explanation').innerHTML = text;
+            renderMathInElement(document.getElementById('chart-explanation'));
+        }
+
+        function renderToxins(filter = 'all') {
+            const grid = document.getElementById('toxins-grid');
+            grid.innerHTML = toxinsData.filter(t => filter === 'all' || t.filter === filter).map(t => `
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all">
+                    <span class="text-4xl block mb-4">${t.icon}</span>
+                    <h3 class="font-black text-lg text-brand-dark-blue mb-1">${t.name}</h3>
+                    <p class="text-brand-blue text-xs font-bold uppercase mb-4">${t.target}</p>
+                    <p class="text-gray-500 text-sm">${t.effect}</p>
+                </div>
+            `).join('');
+            renderMathInElement(grid);
+        }
+
+        function renderConstantes() {
+            document.getElementById('constantes-list').innerHTML = constantes.map(c => `
+                <div>
+                    <div class="flex justify-between mb-2 font-bold">
+                        <span>${c.name}</span>
+                        <span class="text-brand-blue">${c.val}</span>
+                    </div>
+                    <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
+                        <div class="bg-red-400 h-full w-1/4"></div>
+                        <div class="bg-emerald-400 h-full w-1/2"></div>
+                        <div class="bg-red-400 h-full w-1/4"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] mt-1 font-bold text-gray-400">
+                        <span>${c.letal.split('|')[0]}</span>
+                        <span class="text-emerald-600">NORMAL: ${c.range}</span>
+                        <span>${c.letal.split('|')[1]}</span>
+                    </div>
+                </div>
+            `).join('');
+            renderMathInElement(document.getElementById('constantes-list'));
+        }
+
+        function setupNav() {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.content-section').forEach(s => s.classList.add('hide'));
+                    document.getElementById(e.target.dataset.target).classList.remove('hide');
+                }
+            });
+        }
+
+        window.toggleAnswer = (id) => document.getElementById(id).classList.toggle('hidden');
+
+        document.getElementById('btn-normal').onclick = () => updateChart('normal');
+        document.getElementById('btn-ttx').onclick = () => updateChart('ttx');
+        document.getElementById('btn-tea').onclick = () => updateChart('tea');
+
+        window.onload = init;
+    </script>
+</body>
+</html>
