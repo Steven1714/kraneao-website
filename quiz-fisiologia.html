@@ -225,6 +225,7 @@
         let answered = false;
         let currentShuffledOptions = [];
         let currentCorrectIndex = 0;
+        let randomizedQuizData = []; // Nuevo arreglo para las preguntas barajadas
 
         function shuffleArray(array) {
             let currentIndex = array.length, randomIndex;
@@ -236,15 +237,27 @@
             return array;
         }
 
+        function initQuiz() {
+            // Hacemos una copia del banco de preguntas y la barajamos
+            randomizedQuizData = shuffleArray([...quizData]);
+            loadQuestion();
+        }
+
         function loadQuestion() {
             answered = false;
             document.getElementById('next-btn').classList.add('hidden');
             document.getElementById('feedback-box').classList.add('hidden');
 
-            const data = quizData[currentIndex];
-            document.getElementById('question-text').textContent = data.q;
+            // Usamos las preguntas barajadas
+            const data = randomizedQuizData[currentIndex];
 
-            const totalQuestions = quizData.length;
+            // Quitamos el número estático de la pregunta ("1. ", "100. ", etc.)
+            // asumiendo que el formato original es "número. texto de pregunta"
+            let questionText = data.q.replace(/^\d+\.\s*/, '');
+            document.getElementById('question-text').textContent = questionText;
+
+            // Limitamos a 100 preguntas (o la cantidad disponible en la mezcla)
+            const totalQuestions = Math.min(100, randomizedQuizData.length);
 
             document.getElementById('current-index').textContent = currentIndex + 1;
             document.getElementById('total-questions').textContent = totalQuestions;
@@ -277,7 +290,7 @@
             if (answered) return;
             answered = true;
 
-            const data = quizData[currentIndex];
+            const data = randomizedQuizData[currentIndex];
             const btns = document.querySelectorAll('.option-btn');
 
             if (idx === currentCorrectIndex) {
@@ -292,7 +305,8 @@
 
             btns.forEach(b => b.disabled = true);
 
-            if (currentIndex === quizData.length - 1) {
+            const totalQuestions = Math.min(100, randomizedQuizData.length);
+            if (currentIndex === totalQuestions - 1) {
                 document.getElementById('next-btn').textContent = "Ver Resultados 🏆";
             }
 
@@ -315,7 +329,8 @@
 
         document.getElementById('next-btn').onclick = () => {
             currentIndex++;
-            if (currentIndex < quizData.length) {
+            const totalQuestions = Math.min(100, randomizedQuizData.length);
+            if (currentIndex < totalQuestions) {
                 loadQuestion();
             } else {
                 showResults();
@@ -326,7 +341,7 @@
             document.getElementById('question-card').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
 
-            const totalQuestions = quizData.length;
+            const totalQuestions = Math.min(100, randomizedQuizData.length);
             const pct = Math.round((correctCount / totalQuestions) * 100);
 
             document.getElementById('final-score').textContent = pct;
@@ -335,7 +350,7 @@
             document.querySelector('#result-screen p.text-gray-500').textContent = `Has completado los ${totalQuestions} retos de Fisiología.`;
         }
 
-        window.onload = loadQuestion;
+        window.onload = initQuiz; // Llamamos a la inicialización para barajar primero
     </script>
 </body>
 </html>
