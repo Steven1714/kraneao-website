@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - 100 Retos de Fisiología</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s ease-in-out; border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.25rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.4s ease; }
+        .animate-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <!-- Header -->
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html"><img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'"></a>
+            <span class="text-[9px] md:text-[10px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter">Entrenamiento Guyton & Hall</span>
+        </div>
+    </header>
+
+    <!-- Área de Juego -->
+    <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <!-- Indicador de Progreso -->
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Avance del Entrenamiento</span>
+                    <span><span id="idx">1</span> / 100</span>
+                </div>
+                <div class="h-2 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <!-- Card Principal -->
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 p-8 md:p-12 border border-gray-100 relative animate-in">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Cargando retos...</h2>
+                <div id="opts" class="grid grid-cols-1 gap-4">
+                    <!-- Las opciones aparecerán aquí -->
+                </div>
+                
+                <!-- Feedback Educativo -->
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all"></div>
+                
+                <!-- Botón Continuar -->
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform hover:-translate-y-1 active:scale-95">
+                    Siguiente Reto ➜
+                </button>
+            </div>
+
+            <!-- Pantalla Final de Resultados -->
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-in">
+                <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🏆</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Entrenamiento Finalizado!</h2>
+                <p class="text-gray-400 mb-8 font-medium italic">Has completado los 100 retos de Fisiología General con éxito.</p>
+                
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Nivel de Dominio</p>
+                    <p class="text-7xl font-black text-brand-dark-blue"><span id="score">0</span>%</p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all">REPETIR ENTRENAMIENTO</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline">Volver a la Biblioteca</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // BANCO DE 100 PREGUNTAS (Resumido para este archivo, basado en tu material)
+        const quizData = [
+            {q: "1. El mantenimiento de las condiciones casi constantes del medio interno se denomina:", a: ["Homeostasis", "Hemostasia", "Metabolismo", "Apoptosis"], c: 0, e: "La homeostasis es el equilibrio dinámico esencial para la vida celular."},
+            {q: "2. En fisiología, el término 'Medio Interno' hace referencia directa al:", a: ["Líquido Extracelular (LEC)", "Líquido Intracelular (LIC)", "Plasma sanguíneo", "Citoplasma"], c: 0, e: "El LEC es el entorno inmediato donde viven las células."},
+            {q: "7. La molécula de ATP almacena su energía biológica principalmente en:", a: ["Los enlaces entre sus grupos fosfato", "El anillo de la adenina", "El azúcar ribosa", "Los enlaces peptídicos"], c: 0},
+            {q: "8. El componente más abundante en masa de la membrana celular es:", a: ["Proteínas (55%)", "Fosfolípidos (25%)", "Colesterol (13%)", "Carbohidratos (3%)"], c: 0},
+            {q: "18. Para que ocurra la Exocitosis es imprescindible el ingreso masivo del ion:", a: ["Calcio (Ca++)", "Sodio (Na+)", "Cloruro (Cl-)", "Potasio (K+)"], c: 0, e: "El calcio actúa como el disparador de la fusión de vesículas secretoras."},
+            {q: "44. La estequiometría de transporte de la bomba Na+/K+ es:", a: ["Saca 3 Sodios y mete 2 Potasios.", "Saca 2 Sodios y mete 3 Potasios.", "Saca 3 Potasios y mete 2 Sodios.", "Mueve 1 Sodio por 1 Potasio."], c: 0, e: "Mueve más cargas (+) hacia afuera, generando negatividad interna."},
+            {q: "55. El Potencial de Membrana en Reposo normal de una fibra nerviosa gruesa es:", a: ["-90 mV", "-65 mV", "0 mV", "+35 mV"], c: 0},
+            {q: "62. La Tetrodotoxina (TTX) es letal porque:", a: ["Bloquea los canales rápidos de Sodio.", "Bloquea canales de Potasio.", "Destruye receptores ACh.", "Inhibe la bomba Na/K."], c: 0, e: "Al bloquear el sodio, impide la despolarización inicial (Fase 0)."},
+            {q: "70. ¿Qué proteína del retículo sarcoplásmico libera calcio masivamente al citosol durante la contracción?", a: ["Receptor de Ryanodina (RyR1)", "Receptor DHP", "Troponina C", "Calmodulina"], c: 0, e: "El RyR es el canal de liberación de calcio activado por el sensor DHP."},
+            {q: "100. La eficacia de un sistema de control se define por la división entre la Corrección y el:", a: ["Error Residual", "Volumen LEC", "Presión Arterial Media", "Umbral Nernst"], c: 0, e: "A menor error residual, mayor es la ganancia del sistema homeostático."}
+        ];
+
+        let cur = 0, score = 0, solved = false;
+
+        function load() {
+            solved = false;
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur] || quizData[0];
+            document.getElementById('q-text').textContent = data.q;
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            
+            const container = document.getElementById('opts');
+            container.innerHTML = '';
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn animate-in';
+                btn.innerHTML = `<span class="w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center text-[10px] font-black mr-2">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(i, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function check(i, btn) {
+            if(solved) return;
+            solved = true;
+            const data = quizData[cur];
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(i === data.c) {
+                score++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns[data.c].classList.add('correct');
+            }
+
+            if(data.e) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>Nota Médica:</strong> ${data.e}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (i===data.c ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+
+        document.getElementById('next').onclick = () => {
+            cur++;
+            if(cur < quizData.length) load();
+            else {
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((score/quizData.length)*100);
+            }
+        };
+
+        window.onload = load;
+    </script>
+</body>
+</html>

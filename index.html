@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kraneao - Medicina Interactiva</title>
+    <title>Kraneao - Medicina e Inteligencia</title>
+    <!-- Framework de diseño profesional Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
@@ -16,94 +20,216 @@
                         'brand-yellow': '#FFD600',
                         'brand-dark-blue': '#021059',
                     },
-                    animation: { pulseGlow: 'pulseGlow 2s infinite ease-in-out' },
+                    animation: { 
+                        pulseGlow: 'pulseGlow 2s infinite ease-in-out',
+                        fadeIn: 'fadeIn 0.6s ease-out forwards'
+                    },
                     keyframes: {
-                        pulseGlow: { '0%, 100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.05)' } }
+                        pulseGlow: { '0%, 100%': { transform: 'scale(1)', opacity: '1' }, '50%': { transform: 'scale(1.05)', opacity: '0.9' } },
+                        fadeIn: { 'from': { opacity: '0', transform: 'translateY(20px)' }, 'to': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
         }
     </script>
+
     <style>
-        .tab-btn.active { background-color: #0056FF; color: white; }
+        body { background-color: #FFFFFF; color: #021059; scroll-behavior: smooth; overflow-x: hidden; }
+        .tab-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 0.8rem; }
+        .tab-btn.active { background-color: #0056FF; color: white; box-shadow: 0 10px 25px -5px rgba(0, 86, 255, 0.4); }
         .hide { display: none !important; }
-        .quiz-card { transition: all 0.3s ease; border-radius: 1.5rem; }
-        .quiz-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 86, 255, 0.1); }
+        .quiz-card { 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid #F1F5F9; 
+            border-radius: 1.8rem;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .quiz-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            box-shadow: 0 30px 60px -12px rgba(0, 86, 255, 0.12);
+            border-color: #0056FF;
+        }
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
     </style>
 </head>
-<body class="bg-white text-brand-dark-blue">
+<body class="text-brand-dark-blue font-sans">
 
-    <header class="p-4 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b">
+    <!-- Barra de Navegación -->
+    <header class="p-4 glass-header sticky top-0 z-50 border-b border-gray-100/50">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html"><img src="logo-final.png" class="h-10"></a>
-            <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-brand-yellow px-4 py-2 rounded-xl font-bold text-xs animate-pulseGlow">¡USUARIO FUNDADOR!</button>
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <div class="flex items-center gap-2">
+                    <!-- El logo debe llamarse logo-final.png en tu carpeta de GitHub -->
+                    <img src="logo-final.png" alt="Kraneao" class="h-10 md:h-12" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block'">
+                    <span id="logo-text" class="hidden font-black text-2xl text-brand-blue tracking-tighter uppercase">KRANEAO</span>
+                </div>
+            </a>
+            <button onclick="toggleModal(true)" class="bg-brand-yellow px-5 py-2.5 rounded-2xl font-black text-[10px] md:text-xs animate-pulseGlow shadow-xl shadow-yellow-400/20 uppercase tracking-widest text-brand-dark-blue">
+                ¡SER FUNDADOR!
+            </button>
         </nav>
     </header>
 
-    <main class="py-12 px-4">
-        <div class="max-w-4xl mx-auto text-center mb-16">
-            <img src="logo-principal-color.png" class="h-24 mx-auto mb-6">
-            <h1 class="text-5xl md:text-7xl font-black text-brand-blue mb-6">Domina la <span class="text-brand-yellow">Medicina</span>.</h1>
-            <div class="inline-flex p-1 bg-gray-100 rounded-2xl mb-12">
-                <button onclick="switchYear('y1')" id="btn1" class="tab-btn active px-8 py-3 rounded-xl font-bold">1er Año</button>
-                <button onclick="switchYear('y2')" id="btn2" class="tab-btn px-8 py-3 rounded-xl font-bold">2do Año</button>
+    <!-- Sección Principal (Hero) -->
+    <main class="relative pt-16 pb-24 px-4 overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
+            <div class="absolute top-10 left-10 w-64 h-64 bg-blue-100 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-yellow-50 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="mb-6 inline-block animate-fadeIn">
+                <span class="bg-blue-50 text-brand-blue text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-blue-100">Inteligencia Médica Aplicada</span>
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl font-black text-brand-blue leading-[0.9] mb-8 tracking-tighter animate-fadeIn">
+                Domina la <br><span class="text-brand-yellow italic">Medicina.</span>
+            </h1>
+            
+            <p class="text-gray-500 max-w-2xl mx-auto mb-16 font-medium text-lg md:text-xl animate-fadeIn" style="animation-delay: 0.1s">
+                Entrenamientos basados en el <strong>Tratado de Fisiología Médica (Guyton & Hall)</strong>. Prepárate para el 50% con rigor científico.
+            </p>
+            
+            <!-- Selector de Año Académico -->
+            <div class="inline-flex p-1.5 bg-gray-100 rounded-[1.2rem] mb-20 shadow-inner animate-fadeIn" style="animation-delay: 0.2s">
+                <button onclick="switchYear('y1')" id="btn1" class="tab-btn active px-10 md:px-14 py-4 font-black text-lg">1er Año</button>
+                <button onclick="switchYear('y2')" id="btn2" class="tab-btn px-10 md:px-14 py-4 font-black text-lg text-gray-400 hover:text-brand-blue transition-colors">2do Año</button>
             </div>
 
-            <!-- 1ER AÑO -->
-            <div id="y1" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                <div class="quiz-card p-8 border">
-                    <span class="text-[10px] font-black text-brand-blue uppercase">Anatomía</span>
-                    <h3 class="text-xl font-black mt-2 mb-4">Drenaje Venoso</h3>
-                    <a href="quiz.html" class="block w-full bg-brand-yellow text-center py-3 rounded-xl font-bold">Jugar Ahora</a>
-                </div>
-                <div class="quiz-card p-8 border">
-                    <span class="text-[10px] font-black text-brand-blue uppercase">Historia</span>
-                    <h3 class="text-xl font-black mt-2 mb-4">Medicina en Venezuela</h3>
-                    <div class="flex gap-2">
-                        <a href="quiz-historia-150.html" class="flex-1 bg-gray-100 text-center py-3 rounded-xl font-bold text-sm">150 Preg</a>
-                        <a href="quiz-historia-completo.html" class="flex-1 bg-brand-yellow text-center py-3 rounded-xl font-bold text-sm">300 Preg</a>
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- SECCIÓN 1ER AÑO -->
+                <div id="y1" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left animate-fadeIn">
+                    <div class="quiz-card p-8 group h-full">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors text-brand-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Anatomía Humana</span>
+                        <h3 class="text-2xl font-black mb-4 tracking-tight">Drenaje Venoso</h3>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Estudio exhaustivo de los senos durales y la red venosa encefálica profunda.</p>
+                        <a href="quiz.html" class="block w-full bg-brand-yellow text-center py-4 rounded-[1.2rem] font-black hover:bg-yellow-400 transition-all text-brand-dark-blue shadow-lg">EMPEZAR RETO</a>
                     </div>
-                </div>
-            </div>
 
-            <!-- 2DO AÑO -->
-            <div id="y2" class="hide grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                <div class="quiz-card p-8 border border-brand-blue bg-blue-50/30">
-                    <div class="flex justify-between">
-                        <span class="text-[10px] font-black text-brand-blue uppercase">Fisiología I</span>
-                        <span class="bg-green-100 text-green-700 text-[9px] font-black px-2 py-0.5 rounded-full">NUEVO</span>
+                    <div class="quiz-card p-8 group h-full">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors text-brand-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Cultura Médica</span>
+                        <h3 class="text-2xl font-black mb-4 tracking-tight">Historia en Venezuela</h3>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Hitos, personajes y evolución de la salud pública nacional (Lapso 3).</p>
+                        <div class="flex gap-3">
+                            <a href="quiz-historia-150.html" class="flex-1 bg-gray-50 text-center py-4 rounded-[1.2rem] font-black text-xs hover:bg-gray-100 transition-colors uppercase">150 P.</a>
+                            <a href="quiz-historia-completo.html" class="flex-1 bg-brand-yellow text-center py-4 rounded-[1.2rem] font-black text-xs hover:bg-yellow-400 shadow-lg uppercase text-brand-dark-blue">300 P.</a>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-black mt-2 mb-4">Generalidades (100 Retos)</h3>
-                    <p class="text-xs text-gray-500 mb-6">Homeostasis, Membrana y Potencial de Acción.</p>
-                    <a href="quiz-fisiologia-100.html" class="block w-full bg-brand-blue text-white text-center py-3 rounded-xl font-bold">EMPEZAR RETO</a>
                 </div>
-                <div class="quiz-card p-8 border">
-                    <span class="text-[10px] font-black text-gray-400 uppercase">Fisiología II</span>
-                    <h3 class="text-xl font-black mt-2 mb-4">Cardiovascular</h3>
-                    <a href="fisiologia-dashboard.html" class="block w-full bg-gray-100 text-gray-400 text-center py-3 rounded-xl font-bold">Dashboard Interactivo</a>
+
+                <!-- SECCIÓN 2DO AÑO -->
+                <div id="y2" class="hide grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left animate-fadeIn">
+                    <div class="quiz-card p-8 group h-full">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors text-brand-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.628.285a2 2 0 01-1.963 0l-.63-.285a6 6 0 00-3.86-.517l-2.388.477a2 2 0 00-1.022.547V18.28a2 2 0 001.1 1.79l3.352 1.676a4 4 0 003.58 0l3.352-1.676a2 2 0 001.1-1.79v-2.852z" /></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Fisiología I</span>
+                        <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Generalidades</h3>
+                        <p class="text-[10px] text-gray-400 mb-6 italic">Homeostasis y Potencial de Acción.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">100 retos fundamentales basados en la organización celular del cuerpo humano.</p>
+                        <a href="quiz-fisiologia-100.html" class="block w-full bg-brand-blue text-white text-center py-4 rounded-[1.2rem] font-black hover:bg-brand-dark-blue shadow-lg transition-all">ABRIR 100 RETOS</a>
+                    </div>
+
+                    <div class="quiz-card p-8 border-2 border-brand-yellow bg-yellow-50/5 group h-full">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-brand-yellow rounded-2xl flex items-center justify-center group-hover:bg-brand-dark-blue group-hover:text-brand-yellow transition-colors text-brand-dark-blue font-bold">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-[9px] font-black px-3 py-1 rounded-full uppercase">Estreno</span>
+                        </div>
+                        <span class="text-[10px] font-black text-brand-yellow uppercase tracking-widest mb-2 block tracking-tighter text-brand-dark-blue">Fisiología II</span>
+                        <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Nervio y Músculo</h3>
+                        <p class="text-[10px] text-gray-400 mb-6 italic">Sinapsis, Placa Motora y Músculo Liso.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Entrenamiento intensivo sobre la fisiología de la contracción y el impulso nervioso.</p>
+                        <a href="quiz-fisiologia-unidad2.html" class="block w-full bg-brand-yellow text-brand-dark-blue text-center py-4 rounded-[1.2rem] font-black hover:bg-yellow-400 shadow-xl transition-all">EMPEZAR RETO</a>
+                    </div>
+
+                    <div class="quiz-card p-8 group h-full">
+                        <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-dark-blue group-hover:text-white transition-colors text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Laboratorio</span>
+                        <h3 class="text-2xl font-black mb-4 tracking-tight leading-tight">Simulador PA</h3>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Visualiza el impacto de la Tetrodotoxina y el TEA en la gráfica iónica real.</p>
+                        <a href="fisiologia-dashboard.html" class="block w-full bg-gray-100 text-gray-400 text-center py-4 rounded-[1.2rem] font-black hover:bg-gray-200 transition-all uppercase text-[10px] tracking-widest">Abrir Simulador</a>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div id="modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
-        <div onclick="document.getElementById('modal').classList.add('hidden')" class="absolute inset-0 bg-brand-dark-blue/80 backdrop-blur-sm"></div>
-        <div class="relative bg-white p-8 rounded-3xl w-full max-w-md text-center">
-            <h2 class="text-2xl font-black text-brand-blue mb-4">¡Únete a Kraneao!</h2>
+    <!-- Modal de Captura de Leads / Membresía -->
+    <div id="modal-registro" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+        <div onclick="toggleModal(false)" class="absolute inset-0 bg-brand-dark-blue/80 backdrop-blur-sm"></div>
+        <div class="relative bg-white p-10 md:p-14 rounded-[3rem] w-full max-w-md text-center border border-white/20 shadow-2xl animate-fadeIn">
+            <div class="w-20 h-20 bg-yellow-50 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner">🏆</div>
+            <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight tracking-tight">¡Únete a Kraneao!</h2>
+            <p class="text-sm text-gray-500 mb-10 font-medium leading-relaxed">Los miembros fundadores recibirán **guías en PDF explicadas** y contenido exclusivo de cirugías.</p>
+            
             <form action="https://formsubmit.co/esteban.ceo@kraneao.com" method="POST" class="space-y-4 text-left">
-                <input type="text" name="name" placeholder="Nombre" required class="w-full p-4 rounded-xl border outline-none focus:border-brand-blue">
-                <input type="email" name="email" placeholder="Correo" required class="w-full p-4 rounded-xl border outline-none focus:border-brand-blue">
-                <button type="submit" class="w-full bg-brand-yellow py-4 rounded-xl font-black shadow-lg">OBTENER ACCESO</button>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block tracking-widest">Nombre Completo</label>
+                    <input type="text" name="name" required class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-0 outline-none focus:ring-2 focus:ring-brand-blue transition-all" placeholder="Dr. Esteban García">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block tracking-widest">Correo Universitario</label>
+                    <input type="email" name="email" required class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-0 outline-none focus:ring-2 focus:ring-brand-blue transition-all" placeholder="estudiante@unerg.edu">
+                </div>
+                <button type="submit" class="w-full bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl shadow-yellow-200 text-brand-dark-blue hover:bg-yellow-400 uppercase tracking-widest transition-all">
+                    SOLICITAR ACCESO
+                </button>
+                <input type="hidden" name="_next" value="https://kraneao.com/gracias.html">
             </form>
+            
+            <button onclick="toggleModal(false)" class="mt-8 text-xs font-bold text-gray-300 uppercase tracking-widest hover:text-brand-blue transition-colors">Volver por ahora</button>
         </div>
     </div>
 
+    <!-- Lógica de Navegación -->
     <script>
         function switchYear(year) {
-            document.getElementById('y1').classList.toggle('hide', year === 'y2');
-            document.getElementById('y2').classList.toggle('hide', year === 'y1');
-            document.getElementById('btn1').classList.toggle('active', year === 'y1');
-            document.getElementById('btn2').classList.toggle('active', year === 'y2');
+            const y1 = document.getElementById('y1');
+            const y2 = document.getElementById('y2');
+            const btn1 = document.getElementById('btn1');
+            const btn2 = document.getElementById('btn2');
+
+            if (year === 'y1') {
+                y1.classList.remove('hide');
+                y2.classList.add('hide');
+                btn1.classList.add('active');
+                btn1.classList.remove('text-gray-400');
+                btn2.classList.remove('active');
+                btn2.classList.add('text-gray-400');
+            } else {
+                y1.classList.add('hide');
+                y2.classList.remove('hide');
+                btn2.classList.add('active');
+                btn2.classList.remove('text-gray-400');
+                btn1.classList.remove('active');
+                btn1.classList.add('text-gray-400');
+            }
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('modal-registro');
+            if(show) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
     </script>
 </body>
