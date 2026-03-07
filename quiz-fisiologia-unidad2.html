@@ -85,7 +85,7 @@
             <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
                 <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🧬</div>
                 <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Misión Cumplida!</h2>
-                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has completado los 100 retos de Nervio y Músculo.</p>
+                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has completado los <span id="total_qs_res"></span> retos de Nervio y Músculo.</p>
 
                 <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
                     <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Dominio de la Unidad II</p>
@@ -101,1119 +101,120 @@
     </main>
 
     <script>
-        // BANCO DE 100 PREGUNTAS (Unidad II)
-        // Estructura: 'c' es la respuesta correcta (string exacto para validar tras mezcla)
+        // BANCO DE PREGUNTAS (Unidad II)
         const quizData = [
-          {
-                    "q": "1. El mantenimiento de las condiciones casi constantes del medio interno se denomina:",
-                    "a": [
-                              "Homeostasis",
-                              "Hemostasia",
-                              "Metabolismo",
-                              "Apoptosis"
-                    ],
-                    "c": "Homeostasis",
-                    "e": "La homeostasis es el equilibrio dinámico del medio interno esencial para la vida."
-          },
-          {
-                    "q": "2. En fisiología, el término 'Medio Interno' hace referencia directa al:",
-                    "a": [
-                              "Líquido Extracelular (LEC)",
-                              "Líquido Intracelular (LIC)",
-                              "Plasma sanguíneo exclusivamente",
-                              "Citoplasma"
-                    ],
-                    "c": "Líquido Extracelular (LEC)",
-                    "e": "Claude Bernard definió el LEC como el medio en el que viven las células."
-          },
-          {
-                    "q": "3. Un conjunto de órganos con el mismo origen embriológico y tipo de tejido se define como:",
-                    "a": [
-                              "Sistema",
-                              "Aparato",
-                              "Organela",
-                              "Tejido conectivo"
-                    ],
-                    "c": "Sistema",
-                    "e": "Los sistemas comparten origen y tejido, mientras que los aparatos son heterogéneos."
-          },
-          {
-                    "q": "4. El mecanismo de control donde la respuesta del cuerpo va en dirección contraria al estímulo inicial se llama:",
-                    "a": [
-                              "Retroalimentación Negativa",
-                              "Retroalimentación Positiva",
-                              "Ganancia infinita",
-                              "Control isocinético"
-                    ],
-                    "c": "Retroalimentación Negativa",
-                    "e": "La retroalimentación negativa busca estabilizar el sistema volviendo al punto de ajuste."
-          },
-          {
-                    "q": "5. Un ejemplo fisiológico sano y útil de Retroalimentación Positiva es:",
-                    "a": [
-                              "Las contracciones uterinas durante el parto",
-                              "La regulación de la presión arterial",
-                              "El control de la glucosa por insulina",
-                              "El sudor por aumento de temperatura"
-                    ],
-                    "c": "Las contracciones uterinas durante el parto",
-                    "e": "El parto y la coagulación son de los pocos feedbacks positivos fisiológicos."
-          },
-          {
-                    "q": "6. El sistema renal-líquido corporal para el control de la presión a largo plazo es único porque posee:",
-                    "a": [
-                              "Ganancia infinita",
-                              "Ganancia nula",
-                              "Feedback positivo letal",
-                              "Retroalimentación pasiva"
-                    ],
-                    "c": "Ganancia infinita",
-                    "e": "A largo plazo, el riñón ajusta la presión volviéndola exactamente a su valor original."
-          },
-          {
-                    "q": "7. La molécula de ATP almacena su inmensa energía biológica principalmente en:",
-                    "a": [
-                              "Los enlaces entre sus grupos fosfato",
-                              "El anillo de la adenina",
-                              "El azúcar ribosa",
-                              "Los enlaces peptídicos"
-                    ],
-                    "c": "Los enlaces entre sus grupos fosfato",
-                    "e": "Los enlaces anhídrido fosfato son enlaces de alta energía (7.3 kcal/mol)."
-          },
-          {
-                    "q": "8. Según el modelo de Mosaico Fluido, el componente más abundante en masa de la membrana celular es:",
-                    "a": [
-                              "Proteínas (55%)",
-                              "Fosfolípidos (25%)",
-                              "Colesterol (13%)",
-                              "Carbohidratos (3%)"
-                    ],
-                    "c": "Proteínas (55%)",
-                    "e": "Aunque hay más lípidos en número, las proteínas pesan más por su tamaño."
-          },
-          {
-                    "q": "9. La fluidez y estabilidad mecánica de la membrana celular está regulada por:",
-                    "a": [
-                              "Colesterol",
-                              "Glucocálix",
-                              "Acuaporinas",
-                              "Proteínas periféricas"
-                    ],
-                    "c": "Colesterol",
-                    "e": "El colesterol actúa como un amortiguador de fluidez térmica."
-          },
-          {
-                    "q": "10. El Glucocálix, ubicado en la cara externa de la membrana, está formado bioquímicamente por:",
-                    "a": [
-                              "Carbohidratos",
-                              "Ácidos nucleicos",
-                              "Esfingolípidos",
-                              "Colesterol"
-                    ],
-                    "c": "Carbohidratos",
-                    "e": "Son cadenas de azúcares unidas a proteínas (glicoproteínas) o lípidos."
-          },
-          {
-                    "q": "11. La organela responsable de la síntesis de lípidos y detoxificación es el:",
-                    "a": [
-                              "Retículo Endoplásmico Liso",
-                              "Retículo Endoplásmico Rugoso",
-                              "Aparato de Golgi",
-                              "Lisosoma"
-                    ],
-                    "c": "Retículo Endoplásmico Liso",
-                    "e": "El REL es clave en hígado para metabolizar fármacos y sintetizar esteroides."
-          },
-          {
-                    "q": "12. Las enzimas digestivas hidrolasas ácidas se encuentran dentro del:",
-                    "a": [
-                              "Lisosoma",
-                              "Peroxisoma",
-                              "Núcleo",
-                              "Mitocondria"
-                    ],
-                    "c": "Lisosoma",
-                    "e": "Los lisosomas son el sistema digestivo de la célula."
-          },
-          {
-                    "q": "13. La enzima Catalasa, encargada de degradar el peróxido de hidrógeno, reside en el:",
-                    "a": [
-                              "Peroxisoma",
-                              "Lisosoma",
-                              "Aparato de Golgi",
-                              "Citoplasma libre"
-                    ],
-                    "c": "Peroxisoma",
-                    "e": "Los peroxisomas oxidan sustancias potencialmente tóxicas."
-          },
-          {
-                    "q": "14. El organelo encargado de producir hasta el 95% del ATP celular es:",
-                    "a": [
-                              "Mitocondria",
-                              "Ribosoma",
-                              "Nucleolo",
-                              "Retículo Liso"
-                    ],
-                    "c": "Mitocondria",
-                    "e": "Las mitocondrias son las centrales energéticas mediante fosforilación oxidativa."
-          },
-          {
-                    "q": "15. El citoesqueleto permite la locomoción ameboide mediante filamentos de:",
-                    "a": [
-                              "Actina",
-                              "Tubulina",
-                              "Miosina gruesa",
-                              "Clatrina"
-                    ],
-                    "c": "Actina",
-                    "e": "La polimerización de actina empuja la membrana formando seudópodos."
-          },
-          {
-                    "q": "16. El mecanismo de Endocitosis Mediada por Receptor requiere de la proteína:",
-                    "a": [
-                              "Clatrina",
-                              "Actina",
-                              "Colágeno",
-                              "Albúmina"
-                    ],
-                    "c": "Clatrina",
-                    "e": "La clatrina forma una red que invagina la membrana en hoyuelos revestidos."
-          },
-          {
-                    "q": "17. La Fagocitosis requiere energía (ATP) y la acción contráctil de:",
-                    "a": [
-                              "Actina y Miosina",
-                              "Clatrina y Tubulina",
-                              "Kinesina y Dineína",
-                              "Titina y Distrofina"
-                    ],
-                    "c": "Actina y Miosina",
-                    "e": "El movimiento de la membrana para rodear bacterias depende de actomiosina."
-          },
-          {
-                    "q": "18. Para que ocurra la Exocitosis, es imprescindible el ingreso al citosol de:",
-                    "a": [
-                              "Calcio (Ca++)",
-                              "Sodio (Na+)",
-                              "Cloruro (Cl-)",
-                              "Potasio (K+)"
-                    ],
-                    "c": "Calcio (Ca++)",
-                    "e": "El calcio dispara la fusión de la vesícula con la membrana plasmática."
-          },
-          {
-                    "q": "19. El Agua Corporal Total (ACT) en un hombre adulto sano representa el:",
-                    "a": [
-                              "60% del peso corporal",
-                              "50% del peso corporal",
-                              "75% del peso corporal",
-                              "40% del peso corporal"
-                    ],
-                    "c": "60% del peso corporal",
-                    "e": "Regla del 60-40-20: ACT, LIC y LEC respectivamente."
-          },
-          {
-                    "q": "20. Las mujeres tienen menor porcentaje de agua que los hombres debido a:",
-                    "a": [
-                              "Tejido Adiposo (grasa)",
-                              "Tejido Muscular liso",
-                              "Hueso cortical",
-                              "Plasma sanguíneo"
-                    ],
-                    "c": "Tejido Adiposo (grasa)",
-                    "e": "La grasa es hidrofóbica; a más grasa, menos porcentaje de agua total."
-          },
-          {
-                    "q": "21. CÁLCULO: ¿Agua Corporal Total de un hombre de 80 kg?",
-                    "a": [
-                              "48 Litros",
-                              "40 Litros",
-                              "32 Litros",
-                              "16 Litros"
-                    ],
-                    "c": "48 Litros",
-                    "e": "80 kg x 0.60 = 48 litros."
-          },
-          {
-                    "q": "22. CÁLCULO: ¿Agua Corporal Total de una mujer de 60 kg?",
-                    "a": [
-                              "30 Litros",
-                              "36 Litros",
-                              "24 Litros",
-                              "12 Litros"
-                    ],
-                    "c": "30 Litros",
-                    "e": "60 kg x 0.50 = 30 litros."
-          },
-          {
-                    "q": "23. El Líquido Intracelular (LIC) representa qué porcentaje del peso corporal:",
-                    "a": [
-                              "40%",
-                              "20%",
-                              "60%",
-                              "15%"
-                    ],
-                    "c": "40%",
-                    "e": "Dos tercios del agua total están dentro de las células."
-          },
-          {
-                    "q": "24. CÁLCULO: En un paciente de 70 kg, el LEC tiene un volumen de:",
-                    "a": [
-                              "14 Litros",
-                              "28 Litros",
-                              "42 Litros",
-                              "3.5 Litros"
-                    ],
-                    "c": "14 Litros",
-                    "e": "70 kg x 0.20 = 14 litros."
-          },
-          {
-                    "q": "25. El plasma sanguíneo representa aproximadamente el:",
-                    "a": [
-                              "5% del peso corporal",
-                              "15% del peso corporal",
-                              "20% del peso corporal",
-                              "55% del peso corporal"
-                    ],
-                    "c": "5% del peso corporal",
-                    "e": "El plasma es una cuarta parte del Líquido Extracelular."
-          },
-          {
-                    "q": "26. CÁLCULO RÁPIDO: El plasma de un hombre de 100 kg equivale a:",
-                    "a": [
-                              "5 Litros",
-                              "15 Litros",
-                              "20 Litros",
-                              "50 Litros"
-                    ],
-                    "c": "5 Litros",
-                    "e": "100 kg x 0.05 = 5 litros."
-          },
-          {
-                    "q": "27. El líquido que baña las células (intersticial) representa el:",
-                    "a": [
-                              "15%",
-                              "5%",
-                              "20%",
-                              "40%"
-                    ],
-                    "c": "15%",
-                    "e": "Es la mayor parte del LEC (3/4 partes)."
-          },
-          {
-                    "q": "28. El líquido cefalorraquídeo y sinovial pertenecen al:",
-                    "a": [
-                              "Líquido Transcelular",
-                              "Líquido Intracelular",
-                              "Plasma Intravascular",
-                              "Líquido Intersticial"
-                    ],
-                    "c": "Líquido Transcelular",
-                    "e": "Son compartimientos especializados rodeados por epitelio."
-          },
-          {
-                    "q": "29. El catión intracelular más abundante es el:",
-                    "a": [
-                              "Potasio (K+)",
-                              "Sodio (Na+)",
-                              "Calcio (Ca++)",
-                              "Magnesio (Mg++)"
-                    ],
-                    "c": "Potasio (K+)",
-                    "e": "La concentración interna de K+ es de ~140 mEq/L."
-          },
-          {
-                    "q": "30. El catión extracelular más abundante es el:",
-                    "a": [
-                              "Sodio (Na+)",
-                              "Potasio (K+)",
-                              "Calcio (Ca++)",
-                              "Cloruro (Cl-)"
-                    ],
-                    "c": "Sodio (Na+)",
-                    "e": "El Na+ es el principal determinante de la osmolaridad del LEC."
-          },
-          {
-                    "q": "31. La fuerza necesaria para detener la difusión neta de agua se llama:",
-                    "a": [
-                              "Presión Osmótica",
-                              "Presión Hidrostática",
-                              "Presión Oncótica",
-                              "Osmolaridad Efectiva"
-                    ],
-                    "c": "Presión Osmótica",
-                    "e": "Depende del número de partículas por unidad de volumen."
-          },
-          {
-                    "q": "32. FÓRMULA: La Osmolaridad Efectiva o Tonicidad se calcula con:",
-                    "a": [
-                              "2[Na] + (Glucosa/18)",
-                              "2[Na] + (BUN/2.8)",
-                              "[K] + (Glucosa/18)",
-                              "2[Na] + (Glucosa/18) + (BUN/2.8)"
-                    ],
-                    "c": "2[Na] + (Glucosa/18)",
-                    "e": "El BUN se omite porque cruza libremente la membrana y no genera gradiente."
-          },
-          {
-                    "q": "33. CÁLCULO: Na 150 mEq/L y Glucosa 90 mg/dL. ¿Osmolaridad Efectiva?",
-                    "a": [
-                              "305 mOsm/L",
-                              "300 mOsm/L",
-                              "240 mOsm/L",
-                              "390 mOsm/L"
-                    ],
-                    "c": "305 mOsm/L",
-                    "e": "(2 * 150) + (90 / 18) = 300 + 5 = 305."
-          },
-          {
-                    "q": "34. El valor normal de la osmolaridad plasmática humana es:",
-                    "a": [
-                              "275 y 290 mOsm/L",
-                              "135 y 145 mOsm/L",
-                              "300 y 350 mOsm/L",
-                              "100 y 150 mOsm/L"
-                    ],
-                    "c": "275 y 290 mOsm/L",
-                    "e": "Cualquier valor fuera de este rango dispara mecanismos de ADH y sed."
-          },
-          {
-                    "q": "35. En solución de NaCl al 0.9%, ¿qué le pasa a los glóbulos rojos?",
-                    "a": [
-                              "No cambian de volumen.",
-                              "Se hinchan (Edema).",
-                              "Se arrugan (Crenación).",
-                              "Hemólisis."
-                    ],
-                    "c": "No cambian de volumen.",
-                    "e": "Es una solución isotónica respecto al plasma."
-          },
-          {
-                    "q": "36. En solución Hipertónica severa (NaCl 3%), el agua intracelular:",
-                    "a": [
-                              "Saldrá de la célula (crenación).",
-                              "Entrará a la célula (edema).",
-                              "Se mantendrá en equilibrio.",
-                              "Destruirá las acuaporinas."
-                    ],
-                    "c": "Saldrá de la célula (crenación).",
-                    "e": "El agua sigue al soluto para intentar equilibrar las concentraciones."
-          },
-          {
-                    "q": "37. La corrección rápida de hiponatremia causa:",
-                    "a": [
-                              "Mielinólisis Pontina Central",
-                              "Edema Cerebral",
-                              "Esclerosis Múltiple",
-                              "Meningitis"
-                    ],
-                    "c": "Mielinólisis Pontina Central",
-                    "e": "Es una desmielinización osmótica grave por desecación glial."
-          },
-          {
-                    "q": "38. El paso de O2 y CO2 a través de la membrana ocurre por:",
-                    "a": [
-                              "Difusión Simple",
-                              "Difusión Facilitada",
-                              "Transporte Activo Primario",
-                              "Cotransporte"
-                    ],
-                    "c": "Difusión Simple",
-                    "e": "Los gases son liposolubles y cruzan directamente la bicapa."
-          },
-          {
-                    "q": "39. La característica que diferencia la Difusión Facilitada de la Simple es:",
-                    "a": [
-                              "Se satura (Vmax).",
-                              "Gasta ATP.",
-                              "Va contra gradiente.",
-                              "Usa clatrina."
-                    ],
-                    "c": "Se satura (Vmax).",
-                    "e": "Depende de un transportador limitado; cuando todos se ocupan, la velocidad no sube."
-          },
-          {
-                    "q": "40. La entrada de Glucosa por GLUT se realiza por:",
-                    "a": [
-                              "Difusión Facilitada",
-                              "Difusión Simple",
-                              "Transporte Activo Primario",
-                              "Simporte"
-                    ],
-                    "c": "Difusión Facilitada",
-                    "e": "GLUT es un transportador pasivo que no consume energía."
-          },
-          {
-                    "q": "41. Canales que abren al llegar al umbral (-65 mV):",
-                    "a": [
-                              "Voltaje dependientes",
-                              "Ligando dependientes",
-                              "Canales de Fuga",
-                              "Receptores metabotrópicos"
-                    ],
-                    "c": "Voltaje dependientes",
-                    "e": "Son la base de la fase de despolarización del potencial de acción."
-          },
-          {
-                    "q": "42. El receptor nicotínico de la placa motora es un canal:",
-                    "a": [
-                              "Ligando dependiente",
-                              "Voltaje dependiente",
-                              "De Fuga",
-                              "Bomba ATPasa"
-                    ],
-                    "c": "Ligando dependiente",
-                    "e": "Se abre al unirse la Acetilcolina (ligando)."
-          },
-          {
-                    "q": "43. La Bomba Na+/K+ ATPasa es un mecanismo de:",
-                    "a": [
-                              "Transporte Activo Primario",
-                              "Transporte Activo Secundario",
-                              "Difusión Facilitada",
-                              "Cotransporte"
-                    ],
-                    "c": "Transporte Activo Primario",
-                    "e": "Utiliza directamente la energía de la hidrólisis del ATP."
-          },
-          {
-                    "q": "44. La estequiometría de la bomba Na+/K+ es:",
-                    "a": [
-                              "Saca 3 Na+ y mete 2 K+",
-                              "Saca 2 Na+ y mete 3 K+",
-                              "Saca 3 K+ y mete 2 Na+",
-                              "Mueve 1 Na+ por 1 K+"
-                    ],
-                    "c": "Saca 3 Na+ y mete 2 K+",
-                    "e": "Genera negatividad interna al sacar más cargas positivas de las que mete."
-          },
-          {
-                    "q": "45. La subunidad de la Bomba Na+/K+ con actividad enzimática es:",
-                    "a": [
-                              "Alfa",
-                              "Beta",
-                              "Gamma",
-                              "Sigma"
-                    ],
-                    "c": "Alfa",
-                    "e": "La subunidad Alfa es el motor real del transporte."
-          },
-          {
-                    "q": "46. 'Electrógena' aplicado a la Bomba Na/K significa:",
-                    "a": [
-                              "Aporta -4 mV al interior.",
-                              "Produce electrones.",
-                              "Produce chispas.",
-                              "Bloquea voltajes."
-                    ],
-                    "c": "Aporta -4 mV al interior.",
-                    "e": "Contribuye directamente a la negatividad del potencial de reposo."
-          },
-          {
-                    "q": "47. Veneno que inhibe la bomba Na+/K+ ATPasa:",
-                    "a": [
-                              "Ouabaína",
-                              "Tetrodotoxina",
-                              "Curare",
-                              "Tetraetilamonio"
-                    ],
-                    "c": "Ouabaína",
-                    "e": "Es un glucósido cardíaco potente (como la Digital)."
-          },
-          {
-                    "q": "48. La Insulina es tratamiento para Hiperkalemia porque:",
-                    "a": [
-                              "Estimula la bomba Na+/K+.",
-                              "Inhibe canales de fuga.",
-                              "Destruye el potasio.",
-                              "Disuelve la membrana."
-                    ],
-                    "c": "Estimula la bomba Na+/K+.",
-                    "e": "Mueve el K+ del plasma hacia el interior de las células rápidamente."
-          },
-          {
-                    "q": "49. El simporte Sodio-Glucosa intestinal es:",
-                    "a": [
-                              "Transporte Activo Secundario",
-                              "Transporte Activo Primario",
-                              "Difusión Facilitada",
-                              "Pinocitosis"
-                    ],
-                    "c": "Transporte Activo Secundario",
-                    "e": "Usa el gradiente de Na+ creado previamente por la bomba ATPasa."
-          },
-          {
-                    "q": "50. El intercambiador Sodio-Calcio cardíaco es:",
-                    "a": [
-                              "Contratransporte (Antiporte)",
-                              "Cotransporte (Simporte)",
-                              "Exocitosis",
-                              "Difusión Simple"
-                    ],
-                    "c": "Contratransporte (Antiporte)",
-                    "e": "Mueve Na+ hacia adentro y Ca++ hacia afuera."
-          },
-          {
-                    "q": "51. La Ecuación de Nernst calcula el potencial que:",
-                    "a": [
-                              "Detiene la difusión neta de 1 ión.",
-                              "Mide la conducción.",
-                              "Establece el umbral.",
-                              "Estima el ATP."
-                    ],
-                    "c": "Detiene la difusión neta de 1 ión.",
-                    "e": "Es el potencial de equilibrio electroquímico para un ion específico."
-          },
-          {
-                    "q": "52. Valor del Potencial de Nernst para el Sodio (Na+):",
-                    "a": [
-                              "+61 mV",
-                              "-94 mV",
-                              "-90 mV",
-                              "+35 mV"
-                    ],
-                    "c": "+61 mV",
-                    "e": "Si el Na+ fuera el único ion permeable, el reposo sería positivo."
-          },
-          {
-                    "q": "53. La Ecuación de Goldman incorpora en su cálculo:",
-                    "a": [
-                              "Permeabilidad relativa de múltiples iones.",
-                              "Vaina de mielina.",
-                              "Gasto de ATP.",
-                              "Diámetro del axón."
-                    ],
-                    "c": "Permeabilidad relativa de múltiples iones.",
-                    "e": "Es el cálculo más preciso para el potencial de membrana real."
-          },
-          {
-                    "q": "54. En Goldman, el Cloruro se coloca invertido por:",
-                    "a": [
-                              "Su valencia negativa (anión).",
-                              "Su peso molecular.",
-                              "Su permeabilidad.",
-                              "Estar ligado a proteínas."
-                    ],
-                    "c": "Su valencia negativa (anión).",
-                    "e": "Es un ajuste matemático por la carga opuesta a los cationes."
-          },
-          {
-                    "q": "55. Reposo normal de una fibra nerviosa mielínica:",
-                    "a": [
-                              "-90 mV",
-                              "-65 mV",
-                              "0 mV",
-                              "+35 mV"
-                    ],
-                    "c": "-90 mV",
-                    "e": "Es el estado basal de polarización."
-          },
-          {
-                    "q": "56. El reposo (-90 mV) se parece al Nernst del Potasio (-94 mV) por:",
-                    "a": [
-                              "Alta permeabilidad al Potasio.",
-                              "Bomba inyecta potasio.",
-                              "No hay Sodio fuera.",
-                              "Potasio es negativo."
-                    ],
-                    "c": "Alta permeabilidad al Potasio.",
-                    "e": "El reposo es una 'dictadura' del ion más permeable."
-          },
-          {
-                    "q": "57. Punto de no retorno del potencial de acción:",
-                    "a": [
-                              "Umbral de excitación (-65 mV)",
-                              "Período refractario",
-                              "Meseta ventricular",
-                              "Potencial postsináptico"
-                    ],
-                    "c": "Umbral de excitación (-65 mV)",
-                    "e": "Aquí se activan los canales de Na+ de forma explosiva."
-          },
-          {
-                    "q": "58. La fase de Despolarización se genera por:",
-                    "a": [
-                              "Entrada de Sodio.",
-                              "Salida de Potasio.",
-                              "Cierre de Cloro.",
-                              "Bomba Na/K."
-                    ],
-                    "c": "Entrada de Sodio.",
-                    "e": "El interior se vuelve positivo temporalmente."
-          },
-          {
-                    "q": "59. La fase de Repolarización depende de:",
-                    "a": [
-                              "Salida de Potasio.",
-                              "Entrada de Cloruro.",
-                              "Bomba de Sodio.",
-                              "Cierre de poros."
-                    ],
-                    "c": "Salida de Potasio.",
-                    "e": "La salida de cargas positivas devuelve la negatividad interna."
-          },
-          {
-                    "q": "60. En el Período Refractario Absoluto no hay disparo porque:",
-                    "a": [
-                              "Canales de Na+ bloqueados e inactivos.",
-                              "Se agotó el ATP.",
-                              "Mielina caliente.",
-                              "Canales de Calcio compiten."
-                    ],
-                    "c": "Canales de Na+ bloqueados e inactivos.",
-                    "e": "Las compuertas de inactivación de los canales de Na+ no pueden abrirse."
-          },
-          {
-                    "q": "61. El Periodo Refractario Relativo requiere:",
-                    "a": [
-                              "Estímulo mucho más fuerte.",
-                              "Bomba de Sodio.",
-                              "50% de membrana.",
-                              "Imposible disparar."
-                    ],
-                    "c": "Estímulo mucho más fuerte.",
-                    "e": "Debido a la hiperpolarización residual por K+."
-          },
-          {
-                    "q": "62. La Tetrodotoxina (TTX) es letal porque:",
-                    "a": [
-                              "Bloquea canales de Sodio.",
-                              "Bloquea canales de Potasio.",
-                              "Destruye receptores ACh.",
-                              "Inhibe Bomba Na/K."
-                    ],
-                    "c": "Bloquea canales de Sodio.",
-                    "e": "Impide el inicio del potencial de acción, causando parálisis."
-          },
-          {
-                    "q": "63. Toxina de la Marea Roja con efecto igual a la TTX:",
-                    "a": [
-                              "Saxitoxina",
-                              "Toxina Botulínica",
-                              "Neostigmina",
-                              "Muscarina"
-                    ],
-                    "c": "Saxitoxina",
-                    "e": "Producida por dinoflagelados."
-          },
-          {
-                    "q": "64. Blanco diana de la Lidocaína:",
-                    "a": [
-                              "Canales de Sodio voltaje-dep.",
-                              "Receptores opioides.",
-                              "Acuaporinas.",
-                              "Canales de calcio."
-                    ],
-                    "c": "Canales de Sodio voltaje-dep.",
-                    "e": "Bloquea la conducción del dolor en el nervio periférico."
-          },
-          {
-                    "q": "65. Efecto del TEA en un axón:",
-                    "a": [
-                              "Meseta prolongada (fallo repolarización).",
-                              "Línea basal plana.",
-                              "Descargas tetánicas.",
-                              "Hiperpolarización extrema."
-                    ],
-                    "c": "Meseta prolongada (fallo repolarización).",
-                    "e": "Al bloquear K+, la célula no puede volver al reposo rápidamente."
-          },
-          {
-                    "q": "66. Vaina de Mielina periférica formada por:",
-                    "a": [
-                              "Células de Schwann",
-                              "Astrocitos",
-                              "Microglía",
-                              "Ependimocitos"
-                    ],
-                    "c": "Células de Schwann",
-                    "e": "Cada célula de Schwann envuelve un solo segmento de axón."
-          },
-          {
-                    "q": "67. 'Conducción Saltatoria' se refiere a:",
-                    "a": [
-                              "Brinco de nódulo a nódulo.",
-                              "Paso de calcio.",
-                              "Brinco de neurotransmisor.",
-                              "Movimiento ameboide."
-                    ],
-                    "c": "Brinco de nódulo a nódulo.",
-                    "e": "Aumenta drásticamente la velocidad de conducción."
-          },
-          {
-                    "q": "68. La hipocalcemia causa irritabilidad porque el Calcio:",
-                    "a": [
-                              "Estabiliza canales de Sodio.",
-                              "Entra a la miosina.",
-                              "Disuelve mielina.",
-                              "Cierra poros de fuga."
-                    ],
-                    "c": "Estabiliza canales de Sodio.",
-                    "e": "Bajos niveles de Ca++ hacen que el canal de Na+ se abra con estímulos mínimos."
-          },
-          {
-                    "q": "69. Espasmo carpopedal por hipocalcemia:",
-                    "a": [
-                              "Signo de Trousseau",
-                              "Signo de Chvostek",
-                              "Signo de Gowers",
-                              "Efecto de Treppe"
-                    ],
-                    "c": "Signo de Trousseau",
-                    "e": "Indica hiperexcitabilidad neuromuscular."
-          },
-          {
-                    "q": "70. ¿Qué receptor del Retículo Sarcoplásmico libera Calcio al ser activado por el sensor de voltaje T (DHP)?",
-                    "a": [
-                              "Receptor de Ryanodina (RyR1)",
-                              "Calsecuestrina",
-                              "Bomba SERCA",
-                              "Troponina I"
-                    ],
-                    "c": "Receptor de Ryanodina (RyR1)",
-                    "e": "Es el paso crítico del acoplamiento excitación-contracción en el músculo."
-          },
-          {
-                    "q": "71. El RER se encarga de:",
-                    "a": [
-                              "Síntesis de proteínas.",
-                              "Síntesis de esteroides.",
-                              "Detoxificación.",
-                              "Digestión vesicular."
-                    ],
-                    "c": "Síntesis de proteínas.",
-                    "e": "Los ribosomas adheridos le dan el aspecto rugoso."
-          },
-          {
-                    "q": "72. Peculiaridad eléctrica del glucocálix:",
-                    "a": [
-                              "Carga externa negativa.",
-                              "Potencial de espiga.",
-                              "Aislante de Ranvier.",
-                              "Absorbe luz UV."
-                    ],
-                    "c": "Carga externa negativa.",
-                    "e": "Ayuda a repeler otras células y moléculas negativas."
-          },
-          {
-                    "q": "73. CÁLCULO: En hombre de 90 kg, el LIC es de:",
-                    "a": [
-                              "36 Litros",
-                              "54 Litros",
-                              "18 Litros",
-                              "4.5 Litros"
-                    ],
-                    "c": "36 Litros",
-                    "e": "90 kg x 0.40 = 36 litros."
-          },
-          {
-                    "q": "74. Líquido en compartimientos cerrados (LCR, sinovial):",
-                    "a": [
-                              "Líquido Transcelular",
-                              "Líquido Extravascular Libre",
-                              "Sustancia Fundamental",
-                              "Plasma Ultrafiltrado"
-                    ],
-                    "c": "Líquido Transcelular",
-                    "e": "Es un componente menor pero funcional del LEC."
-          },
-          {
-                    "q": "75. Osmolaridad de NaCl al 0.9%:",
-                    "a": [
-                              "308 mOsm/L",
-                              "150 mOsm/L",
-                              "400 mOsm/L",
-                              "0.9 mOsm/L"
-                    ],
-                    "c": "308 mOsm/L",
-                    "e": "Es ligeramente superior a la plasmática pero se considera isotónica."
-          },
-          {
-                    "q": "76. La Mielinólisis Pontina se previene:",
-                    "a": [
-                              "Evitando corregir Na+ rápido.",
-                              "Infundiendo agua pura.",
-                              "Administrando corticoides.",
-                              "Congelando al paciente."
-                    ],
-                    "c": "Evitando corregir Na+ rápido.",
-                    "e": "La corrección debe ser lenta (máximo 8-10 mEq/L en 24h)."
-          },
-          {
-                    "q": "77. Masa de colesterol en la membrana:",
-                    "a": [
-                              "13%",
-                              "25%",
-                              "55%",
-                              "3%"
-                    ],
-                    "c": "13%",
-                    "e": "Es el tercer componente lipídico en importancia de masa."
-          },
-          {
-                    "q": "78. Organelo para metabolismo de lípidos y bilis:",
-                    "a": [
-                              "Retículo Endoplásmico Liso",
-                              "Microtúbulos",
-                              "Aparato de Golgi",
-                              "Mitocondria"
-                    ],
-                    "c": "Retículo Endoplásmico Liso",
-                    "e": "Especialmente desarrollado en el hígado."
-          },
-          {
-                    "q": "79. Soporte interno para locomoción ameboide:",
-                    "a": [
-                              "Microfilamentos de Actina",
-                              "Dímeros de Tubulina",
-                              "Miosinas estriadas",
-                              "Anillos de Clatrina"
-                    ],
-                    "c": "Microfilamentos de Actina",
-                    "e": "La actina es dinámica y permite el cambio de forma."
-          },
-          {
-                    "q": "80. El Transporte Activo Secundario requiere:",
-                    "a": [
-                              "Un colosal gradiente iónico.",
-                              "Lisosomas.",
-                              "Potencial de acción.",
-                              "Miosinas."
-                    ],
-                    "c": "Un colosal gradiente iónico.",
-                    "e": "Aprovecha la energía almacenada en el gradiente de Na+."
-          },
-          {
-                    "q": "81. La Permeabilidad del Cloro (0.45) indica que:",
-                    "a": [
-                              "Cruza con facilidad relativa.",
-                              "Es responsable del -90 mV.",
-                              "Detiene la bomba Na/K.",
-                              "Es más ligero que el Sodio."
-                    ],
-                    "c": "Cruza con facilidad relativa.",
-                    "e": "Su difusión pasiva ayuda a estabilizar el potencial."
-          },
-          {
-                    "q": "82. Fisiología del 'Todo o Nada':",
-                    "a": [
-                              "No hay espiga si no se llega al umbral.",
-                              "Potencial de baja calidad.",
-                              "Inversión química.",
-                              "Muerte irreversible."
-                    ],
-                    "c": "No hay espiga si no se llega al umbral.",
-                    "e": "O ocurre el potencial completo, o no ocurre nada."
-          },
-          {
-                    "q": "83. Uso de Insulina en Hiperpotasemia (9.5 mEq/L):",
-                    "a": [
-                              "Esconde el K+ en citoplasma.",
-                              "Cristaliza iones.",
-                              "Cierra canales de fuga.",
-                              "Secuestra metal."
-                    ],
-                    "c": "Esconde el K+ en citoplasma.",
-                    "e": "Es una medida salvavidas para evitar el paro cardíaco."
-          },
-          {
-                    "q": "84. Perder 20% de peso a expensas de LIC significa:",
-                    "a": [
-                              "Muerte a nivel microcelular.",
-                              "Desangrado total.",
-                              "Drenaje transcelular.",
-                              "Agotamiento intersticial."
-                    ],
-                    "c": "Muerte a nivel microcelular.",
-                    "e": "Representa una deshidratación celular extrema y letal."
-          },
-          {
-                    "q": "85. Gases transitan por membrana mediante:",
-                    "a": [
-                              "Difusión Simple.",
-                              "Vmax saturable.",
-                              "Motores moleculares.",
-                              "Exocitosis."
-                    ],
-                    "c": "Difusión Simple.",
-                    "e": "Los gases no tienen carga y son pequeños/liposolubles."
-          },
-          {
-                    "q": "86. Mujer de 50 kg. ¿Volumen de Plasma?",
-                    "a": [
-                              "2.5 Litros",
-                              "25 Litros",
-                              "10 Litros",
-                              "20 Litros"
-                    ],
-                    "c": "2.5 Litros",
-                    "e": "50 kg x 0.05 = 2.5 L."
-          },
-          {
-                    "q": "87. Hombre de 100 kg. ¿Líquido Intersticial?",
-                    "a": [
-                              "15 Litros",
-                              "20 Litros",
-                              "40 Litros",
-                              "5 Litros"
-                    ],
-                    "c": "15 Litros",
-                    "e": "100 kg x 0.15 = 15 L."
-          },
-          {
-                    "q": "88. RER debe su nombre a:",
-                    "a": [
-                              "Presencia de ribosomas.",
-                              "Falta de fluidez.",
-                              "Exceso de colesterol.",
-                              "Vesículas oxidadas."
-                    ],
-                    "c": "Presencia de ribosomas.",
-                    "e": "Fabrica proteínas de exportación."
-          },
-          {
-                    "q": "89. Función del aparato de Golgi:",
-                    "a": [
-                              "Procesamiento y secreción.",
-                              "Destrucción de desechos.",
-                              "ATP.",
-                              "Almacén de calcio."
-                    ],
-                    "c": "Procesamiento y secreción.",
-                    "e": "Es el centro de logística y despacho de la célula."
-          },
-          {
-                    "q": "90. Organela con enzimas hidrolíticas:",
-                    "a": [
-                              "Lisosoma",
-                              "Peroxisoma",
-                              "Ribosoma",
-                              "Nucléolo"
-                    ],
-                    "c": "Lisosoma",
-                    "e": "Digerir lo que la célula fagocita."
-          },
-          {
-                    "q": "91. Hombre de 70 kg. ¿Volumen de LIC?",
-                    "a": [
-                              "28 Litros",
-                              "14 Litros",
-                              "42 Litros",
-                              "3.5 Litros"
-                    ],
-                    "c": "28 Litros",
-                    "e": "70 kg x 0.40 = 28 L."
-          },
-          {
-                    "q": "92. El 13% de masa de membrana es:",
-                    "a": [
-                              "Colesterol",
-                              "Fosfolípidos",
-                              "Proteínas",
-                              "Carbohidratos"
-                    ],
-                    "c": "Colesterol",
-                    "e": "Proporciona estabilidad mecánica."
-          },
-          {
-                    "q": "93. Ion que arrastra glucosa en el simporte:",
-                    "a": [
-                              "Sodio",
-                              "Potasio",
-                              "Cloruro",
-                              "Calcio"
-                    ],
-                    "c": "Sodio",
-                    "e": "El Na+ es el motor impulsor."
-          },
-          {
-                    "q": "94. Organela heredada por vía materna:",
-                    "a": [
-                              "ADN Mitocondrial.",
-                              "Cromosoma Y.",
-                              "Gránulos de golgi.",
-                              "Redes de actina."
-                    ],
-                    "c": "ADN Mitocondrial.",
-                    "e": "Las mitocondrias del espermatozoide se destruyen tras la fecundación."
-          },
-          {
-                    "q": "95. Pinocitosis se diferencia de fagocitosis por:",
-                    "a": [
-                              "Ingestión de líquidos/micromoléculas.",
-                              "Sólidos/bacterias.",
-                              "Gases.",
-                              "Acuaporinas."
-                    ],
-                    "c": "Ingestión de líquidos/micromoléculas.",
-                    "e": "Es 'beber' celular."
-          },
-          {
-                    "q": "96. Ayuda de transportador, no gasta energía, saturable:",
-                    "a": [
-                              "Difusión Facilitada.",
-                              "Difusión Simple.",
-                              "Transporte Activo Primario.",
-                              "Endocitosis."
-                    ],
-                    "c": "Difusión Facilitada.",
-                    "e": "Ejemplo: Entrada de glucosa por GLUT."
-          },
-          {
-                    "q": "97. CÁLCULO: ¿LIC de anciano de 60 kg?",
-                    "a": [
-                              "24 Litros",
-                              "30 Litros",
-                              "12 Litros",
-                              "3 Litros"
-                    ],
-                    "c": "24 Litros",
-                    "e": "60 kg x 0.40 = 24 L."
-          },
-          {
-                    "q": "98. Solución que hincha a la célula:",
-                    "a": [
-                              "Hipotónica",
-                              "Hipertónica",
-                              "Isotónica",
-                              "Sustrato de glucógeno"
-                    ],
-                    "c": "Hipotónica",
-                    "e": "Provoca entrada de agua por ósmosis."
-          },
-          {
-                    "q": "99. El Sodio rige la osmolaridad del LEC por su:",
-                    "a": [
-                              "Poder osmótico (Tonicidad).",
-                              "Hidrólisis lítica.",
-                              "Bomba de Calcio.",
-                              "Exocitosis clatrínica."
-                    ],
-                    "c": "Poder osmótico (Tonicidad).",
-                    "e": "Es el soluto 'osmoticamente activo' más importante afuera."
-          },
-          {
-                    "q": "100. Ganancia de un sistema de control:",
-                    "a": [
-                              "Corrección / Error Residual",
-                              "Volumen LEC",
-                              "Presión Arterial Media",
-                              "Umbral de Nernst"
-                    ],
-                    "c": "Corrección / Error Residual",
-                    "e": "Mide qué tan eficiente es el cuerpo para volver a la normalidad."
-          }
-];
+            { q: "1. El potencial de membrana en reposo de una fibra nerviosa mielinizada grande es aproximadamente de:", a: ["-90 mV", "-65 mV", "+35 mV", "-55 mV"], c: 0, e: "Está determinado por la alta permeabilidad al Potasio en reposo." },
+            { q: "2. La fase de despolarización rápida del potencial de acción nervioso se debe a la apertura de los canales de:", a: ["Sodio voltaje-dependientes", "Potasio voltaje-dependientes", "Calcio tipo L", "Cloro activados por ligando"], c: 0, e: "La entrada masiva de cargas positivas invierte la polaridad." },
+            { q: "3. La repolarización de la membrana nerviosa es causada directamente por:", a: ["La salida pasiva de Potasio ($K^+$)", "La entrada de Cloruro ($Cl^-$)", "La acción de la bomba Na/K ATPasa", "El cierre de canales de Calcio"], c: 0 },
+            { q: "4. El valor del voltaje en el cual se desata irremediablemente un potencial de acción se denomina:", a: ["Umbral de excitación (-65 mV)", "Potencial de Nernst", "Sobretiro (+35 mV)", "Potencial postsináptico"], c: 0 },
+            { q: "5. Durante el Periodo Refractario Absoluto, la membrana es inexcitable debido a:", a: ["La inactivación física de las compuertas de Sodio", "El agotamiento total del ATP", "La hiperpolarización extrema", "La saturación de los receptores nicotínicos"], c: 0 },
+            { q: "6. En el Periodo Refractario Relativo se requiere un estímulo mayor para disparar porque la membrana está:", a: ["Hiperpolarizada", "Desmielinizada", "Carente de calcio", "Completamente inactiva"], c: 0 },
+            { q: "7. Las células encargadas de producir la vaina de mielina en el Sistema Nervioso Periférico (SNP) son:", a: ["Células de Schwann", "Oligodendrocitos", "Astrocitos", "Microglía"], c: 0 },
+            { q: "8. Las células encargadas de producir la mielina en el Sistema Nervioso Central (SNC) son:", a: ["Oligodendrocitos", "Células de Schwann", "Ependimocitos", "Astrocitos"], c: 0 },
+            { q: "9. Los espacios desprovistos de mielina a lo largo del axón, donde se concentran los canales iónicos, se denominan:", a: ["Nódulos de Ranvier", "Hendiduras sinápticas", "Conos axónicos", "Discos intercalares"], c: 0 },
+            { q: "10. El mecanismo por el cual el potencial de acción viaja mucho más rápido en fibras mielínicas al \"brincar\" se llama:", a: ["Conducción Saltatoria", "Conducción Continua", "Sumación Espacial", "Corriente Electrotónica"], c: 0 },
+            { q: "11. La Tetrodotoxina (TTX) es letal porque:", a: ["Bloquea los canales rápidos de Sodio", "Bloquea los canales de Potasio", "Inhibe la bomba Na/K", "Inhibe la Acetilcolinesterasa"], c: 0 },
+            { q: "12. Si a una fibra nerviosa se le aplica Tetraetilamonio (TEA), la gráfica del potencial mostrará:", a: ["Una meseta prolongada por fallo en la repolarización", "Línea plana en el reposo (-90 mV)", "Un pico de +100 mV", "Oscilaciones tetánicas rítmicas"], c: 0 },
+            { q: "13. La deficiencia de Calcio extracelular (Hipocalcemia) causa tetania porque el Calcio normalmente:", a: ["Estabiliza los canales de Sodio; sin él, la membrana se vuelve hiperexcitable", "Estimula la bomba Na/K", "Inactiva la Acetilcolinesterasa", "Destruye la mielina"], c: 0 },
+            { q: "14. El neurotransmisor exclusivo de la Placa Motora en el músculo esquelético voluntario es:", a: ["Acetilcolina (ACh)", "Noradrenalina", "Dopamina", "GABA"], c: 0 },
+            { q: "15. Para sintetizar Acetilcolina, la enzima Colina O-acetiltransferasa necesita fusionar:", a: ["Acetil-CoA y Colina", "Ácido acético y Colina", "Glucosa y Colesterol", "ATP y Calcio"], c: 0 },
+            { q: "16. El ión que ingresa al botón presináptico y actúa como \"Gatillo\" para liberar el neurotransmisor es el:", a: ["Calcio ($Ca^{2+}$)", "Sodio ($Na^+$)", "Potasio ($K^+$)", "Magnesio ($Mg^{2+}$)"], c: 0 },
+            { q: "17. Las proteínas que se entrelazan para fusionar la vesícula sináptica con la membrana del nervio se denominan Complejo:", a: ["SNARE", "DHP", "G-Actina", "Calmodulina"], c: 0 },
+            { q: "18. En la placa motora, los receptores a los cuales se une la Acetilcolina son de tipo:", a: ["Receptores Nicotínicos", "Receptores Muscarínicos", "Receptores Adrenérgicos Alfa", "Receptores de Rianodina"], c: 0 },
+            { q: "19. Para evitar contracciones eternas, la Acetilcolina es destruida en milisegundos en la hendidura por la enzima:", a: ["Acetilcolinesterasa", "Monoaminooxidasa (MAO)", "Catecol-O-metiltransferasa (COMT)", "Miosina ATPasa"], c: 0 },
+            { q: "20. El Curare (D-tubocurarina) causa parálisis flácida porque actúa como:", a: ["Antagonista competitivo del receptor nicotínico", "Destructor de la acetilcolinesterasa", "Inhibidor de la liberación de calcio", "Bloqueador de los túbulos T"], c: 0 },
+            { q: "21. La Toxina Botulínica (Botox) causa parálisis localizada porque:", a: ["Destruye las proteínas SNARE, impidiendo la exocitosis de Acetilcolina", "Bloquea el receptor nicotínico de forma irreversible", "Inhibe la recaptación de colina", "Destruye los túbulos T"], c: 0, e: "Impide físicamente la fusión de la vesícula con la membrana." },
+            { q: "22. En la Miastenia Gravis, el paciente sufre debilidad debido a anticuerpos que destruyen:", a: ["Los receptores nicotínicos de Acetilcolina", "La enzima Acetilcolinesterasa", "La vaina de mielina motora", "Los canales de Calcio pre-sinápticos"], c: 0 },
+            { q: "23. Los fármacos como la Neostigmina mejoran la Miastenia Gravis porque:", a: ["Inhiben a la Acetilcolinesterasa, acumulando ACh", "Agonizan directamente el receptor", "Aumentan la síntesis de mielina", "Bloquean la bomba Na/K"], c: 0 },
+            { q: "24. El veneno de la Viuda Negra causa rigidez extrema porque provoca:", a: ["La liberación masiva y descontrolada de Acetilcolina de las vesículas", "El bloqueo de los canales de Sodio", "La destrucción de los discos Z", "El bloqueo del receptor de Acetilcolina"], c: 0 },
+            { q: "25. Las invaginaciones profundas de la membrana de la fibra muscular hacia el centro se llaman:", a: ["Túbulos Transversos (Túbulos T)", "Cisternas Terminales", "Caveolas", "Sarcómeros"], c: 0 },
+            { q: "26. La estructura formada por un Túbulo T central y dos cisternas terminales del retículo se denomina:", a: ["Tríada", "Díada", "Sincitio", "Placa Motora"], c: 0 },
+            { q: "27. La unidad funcional básica de la contracción en el músculo estriado, delimitada por discos Z, se llama:", a: ["Sarcómero", "Miofibrilla", "Fibra muscular", "Fascículo"], c: 0 },
+            { q: "28. La banda oscura central del sarcómero formada por gruesos filamentos de miosina es la:", a: ["Banda A (Anisótropa)", "Banda I (Isótropa)", "Zona H", "Línea M"], c: 0 },
+            { q: "29. Durante la contracción muscular, ¿qué región permanece exactamente de la misma longitud?", a: ["Banda A", "Banda I", "Zona H", "Distancia entre Discos Z"], c: 0 },
+            { q: "30. El filamento grueso del sarcómero está compuesto por:", a: ["Miosina", "Actina", "Titina", "Tropomiosina"], c: 0 },
+            { q: "31. En reposo, los sitios activos de la actina están bloqueados físicamente por:", a: ["Tropomiosina", "Troponina C", "Actina G", "Distrofina"], c: 0 },
+            { q: "32. La subunidad de la Troponina encargada de unirse al Calcio es la:", a: ["Troponina C", "Troponina I", "Troponina T", "Calmodulina"], c: 0, e: "La unión al Ca++ desplaza la tropomiosina liberando la actina." },
+            { q: "33. La proteína que actúa como un resorte elástico anclando la Miosina al Disco Z es la:", a: ["Titina", "Nebulina", "Distrofina", "Calsecuestrina"], c: 0 },
+            { q: "34. El sensor de voltaje ubicado en el Túbulo T se conoce como Receptor de:", a: ["Dihidropiridina (DHP)", "Rianodina (RyR)", "Nicotínico", "SERCA"], c: 0 },
+            { q: "35. El canal de liberación de Calcio en el Retículo Sarcoplásmico es el Receptor de:", a: ["Rianodina (RyR1)", "Dihidropiridina", "Acuaporina", "SNARE"], c: 0 },
+            { q: "36. Proteína dentro del Retículo Sarcoplásmico que se une al Calcio para almacenarlo masivamente:", a: ["Calsecuestrina", "Calmodulina", "Troponina C", "Miosina"], c: 0 },
+            { q: "37. Para que el músculo se relaje, el Calcio debe ser bombeado de regreso al retículo por la:", a: ["Bomba SERCA", "Bomba Na/K ATPasa", "Intercambiador Na/Ca", "Bomba de protones"], c: 0 },
+            { q: "38. Físicamente, el \"Golpe de Fuerza\" del puente cruzado ocurre por:", a: ["La liberación del Fósforo inorgánico (Pi) y el ADP de la cabeza de Miosina", "La unión de un nuevo ATP", "La hidrólisis directa del ATP", "La unión del Calcio"], c: 0 },
+            { q: "39. El Rigor Mortis ocurre debido a la ausencia absoluta de:", a: ["Moléculas de ATP para desacoplar la miosina", "Iones de Calcio", "Acetilcolina", "Titina"], c: 0, e: "Sin ATP, las cabezas de miosina no pueden despegarse de la actina." },
+            { q: "40. Contracción donde el músculo genera tensión sin acortar su longitud externa:", a: ["Isométrica", "Isotónica", "Isocinética", "Concéntrica"], c: 0 },
+            { q: "41. Contracción donde el músculo se acorta venciendo una carga (genera trabajo externo):", a: ["Isotónica", "Isométrica", "Excéntrica pasiva", "Tetanización"], c: 0 },
+            { q: "42. La Sumación Espacial se refiere a:", a: ["Aumentar progresivamente el número de unidades motoras reclutadas", "Aumentar la frecuencia de disparos", "El estiramiento previo de la fibra", "El aumento de calcio inicial"], c: 0 },
+            { q: "43. La fusión máxima de las contracciones por alta frecuencia de estimulación se llama:", a: ["Tetanización", "Fatiga", "Rigor Mortis", "Treppe"], c: 0 },
+            { q: "44. El aumento progresivo de fuerza en los primeros latidos de un músculo en reposo es el:", a: ["Fenómeno de Treppe (Escalera)", "Tétanos incompleto", "Fatiga isquémica", "Hipertrofia"], c: 0 },
+            { q: "45. Las fibras tipo I (Lentas/Rojas) deben su color a la abundante presencia de:", a: ["Mioglobina", "Glucógeno", "Ácido Láctico", "Miosina ATPasa rápida"], c: 0 },
+            { q: "46. Las fibras musculares tipo II (Rápidas/Blancas) están optimizadas con:", a: ["Enzimas glucolíticas y extenso retículo sarcoplásmico", "Abundante mioglobina", "Altísima vascularización capilar", "Mitocondrias gigantes"], c: 0 },
+            { q: "47. Energía inicial explosiva para los primeros 10-15 segundos de ejercicio intenso:", a: ["Sistema de los Fosfágenos (Fosfocreatina)", "Oxidación aeróbica", "Glucólisis anaeróbica", "Digestión de grasas"], c: 0 },
+            { q: "48. Vía energética principal para mantener la postura durante horas:", a: ["Aeróbica (Oxidativa)", "Anaeróbica láctica", "Fosfocreatina", "Glucogenólisis rápida"], c: 0 },
+            { q: "49. A diferencia del estriado, las células del músculo liso:", a: ["Son fusiformes y carecen de sarcómeros organizados en bandas", "Poseen múltiples núcleos periféricos", "Tienen estrías muy marcadas", "No poseen miosina"], c: 0 },
+            { q: "50. En el músculo liso, los filamentos de actina están anclados a:", a: ["Cuerpos Densos", "Discos Z", "Líneas M", "Placas motoras"], c: 0 },
+            { q: "51. El músculo liso unitario actúa como un sincitio coordinado gracias a:", a: ["Uniones en Hendidura (Gap Junctions)", "Axones mielinizados", "Cisternas de calcio masivas", "Troponina C"], c: 0 },
+            { q: "52. El músculo liso multiunitario (ej. iris ocular) se caracteriza por:", a: ["Control fino por fibras nerviosas individuales", "Contraerse como un bloque único sincitial", "Falta de inervación autónoma", "Uso de cuerpos densos lineales"], c: 0 },
+            { q: "53. En lugar de Troponina, el músculo liso usa esta proteína para unirse al calcio:", a: ["Calmodulina", "Calsecuestrina", "Tropomiosina", "Titina"], c: 0, e: "El complejo Ca-Calmodulina activa a la miosina cinasa (MLCK)." },
+            { q: "54. El complejo Calcio-Calmodulina en el músculo liso activa a la enzima:", a: ["Miosina Cinasa de Cadena Ligera (MLCK)", "Miosina Fosfatasa", "Adenilato Ciclasa", "Acetilcolinesterasa"], c: 0 },
+            { q: "55. Para que el músculo liso se relaje, se requiere de la enzima:", a: ["Miosina Fosfatasa (quita el fosfato)", "Cinasa MLCK", "Fosfodiesterasa", "Catalasa"], c: 0 },
+            { q: "56. Gran parte del calcio usado para la contracción del músculo liso proviene de:", a: ["El líquido extracelular (LEC)", "La mitocondria", "El núcleo", "Vesículas presinápticas"], c: 0 },
+            { q: "57. Las pequeñas depresiones en el sarcolema liso que actúan como rudimentarios túbulos T se llaman:", a: ["Caveolas", "Plasmodesmos", "Botones varicosos", "Cisternas terminales"], c: 0 },
+            { q: "58. Fenómeno del liso para mantener tensión por horas casi sin gastar ATP:", a: ["Mecanismo de Cerrojo (Latch State)", "Tetanización", "Fatiga láctica", "Hiperplasia"], c: 0 },
+            { q: "59. El estiramiento brusco del intestino provoca una respuesta automática de:", a: ["Contracción refleja miogénica", "Relajación flácida total", "Lisis celular", "Fibrilación"], c: 0 },
+            { q: "60. El corazón actúa como un sincitio porque sus discos intercalares poseen:", a: ["Uniones en hendidura (Gap Junctions)", "Vainas de mielina", "Receptores DHP", "Válvulas gruesas"], c: 0 },
+            { q: "61. Canal responsable de la prolongada Meseta en el músculo cardíaco:", a: ["Canales de Calcio Lentos (Tipo L)", "Canales rápidos de Sodio", "Canales de Potasio rápidos", "Receptores muscarínicos"], c: 0 },
+            { q: "62. Fármacos despolarizantes (Succinilcolina) causan flacidez final porque:", a: ["Mantienen abierto el receptor agotándolo y causando acomodación", "Compiten silenciosamente sin abrir el canal", "Destruyen la bomba Na/K", "Inhiben la acetilcolinesterasa"], c: 0 },
+            { q: "63. La mutación del receptor de Rianodina bajo anestesia general causa:", a: ["Hipertermia Maligna", "Miastenia Gravis", "Duchenne", "Guillain-Barré"], c: 0, e: "Causa una liberación incontrolable de calor y calcio." },
+            { q: "64. Las fibras nerviosas A-alfa motoras son:", a: ["Gruesas, altamente mielinizadas y muy rápidas (hasta 120 m/s)", "Finas, amielínicas y lentas", "Exclusivas del sistema parasimpático", "Vías del dolor crónico"], c: 0 },
+            { q: "65. Las neuronas autónomas liberan neurotransmisor sobre el músculo liso a través de:", a: ["Varicosidades esparcidas", "Placas motoras gigantes y cerradas", "Discos intercalares", "Nódulos de Ranvier"], c: 0 },
+            { q: "66. La enzima que hidroliza o rompe el ATP \"armando\" la cabeza de miosina antes del tirón es:", a: ["Miosina ATPasa", "Acetilcolinesterasa", "Miosina Fosfatasa", "Adenilato Ciclasa"], c: 0 },
+            { q: "67. A nivel presináptico, el agotamiento temporal de las vesículas de ACh ante alta frecuencia de disparo se llama:", a: ["Fatiga Sináptica", "Miastenia", "Acomodación", "Tetanización"], c: 0 },
+            { q: "68. Si cortas el nervio de un músculo esquelético, este sufre:", a: ["Parálisis y Atrofia por denervación", "Hipertrofia compensatoria", "Espasmos continuos", "Fibrilación auricular"], c: 0 },
+            { q: "69. La toxina tetánica causa espasmos violentos porque:", a: ["Bloquea la liberación de inhibidores (GABA/glicina) en la médula espinal", "Destruye la acetilcolina en la placa", "Activa directamente la miosina", "Bloquea los canales de sodio"], c: 0, e: "Elimina la inhibición motora en la médula espinal." },
+            { q: "70. El ácido láctico se acumula en el músculo causando fatiga cuando domina la vía:", a: ["Glucolítica Anaeróbica", "Oxidativa Aeróbica", "De fosfocreatina", "Lipolítica"], c: 0 },
+            { q: "71. El Músculo Extraocular está conformado principalmente por fibras:", a: ["Fibras Rápidas (Tipo II) y unidades motoras muy pequeñas", "Fibras Lentas (Tipo I) gigantes", "Músculo liso multiunitario", "Músculo liso unitario"], c: 0 },
+            { q: "72. Enfermedad donde la falta de una proteína que ancla la membrana al citoesqueleto causa destrucción muscular (Signo de Gowers):", a: ["Distrofia Muscular de Duchenne", "Tétanos", "Miastenia Gravis", "Botulismo"], c: 0 },
+            { q: "73. Un potencial local en la placa motora, causado por una sola vesícula de ACh, se conoce como:", a: ["Potencial de miniatura de placa terminal (MEPP)", "Potencial de acción completo", "Potencial de Nernst", "Sobretiro"], c: 0 },
+            { q: "74. Las fibras del dolor crónico y sordo se caracterizan por ser:", a: ["Amielínicas y lentas (Fibras C)", "Mielínicas y muy rápidas", "A-alfa", "Sensibles únicamente a presión"], c: 0 },
+            { q: "75. Fármacos Digitálicos (Ouabaína, Digoxina) causan inotropismo positivo (más fuerza cardíaca) porque:", a: ["Inhiben la Na/K ATPasa, acumulando Sodio, frenando la salida de Calcio", "Activan directamente la Troponina C", "Abren canales rápidos de potasio", "Inhiben la acetilcolinesterasa"], c: 0 },
+            { q: "76. La \"plasticidad\" o Relajación por Estrés permite al músculo liso (ej. vejiga):", a: ["Acomodar grandes volúmenes de líquido manteniendo la misma presión interna", "Contraerse violentamente y reventar ante el mínimo estímulo", "Perder su tono basal completamente", "Funcionar como una bomba de alta presión"], c: 0 },
+            { q: "77. El músculo estriado esquelético carece de:", a: ["Uniones en hendidura (Gap Junctions) entre sus fibras", "Sarcómeros", "Túbulos T", "Placa motora"], c: 0 },
+            { q: "78. ¿Qué enzima debe activarse para degradar la Acetilcolina en la unión neuromuscular?", a: ["Acetilcolinesterasa", "MAO", "MLCK", "Fosfodiesterasa"], c: 0 },
+            { q: "79. En la placa motora, ¿por qué los canales nicotínicos no dejan pasar aniones (Cloro)?", a: ["Porque el poro tiene fuertes cargas negativas que los repelen", "Porque son demasiado grandes", "Porque el cloro no existe en el LEC", "Porque el calcio bloquea el paso"], c: 0 },
+            { q: "80. Si una neurona está hiperpolarizada (ej. -100 mV), se dice que está en un estado de:", a: ["Inhibición", "Excitación máxima", "Tetanización", "Espiga"], c: 0 },
+            { q: "81. Ion extracelular que antagoniza (frena) al Calcio en el botón presináptico, disminuyendo la liberación de ACh:", a: ["Magnesio ($Mg^{2+}$)", "Cloruro", "Potasio", "Fosfato"], c: 0 },
+            { q: "82. La unidad motora se define estrictamente como:", a: ["Una única motoneurona y todas las fibras musculares que ella inerva", "Un nervio completo y un fascículo muscular", "Un sarcómero y su retículo sarcoplásmico", "El cerebro y la médula espinal"], c: 0 },
+            { q: "83. Las células del músculo cardíaco tienen la capacidad de autoexcitarse rítmicamente gracias a:", a: ["Su potencial de reposo inestable (tejido nodal) que alcanza el umbral por sí solo", "Fuerte inervación simpática obligatoria", "Liberación constante de acetilcolina vagal", "Bloqueo de los canales de sodio"], c: 0 },
+            { q: "84. Un paciente expuesto a Gas Sarín o pesticidas organofosforados sufrirá convulsiones y asfixia por:", a: ["Inhibición irreversible de la acetilcolinesterasa", "Bloqueo competitivo del receptor nicotínico", "Destrucción de la calmodulina", "Bloqueo de los canales de calcio presinápticos"], c: 0 },
+            { q: "85. El aumento a largo plazo del grosor muscular (Hipertrofia) en el fisicoculturismo se debe a:", a: ["Aumento en la cantidad de filamentos de Actina y Miosina en cada célula", "Multiplicación masiva del número de células musculares (hiperplasia)", "Acumulación de grasa intracelular", "Engrosamiento exclusivo de los tendones"], c: 0 },
+            { q: "86. A diferencia del nervio rápido, el Potencial de Marcapasos (Nodo Sinusal) se caracteriza porque su reposo no es plano, y sube lentamente debido a la entrada de:", a: ["Sodio por canales \"Funny\" y luego Calcio", "Potasio libre", "Cloro rápido", "Fosfato"], c: 0 },
+            { q: "87. Componente del músculo liso que equivale funcionalmente a los discos Z del músculo esquelético:", a: ["Cuerpos Densos", "Caveolas", "Calmodulina", "Calsecuestrina"], c: 0 },
+            { q: "88. En el reflejo miotático (reflejo patelar), el receptor que detecta el estiramiento del músculo es:", a: ["El Huso Muscular", "El Órgano Tendinoso de Golgi", "El Corpúsculo de Pacini", "El receptor nicotínico"], c: 0 },
+            { q: "89. Si bloqueas los canales de Potasio de una célula excitada, el resultado eléctrico es:", a: ["Retraso o fallo en la repolarización", "Fallo en la despolarización inicial", "Disminución del potencial de reposo", "Parálisis flácida inmediata"], c: 0 },
+            { q: "90. La relación de longitud-tensión de Starling dicta que la fuerza de contracción del sarcómero es máxima cuando:", a: ["Existe un solapamiento óptimo inicial entre los filamentos de actina y miosina", "El músculo está estirado al máximo y a punto de romperse", "Las bandas I están totalmente superpuestas en reposo", "No hay nada de calcio en el citosol"], c: 0 },
+            { q: "91. Si no tuviéramos Titina, nuestro músculo esquelético sufriría:", a: ["Pérdida total de su elasticidad y alineación sarcoplasmática al estirarlo", "Tetanización inmediata", "Exceso de hipertrofia", "Fibrilación"], c: 0 },
+            { q: "92. Estructura que envuelve a un solo fascículo muscular:", a: ["Perimisio", "Endomisio", "Epimisio", "Sarcolema"], c: 0 },
+            { q: "93. Una diferencia clave entre un neurotransmisor clásico (ACh) y un neuropéptido es que el neuropéptido:", a: ["Tiene una acción mucho más prolongada y se sintetiza en el soma neuronal", "Actúa en fracciones de milisegundo y se sintetiza en el botón", "Es un gas que atraviesa membranas (como el NO)", "Solo excita y nunca inhibe"], c: 0 },
+            { q: "94. Ion que al entrar a la neurona en reposo genera un Potencial Inhibitorio Postsináptico (PIPS):", a: ["Cloruro ($Cl^-$)", "Sodio ($Na^+$)", "Calcio ($Ca^{2+}$)", "Magnesio ($Mg^{2+}$)"], c: 0 },
+            { q: "95. Músculo involuntario y estriado:", a: ["Músculo Cardíaco", "Músculo Liso", "Músculo Esquelético", "Diafragma"], c: 0 },
+            { q: "96. Proceso en el cual una célula muscular lisa unitaria pasa su estímulo a sus vecinas sin cables nerviosos:", a: ["Conducción electrotónica por Uniones Gap", "Exocitosis de varicosidades", "Transmisión saltatoria", "Liberación de Ca++ por el retículo"], c: 0 },
+            { q: "97. Receptor muscarínico del corazón (M2) activado por el nervio Vago produce:", a: ["Bradicardia (frena el corazón)", "Taquicardia (acelera el corazón)", "Aumento extremo de fuerza contráctil", "Paro en sístole"], c: 0 },
+            { q: "98. En el Acoplamiento Excitación-Contracción esquelético, ¿quién \"tira\" mecánicamente de la Rianodina?", a: ["El receptor de Dihidropiridina (DHP)", "La Titina", "La Calmodulina", "El Calcio extracelular"], c: 0 },
+            { q: "99. Si se pierde la vaina de mielina de los axones centrales (ej. Esclerosis Múltiple), la corriente eléctrica:", a: ["Se fuga, conduciéndose de manera defectuosa, lenta o bloqueándose por completo", "Viaja más rápido porque ya no tiene obstáculos", "Se convierte en señal química", "Hace que el nervio se hipertrofie"], c: 0 },
+            { q: "100. En la membrana en reposo, el interior celular se mantiene a -90 mV. Si se introduce un microelectrodo y se inyectan más cargas positivas artificialmente (hasta -50 mV), la neurona:", a: ["Supera el umbral y dispara un potencial de acción explosivo", "Se inhibe por completo", "Acelera la bomba Na/K sin disparar", "Se convierte en músculo liso"], c: 0 }
+        ];
 
-        let cur = 0, points = 0, solved = false;
+        let cur = 0, score = 0, solved = false;
         let shuffledData = [];
 
         // ALGORITMO DE MEZCLA (Fisher-Yates Shuffle)
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
             }
             return array;
         }
@@ -1222,7 +223,10 @@
             solved = false;
             document.getElementById('next').classList.add('hidden');
             document.getElementById('fb').classList.add('hidden');
-            const data = shuffledData[cur];
+
+            const data = shuffledData[cur] || shuffledData[0];
+
+            // Eliminar numeración
             document.getElementById('q-text').textContent = data.q.replace(/^\d+\.\s*/, '');
             document.getElementById('idx').textContent = cur + 1;
             document.getElementById('total_qs').textContent = shuffledData.length;
@@ -1231,38 +235,43 @@
             const container = document.getElementById('opts');
             container.innerHTML = '';
 
-            // LÓGICA DE MEZCLA: Las opciones se desordenan antes de mostrarse
-            const shuffledOptions = shuffle([...data.a]);
+            // Generar un arreglo de objetos para rastrear el índice original de la opción
+            let optionsWithIndex = data.a.map((opt, i) => { return { text: opt, originalIndex: i }; });
 
-            shuffledOptions.forEach((opt, i) => {
+            // Mezclar opciones
+            let shuffledOptions = shuffleArray(optionsWithIndex);
+
+            // Encontrar el nuevo índice de la respuesta correcta (que originalmente era 0)
+            let newCorrectIndex = shuffledOptions.findIndex(opt => opt.originalIndex === data.c);
+
+            shuffledOptions.forEach((optObj, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn animate-fade-in';
-                btn.innerHTML = `<span class="w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center text-[10px] font-black mr-2">${String.fromCharCode(65+i)}</span> ${opt}`;
-                btn.onclick = () => check(opt, btn, data.c, data.e);
+                btn.innerHTML = `<span class="w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center text-[10px] font-black mr-2">${String.fromCharCode(65+i)}</span> ${optObj.text}`;
+                btn.onclick = () => check(i, btn, newCorrectIndex);
                 container.appendChild(btn);
             });
         }
 
-        function check(selected, btn, correct, explanation) {
+        function check(i, btn, correctIndex) {
             if(solved) return;
             solved = true;
+            const data = shuffledData[cur];
             const btns = document.querySelectorAll('.option-btn');
 
-            if(selected === correct) {
-                points++;
+            if(i === correctIndex) {
+                score++;
                 btn.classList.add('correct');
             } else {
                 btn.classList.add('incorrect');
                 // Revelar la correcta para fomentar el aprendizaje
-                btns.forEach(b => {
-                    if(b.textContent.includes(correct)) b.classList.add('correct');
-                });
+                btns[correctIndex].classList.add('correct');
             }
 
-            if(explanation) {
+            if(data.e) {
                 const fb = document.getElementById('fb');
-                fb.innerHTML = `<strong>ANÁLISIS MÉDICO:</strong> ${explanation}`;
-                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.innerHTML = `<strong>ANÁLISIS MÉDICO:</strong> ${data.e}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (i===correctIndex ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
                 fb.classList.remove('hidden');
             }
 
@@ -1283,11 +292,13 @@
         function showResults() {
             document.getElementById('card').classList.add('hidden');
             document.getElementById('res').classList.remove('hidden');
-            document.getElementById('score').textContent = Math.round((points/shuffledData.length)*100);
+            document.getElementById('score').textContent = Math.round((score/shuffledData.length)*100);
+            document.getElementById('total_qs_res').textContent = shuffledData.length;
         }
 
         window.onload = () => {
-            shuffledData = shuffle([...quizData]);
+            // Orden aleatorio de preguntas
+            shuffledData = shuffleArray([...quizData]);
             load();
         };
     </script>
