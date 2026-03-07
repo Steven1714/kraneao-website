@@ -211,7 +211,7 @@
             document.getElementById('next').classList.add('hidden');
             document.getElementById('fb').classList.add('hidden');
             const data = quizData[cur];
-            document.getElementById('q-text').textContent = data.q;
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
             document.getElementById('idx').textContent = cur + 1;
             document.getElementById('total-count').textContent = quizData.length;
             document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
@@ -271,4 +271,5 @@
         window.onload = load;
     </script>
 </body>
+
 </html>
