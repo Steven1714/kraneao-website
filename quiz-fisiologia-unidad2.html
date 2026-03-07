@@ -40,60 +40,52 @@
 </head>
 <body class="flex flex-col min-h-screen"> 
 
-    <!-- Encabezado con Identidad Kraneao -->
     <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="index.html" class="hover:opacity-80 transition-opacity">
                 <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
             </a>
-            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">Unidad II: Reto Guyton</span>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">Unidad II: Reto 100</span>
         </div>
     </header>
 
     <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
         <div id="quiz-container" class="w-full max-w-2xl">
             
-            <!-- Barra de Avance Médico -->
             <div class="mb-8">
                 <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
-                    <span>Avance del Entrenamiento</span>
-                    <span><span id="idx">1</span> / 100</span>
+                    <span>Progreso del Entrenamiento</span>
+                    <span><span id="idx">1</span> / <span id="total-count">100</span></span>
                 </div>
                 <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
                     <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
                 </div>
             </div>
 
-            <!-- Card de Pregunta Interactiva -->
             <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
-                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center italic">Cargando banco de preguntas...</h2>
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Cargando banco de preguntas...</h2>
                 
-                <div id="opts" class="grid grid-cols-1 gap-4">
-                    <!-- Opciones mezcladas dinámicamente -->
-                </div>
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
                 
-                <!-- Feedback Fisiológico -->
                 <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
                 
-                <!-- Botón de Navegación -->
                 <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">
                     Siguiente Reto ➜
                 </button>
             </div>
 
-            <!-- Pantalla Final de Resultados -->
             <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
-                <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🧬</div>
-                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Misión Cumplida!</h2>
-                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has completado los 100 retos de Nervio y Músculo.</p>
+                <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🏆</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Unidad II Dominada!</h2>
+                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has completado los 100 retos de Fisiología del Nervio y Músculo.</p>
                 
                 <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Dominio de la Unidad II</p>
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Calificación Final</p>
                     <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
                 </div>
 
                 <div class="flex flex-col gap-4">
-                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all">REINTENTAR ENTRENAMIENTO</button>
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all">REINTENTAR</button>
                     <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver a la Biblioteca</a>
                 </div>
             </div>
@@ -101,37 +93,111 @@
     </main>
 
     <script>
-        // BANCO DE 100 PREGUNTAS (Unidad II)
-        // Estructura: 'c' es la respuesta correcta (string exacto para validar tras mezcla)
         const quizData = [
-            {q: "1. El potencial de membrana en reposo de una fibra nerviosa mielinizada grande es aproximadamente de:", a: ["-90 mV", "-65 mV", "+35 mV", "-55 mV"], c: "-90 mV", e: "Está determinado por la alta permeabilidad al Potasio en reposo."},
-            {q: "2. La fase de despolarización rápida del potencial de acción nervioso se debe a la apertura de los canales de:", a: ["Sodio voltaje-dependientes", "Potasio voltaje-dependientes", "Calcio tipo L", "Cloro activados por ligando"], c: "Sodio voltaje-dependientes", e: "La entrada masiva de cargas positivas invierte la polaridad."},
+            {q: "1. El potencial de membrana en reposo de una fibra nerviosa mielinizada grande es aproximadamente de:", a: ["-90 mV", "-65 mV", "+35 mV", "-55 mV"], c: "-90 mV", e: "Está determinado por el potencial de Nernst del Potasio ($K^+$)."},
+            {q: "2. La fase de despolarización rápida del potencial de acción nervioso se debe a la apertura de:", a: ["Canales de Sodio voltaje-dependientes", "Canales de Potasio voltaje-dependientes", "Canales de Calcio tipo L", "Canales de Cloro"], c: "Canales de Sodio voltaje-dependientes"},
+            {q: "3. La repolarización de la membrana nerviosa es causada directamente por:", a: ["La salida pasiva de Potasio ($K^+$)", "La entrada de Cloruro", "La acción de la bomba Na/K ATPasa", "El cierre de canales de Calcio"], c: "La salida pasiva de Potasio ($K^+$)"},
             {q: "4. El valor del voltaje en el cual se desata irremediablemente un potencial de acción se denomina:", a: ["Umbral de excitación (-65 mV)", "Potencial de Nernst", "Sobretiro (+35 mV)", "Potencial postsináptico"], c: "Umbral de excitación (-65 mV)"},
-            {q: "10. El mecanismo por el cual el potencial de acción viaja mucho más rápido en fibras mielínicas se llama:", a: ["Conducción Saltatoria", "Conducción Continua", "Sumación Espacial", "Corriente Electrotónica"], c: "Conducción Saltatoria", e: "El potencial 'brinca' de un nódulo de Ranvier a otro."},
-            {q: "14. El neurotransmisor exclusivo de la Placa Motora en el músculo esquelético voluntario es:", a: ["Acetilcolina (ACh)", "Noradrenalina", "Dopamina", "GABA"], c: "Acetilcolina (ACh)"},
-            {q: "16. El ión que ingresa al botón presináptico y actúa como 'Gatillo' para liberar el neurotransmisor es el:", a: ["Calcio (Ca2+)", "Sodio (Na+)", "Potasio (K+)", "Magnesio (Mg2+)"], c: "Calcio (Ca2+)", e: "Activa las proteínas SNARE para la exocitosis."},
-            {q: "21. La Toxina Botulínica (Botox) causa parálisis localizada porque:", a: ["Destruye las proteínas SNARE", "Bloquea el receptor nicotínico", "Inhibe la recaptación de colina", "Destruye los túbulos T"], c: "Destruye las proteínas SNARE", e: "Impide físicamente la fusión de la vesícula con la membrana."},
-            {q: "27. La unidad funcional básica de la contracción en el músculo estriado se llama:", a: ["Sarcómero", "Miofibrilla", "Fibra muscular", "Fascículo"], c: "Sarcómero", e: "Ubicado entre dos discos Z contiguos."},
-            {q: "32. La subunidad de la Troponina encargada de unirse al Calcio es la:", a: ["Troponina C", "Troponina I", "Troponina T", "Calmodulina"], c: "Troponina C", e: "La unión al Ca++ desplaza la tropomiosina liberando la actina."},
-            {q: "34. El sensor de voltaje ubicado en el Túbulo T se conoce como Receptor de:", a: ["Dihidropiridina (DHP)", "Rianodina (RyR)", "Nicotínico", "SERCA"], c: "Dihidropiridina (DHP)"},
-            {q: "35. El canal de liberación de Calcio en el Retículo Sarcoplásmico es el Receptor de:", a: ["Rianodina (RyR1)", "Dihidropiridina", "Acuaporina", "SNARE"], c: "Rianodina (RyR1)"},
-            {q: "39. El Rigor Mortis ocurre debido a la ausencia absoluta de:", a: ["ATP", "Calcio", "Acetilcolina", "Titina"], c: "ATP", e: "Sin ATP, las cabezas de miosina no pueden despegarse de la actina."},
-            {q: "40. Contracción donde el músculo genera tensión sin acortar su longitud externa:", a: ["Isométrica", "Isotónica", "Isocinética", "Concéntrica"], c: "Isométrica"},
-            {q: "53. En lugar de Troponina, el músculo liso usa esta proteína para unirse al calcio:", a: ["Calmodulina", "Calsecuestrina", "Tropomiosina", "Titina"], c: "Calmodulina", e: "El complejo Ca-Calmodulina activa a la miosina cinasa (MLCK)."},
-            {q: "58. Fenómeno del liso para mantener tensión por horas casi sin gastar ATP:", a: ["Mecanismo de Cerrojo (Latch State)", "Tetanización", "Fatiga láctica", "Hiperplasia"], c: "Mecanismo de Cerrojo (Latch State)"},
-            {q: "63. La mutación del receptor de Rianodina bajo anestesia general causa:", a: ["Hipertermia Maligna", "Miastenia Gravis", "Duchenne", "Guillain-Barré"], c: "Hipertermia Maligna", e: "Causa una liberación incontrolable de calor y calcio."},
-            {q: "69. La toxina tetánica causa espasmos violentos porque:", a: ["Bloquea la liberación de GABA/Glicina", "Destruye la acetilcolina", "Activa la miosina", "Bloquea sodio"], c: "Bloquea la liberación de GABA/Glicina", e: "Elimina la inhibición motora en la médula espinal."},
-            {q: "70. El ácido láctico se acumula en el músculo causando fatiga cuando domina la vía:", a: ["Glucolítica Anaeróbica", "Oxidativa Aeróbica", "De fosfocreatina", "Lipolítica"], c: "Glucolítica Anaeróbica"},
-            {q: "84. Un paciente expuesto a Gas Sarín o organofosforados sufrirá convulsiones por:", a: ["Inhibición irreversible de la acetilcolinesterasa", "Bloqueo del receptor nicotínico", "Destrucción de calmodulina", "Bloqueo de calcio"], c: "Inhibición irreversible de la acetilcolinesterasa", e: "La acetilcolina no se degrada y estimula el músculo sin parar."},
-            {q: "98. En el acoplamiento excitación-contracción, ¿quién 'tira' mecánicamente de la Rianodina?", a: ["Receptor DHP", "Titina", "Calmodulina", "Calcio"], c: "Receptor DHP", e: "Es una conexión física directa túbulo-retículo."},
-            {q: "100. Si se inyectan cargas positivas artificialmente hasta -50 mV, la neurona:", a: ["Supera el umbral y dispara un potencial", "Se inhibe", "Acelera bomba Na/K", "Muere"], c: "Supera el umbral y dispara un potencial"}
-            // Esteban: He incluido las más representativas de tu lista. 
-            // Para completar las 100 reales, simplemente añade objetos siguiendo el formato {q, a, c, e}.
+            {q: "5. Durante el Periodo Refractario Absoluto, la membrana es inexcitable debido a:", a: ["La inactivación física de las compuertas de Sodio", "El agotamiento total del ATP", "La hiperpolarización extrema", "La saturación de receptores"], c: "La inactivación física de las compuertas de Sodio"},
+            {q: "6. En el Periodo Refractario Relativo se requiere un estímulo mayor porque la membrana está:", a: ["Hiperpolarizada", "Desmielinizada", "Carente de calcio", "Completamente inactiva"], c: "Hiperpolarizada"},
+            {q: "7. Las células encargadas de producir la vaina de mielina en el Sistema Nervioso Periférico (SNP) son:", a: ["Células de Schwann", "Oligodendrocitos", "Astrocitos", "Microglía"], c: "Células de Schwann"},
+            {q: "8. Las células encargadas de producir la mielina en el Sistema Nervioso Central (SNC) son:", a: ["Oligodendrocitos", "Células de Schwann", "Ependimocitos", "Astrocitos"], c: "Oligodendrocitos"},
+            {q: "9. Los espacios desprovistos de mielina a lo largo del axón se denominan:", a: ["Nódulos de Ranvier", "Hendiduras sinápticas", "Conos axónicos", "Discos intercalares"], c: "Nódulos de Ranvier"},
+            {q: "10. El mecanismo por el cual el potencial viaja mucho más rápido en fibras mielínicas se llama:", a: ["Conducción Saltatoria", "Conducción Continua", "Sumación Espacial", "Corriente Electrotónica"], c: "Conducción Saltatoria"},
+            {q: "11. La Tetrodotoxina (TTX) es letal porque:", a: ["Bloquea los canales rápidos de Sodio", "Bloquea los canales de Potasio", "Inhibe la bomba Na/K", "Inhibe la Acetilcolinesterasa"], c: "Bloquea los canales rápidos de Sodio"},
+            {q: "12. Si a una fibra nerviosa se le aplica Tetraetilamonio (TEA), la gráfica mostrará:", a: ["Una meseta prolongada por fallo en la repolarización", "Línea plana en el reposo", "Un pico de +100 mV", "Oscilaciones tetánicas"], c: "Una meseta prolongada por fallo en la repolarización"},
+            {q: "13. La deficiencia de Calcio extracelular (Hipocalcemia) causa tetania porque:", a: ["El Calcio estabiliza los canales de Sodio; sin él, la membrana es hiperexcitable", "Estimula la bomba Na/K", "Inactiva la enzima AChE", "Destruye la mielina"], c: "El Calcio estabiliza los canales de Sodio; sin él, la membrana es hiperexcitable"},
+            {q: "14. El neurotransmisor exclusivo de la Placa Motora en el músculo esquelético es:", a: ["Acetilcolina (ACh)", "Noradrenalina", "Dopamina", "GABA"], c: "Acetilcolina (ACh)"},
+            {q: "15. Para sintetizar Acetilcolina, la enzima Colina O-acetiltransferasa fusiona:", a: ["Acetil-CoA y Colina", "Ácido acético y Colina", "Glucosa y Colesterol", "ATP y Calcio"], c: "Acetil-CoA y Colina"},
+            {q: "16. El ión que actúa como 'Gatillo' para liberar el neurotransmisor es el:", a: ["Calcio ($Ca^{2+}$)", "Sodio ($Na^+$)", "Potasio ($K^+$)", "Magnesio ($Mg^{2+}$)"], c: "Calcio ($Ca^{2+}$)"},
+            {q: "17. Las proteínas que fusionan la vesícula sináptica con la membrana son el Complejo:", a: ["SNARE", "DHP", "G-Actina", "Calmodulina"], c: "SNARE"},
+            {q: "18. En la placa motora, los receptores de la Acetilcolina son de tipo:", a: ["Receptores Nicotínicos", "Receptores Muscarínicos", "Receptores Adrenérgicos", "Receptores de Rianodina"], c: "Receptores Nicotínicos"},
+            {q: "19. La Acetilcolina es destruida en milisegundos en la hendidura por la:", a: ["Acetilcolinesterasa", "Monoaminooxidasa (MAO)", "Catecol-O-metiltransferasa", "Miosina ATPasa"], c: "Acetilcolinesterasa"},
+            {q: "20. El Curare (D-tubocurarina) causa parálisis flácida porque actúa como:", a: ["Antagonista competitivo del receptor nicotínico", "Destructor de la acetilcolinesterasa", "Inhibidor de la liberación de calcio", "Bloqueador de los túbulos T"], c: "Antagonista competitivo del receptor nicotínico"},
+            {q: "21. La Toxina Botulínica (Botox) causa parálisis porque:", a: ["Destruye las proteínas SNARE", "Bloquea el receptor nicotínico", "Inhibe la recaptación de colina", "Destruye los túbulos T"], c: "Destruye las proteínas SNARE"},
+            {q: "22. En la Miastenia Gravis, los anticuerpos destruyen:", a: ["Los receptores nicotínicos de Acetilcolina", "La enzima Acetilcolinesterasa", "La vaina de mielina", "Los canales de Calcio"], c: "Los receptores nicotínicos de Acetilcolina"},
+            {q: "23. Los fármacos como la Neostigmina mejoran la Miastenia Gravis porque:", a: ["Inhiben a la Acetilcolinesterasa", "Agonizan directamente el receptor", "Aumentan la síntesis de mielina", "Bloquean la bomba Na/K"], c: "Inhiben a la Acetilcolinesterasa"},
+            {q: "24. El veneno de la Viuda Negra causa rigidez extrema porque provoca:", a: ["Liberación masiva y descontrolada de Acetilcolina", "Bloqueo de los canales de Sodio", "Destrucción de los discos Z", "Bloqueo del receptor de ACh"], c: "Liberación masiva y descontrolada de Acetilcolina"},
+            {q: "25. Las invaginaciones profundas de la membrana muscular hacia el centro se llaman:", a: ["Túbulos Transversos (Túbulos T)", "Cisternas Terminales", "Caveolas", "Sarcómeros"], c: "Túbulos Transversos (Túbulos T)"},
+            {q: "26. La estructura formada por un Túbulo T y dos cisternas terminales es la:", a: ["Tríada", "Díada", "Sincitio", "Placa Motora"], c: "Tríada"},
+            {q: "27. Unidad funcional básica de la contracción, delimitada por discos Z:", a: ["Sarcómero", "Miofibrilla", "Fibra muscular", "Fascículo"], c: "Sarcómero"},
+            {q: "28. La banda oscura central del sarcómero formada por miosina es la:", a: ["Banda A (Anisótropa)", "Banda I (Isótropa)", "Zona H", "Línea M"], c: "Banda A (Anisótropa)"},
+            {q: "29. Durante la contracción muscular, ¿qué región NO cambia de longitud?", a: ["Banda A", "Banda I", "Zona H", "Distancia entre Discos Z"], c: "Banda A"},
+            {q: "30. El filamento grueso del sarcómero está compuesto por:", a: ["Miosina", "Actina", "Titina", "Tropomiosina"], c: "Miosina"},
+            {q: "31. En reposo, los sitios activos de la actina están bloqueados por:", a: ["Tropomiosina", "Troponina C", "Actina G", "Distrofina"], c: "Tropomiosina"},
+            {q: "32. La subunidad de la Troponina que se une al Calcio es la:", a: ["Troponina C", "Troponina I", "Troponina T", "Calmodulina"], c: "Troponina C"},
+            {q: "33. Proteína elástica que ancla la Miosina al Disco Z:", a: ["Titina", "Nebulina", "Distrofina", "Calsecuestrina"], c: "Titina"},
+            {q: "34. Sensor de voltaje ubicado en el Túbulo T:", a: ["Receptor de Dihidropiridina (DHP)", "Receptor de Rianodina (RyR)", "Receptor Nicotínico", "SERCA"], c: "Receptor de Dihidropiridina (DHP)"},
+            {q: "35. Canal de liberación de Calcio en el Retículo Sarcoplásmico:", a: ["Receptor de Rianodina (RyR1)", "Receptor DHP", "Acuaporina", "SNARE"], c: "Receptor de Rianodina (RyR1)"},
+            {q: "36. Proteína dentro del Retículo que almacena Calcio masivamente:", a: ["Calsecuestrina", "Calmodulina", "Troponina C", "Miosina"], c: "Calsecuestrina"},
+            {q: "37. El Calcio regresa al retículo para la relajación mediante la:", a: ["Bomba SERCA", "Bomba Na/K ATPasa", "Intercambiador Na/Ca", "Bomba de protones"], c: "Bomba SERCA"},
+            {q: "38. Físicamente, el 'Golpe de Fuerza' ocurre por:", a: ["La liberación de Pi y ADP de la cabeza de Miosina", "La unión de un nuevo ATP", "La hidrólisis directa del ATP", "La unión del Calcio"], c: "La liberación de Pi y ADP de la cabeza de Miosina"},
+            {q: "39. El Rigor Mortis ocurre debido a la ausencia absoluta de:", a: ["ATP", "Iones de Calcio", "Acetilcolina", "Titina"], c: "ATP"},
+            {q: "40. Contracción donde el músculo genera tensión sin acortarse externamente:", a: ["Isométrica", "Isotónica", "Isocinética", "Concéntrica"], c: "Isométrica"},
+            {q: "41. Contracción donde el músculo se acorta venciendo una carga:", a: ["Isotónica", "Isométrica", "Excéntrica", "Tetanización"], c: "Isotónica"},
+            {q: "42. La Sumación Espacial se refiere a:", a: ["Aumentar el número de unidades motoras reclutadas", "Aumentar la frecuencia de disparos", "El estiramiento previo", "El aumento de calcio"], c: "Aumentar el número de unidades motoras reclutadas"},
+            {q: "43. Fusión máxima de contracciones por alta frecuencia de estimulación:", a: ["Tetanización", "Fatiga", "Rigor Mortis", "Treppe"], c: "Tetanización"},
+            {q: "44. Aumento progresivo de fuerza en los primeros latidos (músculo en reposo):", a: ["Fenómeno de Treppe (Escalera)", "Tétanos incompleto", "Fatiga isquémica", "Hipertrofia"], c: "Fenómeno de Treppe (Escalera)"},
+            {q: "45. Las fibras tipo I (Lentas/Rojas) deben su color a:", a: ["Abundante Mioglobina", "Glucógeno", "Ácido Láctico", "Miosina rápida"], c: "Abundante Mioglobina"},
+            {q: "46. Las fibras tipo II (Rápidas/Blancas) están optimizadas con:", a: ["Enzimas glucolíticas y extenso retículo", "Abundante mioglobina", "Alta vascularización", "Mitocondrias gigantes"], c: "Enzimas glucolíticas y extenso retículo"},
+            {q: "47. Energía explosiva para los primeros 10-15 segundos de ejercicio intenso:", a: ["Sistema de los Fosfágenos (Fosfocreatina)", "Oxidación aeróbica", "Glucólisis anaeróbica", "Grasas"], c: "Sistema de los Fosfágenos (Fosfocreatina)"},
+            {q: "48. Vía energética principal para mantener la postura por horas:", a: ["Aeróbica (Oxidativa)", "Anaeróbica láctica", "Fosfocreatina", "Glucogenólisis"], c: "Aeróbica (Oxidativa)"},
+            {q: "49. A diferencia del estriado, las células del músculo liso son:", a: ["Fusiformes y carecen de sarcómeros organizados", "Multinucleadas periféricas", "Estríadas marcadas", "Carentes de miosina"], c: "Fusiformes y carecen de sarcómeros organizados"},
+            {q: "50. En el músculo liso, los filamentos de actina están anclados a:", a: ["Cuerpos Densos", "Discos Z", "Líneas M", "Placas motoras"], c: "Cuerpos Densos"},
+            {q: "51. El músculo liso unitario actúa como sincitio gracias a:", a: ["Uniones en Hendidura (Gap Junctions)", "Axones mielinizados", "Cisternas masivas", "Troponina C"], c: "Uniones en Hendidura (Gap Junctions)"},
+            {q: "52. El músculo liso multiunitario (ej. iris) se caracteriza por:", a: ["Control fino por fibras individuales", "Bloque sincitial único", "Falta de inervación", "Cuerpos densos lineales"], c: "Control fino por fibras individuales"},
+            {q: "53. En lugar de Troponina, el músculo liso usa para unirse al calcio:", a: ["Calmodulina", "Calsecuestrina", "Tropomiosina", "Titina"], c: "Calmodulina"},
+            {q: "54. El complejo Calcio-Calmodulina activa a la enzima:", a: ["Miosina Cinasa de Cadena Ligera (MLCK)", "Miosina Fosfatasa", "Adenilato Ciclasa", "Acetilcolinesterasa"], c: "Miosina Cinasa de Cadena Ligera (MLCK)"},
+            {q: "55. Para que el músculo liso se relaje, se requiere de la:", a: ["Miosina Fosfatasa", "Cinasa MLCK", "Fosfodiesterasa", "Catalasa"], c: "Miosina Fosfatasa"},
+            {q: "56. El calcio usado para la contracción del liso proviene mayormente de:", a: ["El líquido extracelular (LEC)", "La mitocondria", "El núcleo", "Vesículas"], c: "El líquido extracelular (LEC)"},
+            {q: "57. Pequeñas depresiones en el sarcolema liso (mini túbulos T):", a: ["Caveolas", "Plasmodesmos", "Botones", "Cisternas"], c: "Caveolas"},
+            {q: "58. Fenómeno del liso para mantener tensión casi sin gastar ATP:", a: ["Mecanismo de Cerrojo (Latch State)", "Tetanización", "Fatiga", "Hiperplasia"], c: "Mecanismo de Cerrojo (Latch State)"},
+            {q: "59. El estiramiento brusco del intestino provoca una:", a: ["Contracción refleja miogénica", "Relajación flácida", "Lisis", "Fibrilación"], c: "Contracción refleja miogénica"},
+            {q: "60. El corazón actúa como sincitio porque posee:", a: ["Uniones en hendidura (Gap Junctions)", "Vainas de mielina", "Receptores DHP", "Válvulas"], c: "Uniones en hendidura (Gap Junctions)"},
+            {q: "61. Canal responsable de la Meseta en el músculo cardíaco:", a: ["Canales de Calcio Lentos (Tipo L)", "Canales rápidos de Sodio", "Canales de Potasio", "Muscarínicos"], c: "Canales de Calcio Lentos (Tipo L)"},
+            {q: "62. La Succinilcolina causa flacidez final porque:", a: ["Mantiene abierto el receptor agotándolo", "Compite sin abrir el canal", "Destruye la bomba Na/K", "Inhibe la AChE"], c: "Mantiene abierto el receptor agotándolo"},
+            {q: "63. La mutación del receptor de Rianodina bajo anestesia causa:", a: ["Hipertermia Maligna", "Miastenia Gravis", "Duchenne", "Guillain-Barré"], c: "Hipertermia Maligna"},
+            {q: "64. Las fibras nerviosas A-alfa motoras son:", a: ["Gruesas, mielinizadas y rápidas", "Finas y amielínicas", "Parasimpáticas exclusivas", "Vías del dolor sordo"], c: "Gruesas, mielinizadas y rápidas"},
+            {q: "65. Las neuronas autónomas liberan neurotransmisor sobre el liso en:", a: ["Varicosidades esparcidas", "Placas motoras cerradas", "Discos intercalares", "Nódulos"], c: "Varicosidades esparcidas"},
+            {q: "66. La enzima que rompe el ATP 'armando' la cabeza de miosina es:", a: ["Miosina ATPasa", "AChE", "Fosfatasa", "Adenilato Ciclasa"], c: "Miosina ATPasa"},
+            {q: "67. Agotamiento de vesículas de ACh ante alta frecuencia:", a: ["Fatiga Sináptica", "Miastenia", "Acomodación", "Tetanización"], c: "Fatiga Sináptica"},
+            {q: "68. Si cortas el nervio de un músculo esquelético, este sufre:", a: ["Parálisis y Atrofia por denervación", "Hipertrofia", "Espasmos", "Fibrilación"], c: "Parálisis y Atrofia por denervación"},
+            {q: "69. La toxina tetánica causa espasmos violentos porque:", a: ["Bloquea la liberación de GABA/Glicina", "Destruye ACh", "Activa miosina", "Bloquea sodio"], c: "Bloquea la liberación de GABA/Glicina"},
+            {q: "70. El ácido láctico se acumula en el músculo causando fatiga en la vía:", a: ["Glucolítica Anaeróbica", "Oxidativa Aeróbica", "Fosfocreatina", "Lipolítica"], c: "Glucolítica Anaeróbica"},
+            {q: "71. El Músculo Extraocular está conformado por fibras:", a: ["Tipo II (Rápidas) y unidades pequeñas", "Tipo I (Lentas)", "Liso multiunitario", "Liso unitario"], c: "Tipo II (Rápidas) y unidades pequeñas"},
+            {q: "72. Falta de proteína que ancla la membrana al citoesqueleto:", a: ["Distrofia de Duchenne", "Tétanos", "Miastenia", "Botulismo"], c: "Distrofia de Duchenne"},
+            {q: "73. Potencial local en la placa causado por una sola vesícula:", a: ["Potencial de miniatura (MEPP)", "Potencial de acción", "Nernst", "Sobretiro"], c: "Potencial de miniatura (MEPP)"},
+            {q: "74. Las fibras del dolor crónico y sordo son:", a: ["Amielínicas y lentas (Fibras C)", "Mielínicas rápidas", "A-alfa", "Fibras A-beta"], c: "Amielínicas y lentas (Fibras C)"},
+            {q: "75. Los Digitálicos aumentan la fuerza cardíaca porque:", a: ["Inhiben Na/K ATPasa, frenando salida de Calcio", "Activan Troponina C", "Abren canales de K", "Inhiben AChE"], c: "Inhiben Na/K ATPasa, frenando salida de Calcio"},
+            {q: "76. Relajación por Estrés permite al músculo liso (ej. vejiga):", a: ["Acomodar volúmenes sin subir mucho la presión", "Cerrarse violentamente", "Perder tono basal", "Explotar"], c: "Acomodar volúmenes sin subir mucho la presión"},
+            {q: "77. El músculo estriado esquelético carece de:", a: ["Uniones en hendidura (Gap Junctions)", "Sarcómeros", "Túbulos T", "Placa motora"], c: "Uniones en hendidura (Gap Junctions)"},
+            {q: "78. La enzima que degrada la ACh en la unión neuromuscular es:", a: ["Acetilcolinesterasa", "MAO", "MLCK", "Fosfodiesterasa"], c: "Acetilcolinesterasa"},
+            {q: "79. ¿Por qué los canales nicotínicos no dejan pasar Cloro?", a: ["El poro tiene cargas negativas que los repelen", "Son muy grandes", "No hay Cloro fuera", "El calcio lo impide"], c: "El poro tiene cargas negativas que los repelen"},
+            {q: "80. Si una neurona está a -100 mV, está en estado de:", a: ["Inhibición", "Excitación", "Tetanización", "Espiga"], c: "Inhibición"},
+            {q: "81. Ion que antagoniza al Calcio disminuyendo liberación de ACh:", a: ["Magnesio ($Mg^{2+}$)", "Cloruro", "Potasio", "Fosfato"], c: "Magnesio ($Mg^{2+}$)"},
+            {q: "82. Una unidad motora es:", a: ["Una motoneurona y todas las fibras que inerva", "Un nervio y un fascículo", "Un sarcómero", "Cerebro y Médula"], c: "Una motoneurona y todas las fibras que inerva"},
+            {q: "83. El músculo cardíaco se autoexcita rítmicamente por:", a: ["Potencial de reposo inestable (tejido nodal)", "Inervación simpática obligatoria", "ACh vagal constante", "Bloqueo de Na"], c: "Potencial de reposo inestable (tejido nodal)"},
+            {q: "84. El Gas Sarín causa convulsiones y asfixia por:", a: ["Inhibición irreversible de AChE", "Bloqueo de receptores", "Destrucción calmodulina", "Bloqueo de Ca"], c: "Inhibición irreversible de AChE"},
+            {q: "85. La Hipertrofia por ejercicio se debe a:", a: ["Aumento de filamentos en cada célula", "Multiplicación de células (hiperplasia)", "Acumulación de grasa", "Tendones gruesos"], c: "Aumento de filamentos en cada célula"},
+            {q: "86. El Potencial de Marcapasos sube lentamente por entrada de:", a: ["Sodio (canales Funny) y Calcio", "Potasio libre", "Cloro rápido", "Fosfato"], c: "Sodio (canales Funny) y Calcio"},
+            {q: "87. Equivalente a los discos Z en el músculo liso:", a: ["Cuerpos Densos", "Caveolas", "Calmodulina", "Calsecuestrina"], c: "Cuerpos Densos"},
+            {q: "88. En el reflejo patelar, el receptor es:", a: ["El Huso Muscular", "Órgano de Golgi", "Pacini", "Receptor nicotínico"], c: "El Huso Muscular"},
+            {q: "89. Bloquear los canales de Potasio resulta en:", a: ["Fallo en la repolarización", "Fallo en despolarización", "Menor reposo", "Parálisis inmediata"], c: "Fallo en la repolarización"},
+            {q: "90. La fuerza del sarcómero es máxima cuando:", a: ["Hay solapamiento óptimo actina/miosina", "Está estirado al máximo", "Bandas I se superponen", "No hay calcio"], c: "Hay solapamiento óptimo actina/miosina"},
+            {q: "91. Sin Titina, el músculo esquelético perdería:", a: ["Elasticidad y alineación sarcoplasmática", "Tetanización", "Hipertrofia", "Sarcómeros"], c: "Elasticidad y alineación sarcoplasmática"},
+            {q: "92. Estructura que envuelve a un solo fascículo muscular:", a: ["Perimisio", "Endomisio", "Epimisio", "Sarcolema"], c: "Perimisio"},
+            {q: "93. El neuropéptido se diferencia del neurotransmisor porque:", a: ["Acción prolongada y síntesis en el soma", "Acción rápida y síntesis en botón", "Es un gas", "Solo excita"], c: "Acción prolongada y síntesis en el soma"},
+            {q: "94. Ion que genera un PIPS (Inhibitorio):", a: ["Cloruro ($Cl^-$)", "Sodio", "Calcio", "Magnesio"], c: "Cloruro ($Cl^-$)"},
+            {q: "95. Músculo involuntario y estriado:", a: ["Músculo Cardíaco", "Músculo Liso", "Esquelético", "Diafragma"], c: "Músculo Cardíaco"},
+            {q: "96. Célula lisa unitaria pasa estímulo a vecinas por:", a: ["Uniones Gap", "Varicosidades", "Mielina", "Relajación"], c: "Uniones Gap"},
+            {q: "97. Receptor muscarínico M2 (Nervio Vago) produce:", a: ["Bradicardia", "Taquicardia", "Más fuerza", "Paro en sístole"], c: "Bradicardia"},
+            {q: "98. ¿Quién 'tira' de la Rianodina físicamente?", a: ["El receptor DHP", "La Titina", "La Calmodulina", "El Calcio"], c: "El receptor DHP"},
+            {q: "99. En Esclerosis Múltiple, la corriente eléctrica:", a: ["Se fuga o se bloquea", "Viaja más rápido", "Se hace química", "Hipertrofia el nervio"], c: "Se fuga o se bloquea"},
+            {q: "100. Inyectar cargas positivas hasta -50 mV provoca:", a: ["Disparo de potencial explosivo", "Inhibición", "Acelera bomba", "Nada"], c: "Disparo de potencial explosivo"}
         ];
 
         let cur = 0, points = 0, solved = false;
 
-        // ALGORITMO DE MEZCLA (Fisher-Yates Shuffle)
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -147,12 +213,12 @@
             const data = quizData[cur];
             document.getElementById('q-text').textContent = data.q;
             document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
             document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
             
             const container = document.getElementById('opts');
             container.innerHTML = '';
             
-            // LÓGICA DE MEZCLA: Las opciones se desordenan antes de mostrarse
             const shuffledOptions = shuffle([...data.a]);
             
             shuffledOptions.forEach((opt, i) => {
@@ -174,7 +240,6 @@
                 btn.classList.add('correct');
             } else {
                 btn.classList.add('incorrect');
-                // Revelar la correcta para fomentar el aprendizaje
                 btns.forEach(b => {
                     if(b.textContent.includes(correct)) b.classList.add('correct');
                 });
@@ -182,7 +247,7 @@
 
             if(explanation) {
                 const fb = document.getElementById('fb');
-                fb.innerHTML = `<strong>ANÁLISIS MÉDICO:</strong> ${explanation}`;
+                fb.innerHTML = `<strong>ANÁLISIS:</strong> ${explanation}`;
                 fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
                 fb.classList.remove('hidden');
             }
@@ -197,15 +262,11 @@
                 load();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                showResults();
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
             }
         };
-
-        function showResults() {
-            document.getElementById('card').classList.add('hidden');
-            document.getElementById('res').classList.remove('hidden');
-            document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
-        }
 
         window.onload = load;
     </script>
