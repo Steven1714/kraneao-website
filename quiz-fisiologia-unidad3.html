@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kraneao - Unidad III: Fisiología de la Sangre</title>
-    <!-- Tailwind CSS para diseño de alta resolución -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +39,6 @@
 </head>
 <body class="flex flex-col min-h-screen"> 
 
-    <!-- Header -->
     <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="index.html" class="hover:opacity-80 transition-opacity">
@@ -53,7 +51,6 @@
     <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
         <div id="quiz-container" class="w-full max-w-2xl">
             
-            <!-- Progreso -->
             <div class="mb-8">
                 <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
                     <span>Avance del Entrenamiento</span>
@@ -64,13 +61,10 @@
                 </div>
             </div>
 
-            <!-- Card de Pregunta -->
             <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
-                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Cargando banco de preguntas...</h2>
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Cargando retos...</h2>
                 
                 <div id="opts" class="grid grid-cols-1 gap-4"></div>
-                
-                <!-- Feedback Fisiológico -->
                 <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
                 
                 <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">
@@ -78,49 +72,120 @@
                 </button>
             </div>
 
-            <!-- Pantalla Final -->
             <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
                 <div class="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🩸</div>
-                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Unidad III Finalizada!</h2>
-                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has dominado los conceptos de Sangre, Hematopoyesis y Coagulación.</p>
-                
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Hematología Dominada!</h2>
                 <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Nivel de Dominio</p>
                     <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
                 </div>
-
-                <div class="flex flex-col gap-4">
-                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar Unidad</button>
-                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver a la Biblioteca</a>
-                </div>
+                <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar Unidad</button>
             </div>
         </div>
     </main>
 
     <script>
-        // BANCO DE 100 PREGUNTAS (Unidad III)
+        // BASE DE DATOS COMPLETA DE 100 PREGUNTAS (Esteban: No borres nada aquí)
         const quizData = [
-            {q: "1. ¿Qué porcentaje del peso corporal total representa la volemia en un adulto estándar?", a: ["5%", "10%", "20%", "40%"], c: "5%", e: "Un adulto promedio tiene aprox. 5 litros de sangre, lo que corresponde al 7-8% del peso, pero en el modelo estándar de cátedra se simplifica al 5% del volumen plasmático/volemia total."},
-            {q: "2. Al centrifugar la sangre, ¿qué porcentaje de su volumen corresponde exclusivamente al Plasma?", a: ["55%", "45%", "20%", "5%"], c: "55%", e: "El plasma es la parte líquida (55%) y los elementos formes el 45% (Hematocrito)."},
-            {q: "3. El porcentaje del volumen sanguíneo total ocupado por los glóbulos rojos se denomina clínicamente:", a: ["Hematocrito", "Hemoglobina", "Volemia", "Velocidad de sedimentación"], c: "Hematocrito"},
-            {q: "4. ¿Cuál es el rango fisiológico normal y estricto del pH sanguíneo humano?", a: ["7.35 a 7.45", "6.9 a 8.0", "7.0 a 7.5", "7.25 a 7.55"], c: "7.35 a 7.45", e: "Cualquier valor fuera de este rango indica Acidosis o Alcalosis clínica."},
-            {q: "6. Si un paciente tiene policitemia, ¿qué variable aumenta drásticamente elevando la resistencia vascular?", a: ["La viscosidad", "El radio del vaso", "La longitud del vaso", "La presión oncótica"], c: "La viscosidad", e: "Según Poiseuille, la resistencia es directamente proporcional a la viscosidad ($\eta$)."},
-            {q: "8. ¿Cuál es el primer sitio embrionario encargado de formar sangre (Semanas 3 a 12)?", a: ["Saco Vitelino", "Hígado fetal", "Médula Ósea", "Bazo"], c: "Saco Vitelino", e: "Es la fase mesoblástica de la hematopoyesis prenatal."},
-            {q: "13. Todas las células de la sangre derivan de un ancestro común en la médula ósea denominado:", a: ["Célula Madre Hematopoyética Pluripotencial", "Proeritroblasto", "Megacariocito", "Linfoblasto"], c: "Célula Madre Hematopoyética Pluripotencial"},
-            {q: "17. La célula gigante de la médula ósea que fragmenta su citoplasma para dar origen a las plaquetas es:", a: ["El Megacariocito", "El Proeritroblasto", "El Macrófago medular", "El Linfoblasto"], c: "El Megacariocito"},
-            {q: "25. La vida media de un Eritrocito maduro en el torrente sanguíneo antes de ser destruido es de:", a: ["120 días", "24 a 48 horas", "6 a 8 meses", "7 a 10 días"], c: "120 días"},
-            {q: "27. El órgano rey absoluto en la producción del 90% de la hormona Eritropoyetina es:", a: ["El Riñón", "El Hígado", "La Tiroides", "El Bazo"], c: "El Riñón", e: "Las células intersticiales de la corteza renal detectan la hipoxia."},
-            {q: "32. ¿Por qué la falta de Factor Intrínseco gástrico produce Anemia Perniciosa?", a: ["Porque sin él, la Vitamina B12 no puede ser absorbida en el íleon terminal.", "Porque impide la secreción de HCl.", "Porque bloquea la absorción de hierro.", "Porque destruye la transferrina."], c: "Porque sin él, la Vitamina B12 no puede ser absorbida en el íleon terminal."},
-            {q: "43. Granulocito más abundante (60-70%), primera línea de defensa contra bacterias:", a: ["Neutrófilo", "Linfocito", "Eosinófilo", "Monocito"], c: "Neutrófilo"},
-            {q: "54. En la adhesión plaquetaria, la proteína que actúa como 'ancla' entre el colágeno y la plaqueta es:", a: ["Factor de von Willebrand (vWF)", "Fibrinógeno", "Tromboplastina", "Factor XIII"], c: "Factor de von Willebrand (vWF)"},
-            {q: "58. En la cascada secundaria, la 'Vía Extrínseca' inicia rápidamente gracias a la liberación de:", a: ["Factor Tisular (III)", "Factor XII", "Fibrinógeno", "Calcio"], c: "Factor Tisular (III)"},
-            {q: "68. Los Factores Vitamina K dependientes sintetizados en el hígado (Mnemotecnia 1972) son:", a: ["Factores II, VII, IX y X.", "Factores I, V, VIII y XII.", "Factores III, IV, XI y XIII.", "Factores V, VII, XI y XII."], c: "Factores II, VII, IX y X."},
-            {q: "74. Enzima encargada de disolver y destruir la malla de fibrina vieja (Fibrinólisis):", a: ["Plasmina", "Trombina", "Protrombinasa", "Calicreína"], c: "Plasmina"},
-            {q: "82. Un paciente tipo 'O negativo' es considerado el 'Donante Universal' porque:", a: ["Sus glóbulos rojos no tienen antígenos A, B ni Rh.", "Su plasma no tiene anticuerpos.", "Engaña al sistema inmune.", "Produce exceso de vWF."], c: "Sus glóbulos rojos no tienen antígenos A, B ni Rh."},
-            {q: "84. La Eritroblastosis Fetal ocurre EXCLUSIVAMENTE bajo esta combinación:", a: ["Madre Rh negativa con feto Rh positivo.", "Madre Rh positiva con feto Rh negativo.", "Madre tipo O con feto AB.", "Madre Rh positiva con feto Rh positivo."], c: "Madre Rh negativa con feto Rh positivo."},
-            {q: "99. ¿Qué órgano del cuerpo humano recibe el nombre del 'CEMENTERIO' de los glóbulos rojos?", a: ["El Bazo (Pulpa Roja)", "El Hígado", "Los Riñones", "Los Ganglios"], c: "El Bazo (Pulpa Roja)"},
-            {q: "100. El desecho amarillo-verdoso que el hígado excreta tras romper la hemoglobina es:", a: ["La Bilirrubina", "La Urea", "El Ácido Úrico", "El Amoníaco"], c: "La Bilirrubina"}
-            // Esteban: Inyecta aquí el resto de tus 100 preguntas siguiendo exactamente este formato {q, a, c, e}
+            {q: "1. ¿Qué porcentaje del peso corporal total representa la volemia en un adulto estándar?", a: ["5%", "10%", "20%", "40%"], c: "5%"},
+            {q: "2. Al centrifugar la sangre, ¿qué porcentaje de su volumen corresponde al Plasma?", a: ["55%", "45%", "20%", "5%"], c: "55%"},
+            {q: "3. El volumen sanguíneo ocupado por los glóbulos rojos se denomina:", a: ["Hematocrito", "Hemoglobina", "Volemia", "Velocidad de sedimentación"], c: "Hematocrito"},
+            {q: "4. ¿Cuál es el rango fisiológico normal del pH sanguíneo humano?", a: ["7.35 a 7.45", "6.9 a 8.0", "7.0 a 7.5", "7.25 a 7.55"], c: "7.35 a 7.45"},
+            {q: "5. ¿Cuál es la viscosidad normal de la sangre en comparación con el agua?", a: ["5 a 6 veces mayor", "Igual", "10 a 15 veces mayor", "La mitad"], c: "5 a 6 veces mayor"},
+            {q: "6. En policitemia, ¿qué variable aumenta drásticamente la resistencia vascular?", a: ["La viscosidad ($\eta$)", "El radio del vaso", "La longitud", "La presión oncótica"], c: "La viscosidad ($\eta$)"},
+            {q: "7. ¿Cuál es el componente químico más abundante del plasma?", a: ["Agua (90-92%)", "Albúmina", "Fibrinógeno", "Sodio"], c: "Agua (90-92%)"},
+            {q: "8. Primer sitio embrionario encargado de formar sangre (Semanas 3 a 12):", a: ["Saco Vitelino", "Hígado fetal", "Médula Ósea", "Bazo"], c: "Saco Vitelino"},
+            {q: "9. Órgano principal en la producción de sangre fetal (segundo trimestre):", a: ["El Hígado", "El Saco Vitelino", "La Médula Ósea", "El Timo"], c: "El Hígado"},
+            {q: "10. Órgano central de la hematopoyesis a partir del séptimo mes y de por vida:", a: ["La Médula Ósea", "El Hígado", "El Bazo", "Los Ganglios"], c: "La Médula Ósea"},
+            {q: "11. Huesos donde se mantiene activa la médula ósea roja en el adulto:", a: ["Huesos planos (Esternón, costillas, pelvis)", "Diáfisis de fémur y tibia", "Huesos del cráneo únicamente", "Todos los huesos"], c: "Huesos planos (Esternón, costillas, pelvis)"},
+            {q: "12. Tejido inactivo rico en adipocitos que reemplaza la médula en huesos largos:", a: ["Médula Ósea Amarilla", "Médula Ósea Roja", "Tejido linfoide", "Hueso cortical"], c: "Médula Ósea Amarilla"},
+            {q: "13. Ancestro común en la médula de todas las células sanguíneas:", a: ["Célula Madre Hematopoyética Pluripotencial", "Proeritroblasto", "Megacariocito", "Linfoblasto"], c: "Célula Madre Hematopoyética Pluripotencial"},
+            {q: "14. La bifurcación temprana de la célula madre da origen a:", a: ["Línea Mieloide y Línea Linfoide", "Eritrocítica y Plaquetaria", "Granulocítica y Monocítica", "Hepática y Esplénica"], c: "Línea Mieloide y Línea Linfoide"},
+            {q: "15. Los Linfocitos T y B pertenecen a la vía de maduración:", a: ["Linfoide", "Mieloide", "Eritroide", "Megacariocítica"], c: "Linfoide"},
+            {q: "16. Destrucción de la Línea MIELOIDE causará carencia de:", a: ["Eritrocitos, Plaquetas y Granulocitos", "Linfocitos T y B", "Únicamente Eritrocitos", "Anticuerpos"], c: "Eritrocitos, Plaquetas y Granulocitos"},
+            {q: "17. Célula gigante que fragmenta su citoplasma para dar origen a las plaquetas:", a: ["Megacariocito", "Proeritroblasto", "Macrófago", "Linfoblasto"], c: "Megacariocito"},
+            {q: "18. Primera célula inmadura comprometida a ser glóbulo rojo:", a: ["Proeritroblasto", "Reticulocito", "Célula Madre", "Mieloblasto"], c: "Proeritroblasto"},
+            {q: "19. El Eritroblasto Basófilo debe su color azulado a:", a: ["Ribosomas y ARN masivos", "Hierro", "Fibrina", "Lisosomas"], c: "Ribosomas y ARN masivos"},
+            {q: "20. El Eritroblasto Policromatófilo es multicolor porque:", a: ["Mezcla azul de ARN con rojo de Hemoglobina", "Expulsa el núcleo", "Tiene parásitos", "Almacena bilirrubina"], c: "Mezcla azul de ARN con rojo de Hemoglobina"},
+            {q: "21. Estadio donde la célula condensa su núcleo (picnosis) y lo expulsa:", a: ["Eritroblasto Ortocromático", "Reticulocito", "Proeritroblasto", "Eritrocito"], c: "Eritroblasto Ortocromático"},
+            {q: "22. Célula resultante de la expulsión del núcleo que pasa a la sangre con restos de ARN:", a: ["Reticulocito", "Macrófago", "Mielocito", "Normoblasto"], c: "Reticulocito"},
+            {q: "23. Límite fisiológico normal de reticulocitos en sangre:", a: ["1% a 2%", "45% a 50%", "10% a 15%", "0%"], c: "1% a 2%"},
+            {q: "24. Beneficio de la forma de Disco Bicóncavo del glóbulo rojo:", a: ["Aumenta superficie para difusión de gases", "Fagocitosis", "Resistencia intracraneal", "Almacén de factor intrínseco"], c: "Aumenta superficie para difusión de gases"},
+            {q: "25. Vida media de un Eritrocito maduro en el torrente sanguíneo:", a: ["120 días", "24 horas", "6 meses", "7 días"], c: "120 días"},
+            {q: "26. Estímulo infalible que dispara la producción de Eritropoyetina (EPO):", a: ["Hipoxia Tisular", "Hipercapnia", "Bajo hierro", "Hipotensión"], c: "Hipoxia Tisular"},
+            {q: "27. Órgano que produce el 90% de la hormona Eritropoyetina:", a: ["El Riñón", "El Hígado", "La Tiroides", "El Bazo"], c: "El Riñón"},
+            {q: "28. Anemia típica en paciente con insuficiencia renal crónica:", a: ["Normocítica y Normocrómica", "Microcítica Hipocrómica", "Macrocítica", "Falciforme"], c: "Normocítica y Normocrómica"},
+            {q: "29. Factor de transcripción renal que estimula la EPO en hipoxia:", a: ["Factor HIF-1", "Factor XIII", "Factor von Willebrand", "Hormona ACTH"], c: "Factor HIF-1"},
+            {q: "30. El efecto primario de la EPO es acelerar la diferenciación de:", a: ["Proeritroblastos", "Hemo", "Macrófagos", "Megacariocitos"], c: "Proeritroblastos"},
+            {q: "31. El eritroblasto requiere para su ADN obligatoriamente de:", a: ["B12 y Ácido Fólico (B9)", "Vitamina K y Calcio", "Vitamina D", "Vitamina C"], c: "B12 y Ácido Fólico (B9)"},
+            {q: "32. ¿Por qué la falta de Factor Intrínseco produce Anemia Perniciosa?", a: ["Impide absorción de Vitamina B12 en íleon", "Bloquea HCl", "Bloquea Hierro", "Destruye transferrina"], c: "Impide absorción de Vitamina B12 en íleon"},
+            {q: "33. Proteína 'taxi' que transporta Hierro ($Fe^{3+}$) por la sangre:", a: ["Transferrina", "Ferritina", "Hemoglobina", "Albúmina"], c: "Transferrina"},
+            {q: "34. Forma de almacén seguro e insoluble de Hierro en el hígado:", a: ["Ferritina", "Hemosiderina", "Bilirrubina", "Plasmina"], c: "Ferritina"},
+            {q: "35. Paciente con sangrado crónico que falla en síntesis de hemoglobina tendrá:", a: ["Anemia Microcítica Hipocrómica", "Macrocítica", "Normocítica", "Aplásica"], c: "Anemia Microcítica Hipocrómica"},
+            {q: "36. Rango normal del Volumen Corpuscular Medio (VCM):", a: ["80 a 100 fL", "27 pg", "42%", "120 fL"], c: "80 a 100 fL"},
+            {q: "37. Rango normal de la Hemoglobina Corpuscular Media (HCM):", a: ["27 a 32 pg", "80 fL", "14 g/dL", "32%"], c: "27 a 32 pg"},
+            {q: "38. Hemoglobina normal para un Hombre adulto:", a: ["14 a 16 g/dL", "12 g/dL", "42%", "10 g/dL"], c: "14 a 16 g/dL"},
+            {q: "39. Hemoglobina normal para una Mujer adulta:", a: ["12 a 14 g/dL", "15 g/dL", "37%", "16 g/dL"], c: "12 a 14 g/dL"},
+            {q: "40. Hematocrito normal para un Hombre adulto:", a: ["42% a 52%", "37%", "14 g/dL", "55%"], c: "42% a 52%"},
+            {q: "41. Hematocrito normal para una Mujer adulta:", a: ["37% a 47%", "42%", "12 g/dL", "30%"], c: "37% a 47%"},
+            {q: "42. Recuento basal de Leucocitos en sangre periférica:", a: ["4.000 a 10.000 /mm³", "150.000 /mm³", "5 millones", "1.000 /mm³"], c: "4.000 a 10.000 /mm³"},
+            {q: "43. Granulocito más abundante (primera línea suicida contra bacterias):", a: ["Neutrófilo", "Linfocito", "Eosinófilo", "Monocito"], c: "Neutrófilo"},
+            {q: "44. Leucocito especializado en atacar parásitos helmintos:", a: ["Eosinófilo", "Basófilo", "Linfocito T", "Macrófago"], c: "Eosinófilo"},
+            {q: "45. Leucocito menos abundante que libera histamina y heparina:", a: ["Basófilo", "Neutrófilo", "Célula NK", "Monocito"], c: "Basófilo"},
+            {q: "46. Célula circulante que al llegar al tejido se vuelve Macrófago:", a: ["Monocito", "Linfocito B", "Reticulocito", "Eosinófilo"], c: "Monocito"},
+            {q: "47. Leucocitos responsables de la inmunidad adaptativa y anticuerpos:", a: ["Linfocitos T y B", "Neutrófilos", "Monocitos", "Megacariocitos"], c: "Linfocitos T y B"},
+            {q: "48. Proceso donde leucocitos cruzan poros capilares para invadir tejido:", a: ["Diapédesis", "Quimiotaxis", "Marginación", "Opsonización"], c: "Diapédesis"},
+            {q: "49. Atracción direccional del leucocito guiado por sustancias químicas:", a: ["Quimiotaxis", "Diapédesis", "Fagocitosis", "Transcitosis"], c: "Quimiotaxis"},
+            {q: "50. 'Aderezo' químico que marca bacterias para ser devoradas:", a: ["Opsonización", "Marginación", "Quimiotaxis", "Lisis"], c: "Opsonización"},
+            {q: "51. Recuento fisiológico normal de Plaquetas:", a: ["150.000 a 400.000 /mm³", "4.000 /mm³", "5 millones", "50.000 /mm³"], c: "150.000 a 400.000 /mm³"},
+            {q: "52. Vida media aproximada de las plaquetas:", a: ["7 a 10 días", "120 días", "24 horas", "1 mes"], c: "7 a 10 días"},
+            {q: "53. Primer paso inmediato de la Hemostasia tras lesión traumática:", a: ["Espasmo vascular", "Adhesión", "Fibrina", "Retracción"], c: "Espasmo vascular"},
+            {q: "54. 'Velcro' endotelial entre colágeno y plaqueta:", a: ["Factor de von Willebrand", "Fibrinógeno", "Tromboplastina", "Factor XIII"], c: "Factor de von Willebrand"},
+            {q: "55. Potentes agregantes liberados por los gránulos plaquetarios:", a: ["Tromboxano A2 y ADP", "Óxido Nítrico", "Plasmina", "Histamina"], c: "Tromboxano A2 y ADP"},
+            {q: "56. Fármaco que previene infartos impidiendo la formación de Tromboxano A2:", a: ["Aspirina", "Warfarina", "Heparina", "Vitamina K"], c: "Aspirina"},
+            {q: "57. Prueba que evalúa la función vascular y plaquetaria in vivo:", a: ["Tiempo de Sangría", "TP", "TPT", "Retracción"], c: "Tiempo de Sangría"},
+            {q: "58. La Vía Extrínseca inicia rápido gracias a la liberación de:", a: ["Factor Tisular (III)", "Factor XII", "Fibrinógeno", "Calcio"], c: "Factor Tisular (III)"},
+            {q: "59. El Factor Tisular activa inmediatamente al Factor:", a: ["Factor VII", "Factor XII", "Factor IX", "Factor VIII"], c: "Factor VII"},
+            {q: "60. Factor que inicia la Vía Intrínseca (lenta/de contacto):", a: ["Factor XII (Hageman)", "Factor VII", "Factor III", "Factor X"], c: "Factor XII (Hageman)"},
+            {q: "61. El complejo 'Tenasa' intrínseco está formado por Factores:", a: ["VIII y IXa", "V y Xa", "VII y III", "XI y XII"], c: "VIII y IXa"},
+            {q: "62. Enfermedad hemorrágica causada por deficiencia del Factor VIII:", a: ["Hemofilia A", "Hemofilia B", "von Willebrand", "Púrpura"], c: "Hemofilia A"},
+            {q: "63. Vía Común: convergencia de cascadas activando a la enzima:", a: ["Factor X", "Factor II", "Factor I", "Factor XII"], c: "Factor X"},
+            {q: "64. Función directa de la 'Protrombinasa':", a: ["Convertir Protrombina en Trombina", "Fibrinógeno en Fibrina", "Activar XIII", "Fibrinólisis"], c: "Convertir Protrombina en Trombina"},
+            {q: "65. La Trombina convierte la proteína líquida en hilos sólidos de:", a: ["Fibrina", "Plasmina", "Protrombina", "Tromboxano"], c: "Fibrina"},
+            {q: "66. Forma enlaces covalentes para endurecer la red de fibrina:", a: ["Factor XIII", "Factor VIII", "Factor X", "Trombina"], c: "Factor XIII"},
+            {q: "67. Catión esencial (Factor IV) en casi todos los pasos de la cascada:", a: ["Calcio ($Ca^{++}$)", "Magnesio", "Sodio", "Hierro"], c: "Calcio ($Ca^{++}$)"},
+            {q: "68. Los Factores Vitamina K dependientes (Mnemotecnia 1972) son:", a: ["II, VII, IX y X", "I, V, VIII", "III, IV, XI", "V, VII, XII"], c: "II, VII, IX y X"},
+            {q: "69. Anticoagulante oral que antagoniza la Vitamina K:", a: ["Warfarina", "Heparina", "Aspirina", "Clopidogrel"], c: "Warfarina"},
+            {q: "70. Anticoagulante inyectable que potencia la Antitrombina III:", a: ["Heparina", "Warfarina", "t-PA", "Neostigmina"], c: "Heparina"},
+            {q: "71. Prueba de laboratorio que evalúa la Vía EXTRÍNSECA:", a: ["Tiempo de Protrombina (TP)", "TPT", "Sangría", "Retracción"], c: "Tiempo de Protrombina (TP)"},
+            {q: "72. Prueba de laboratorio que evalúa la Vía INTRÍNSECA:", a: ["Tiempo Parcial de Tromboplastina (TPT)", "TP", "Sangría", "Dimero-D"], c: "Tiempo Parcial de Tromboplastina (TPT)"},
+            {q: "73. Plaquetas contraen su actina para exprimir el suero del coágulo:", a: ["Retracción del Coágulo", "Fibrinólisis", "Agregación", "Vasoespasmo"], c: "Retracción del Coágulo"},
+            {q: "74. 'Tijera biológica' encargada de disolver la fibrina vieja:", a: ["Plasmina", "Trombina", "Protrombinasa", "Calicreína"], c: "Plasmina"},
+            {q: "75. Precursor inactivo que debe activarse para ser Plasmina:", a: ["Plasminógeno", "Fibrinógeno", "Antitrombina", "Protrombina"], c: "Plasminógeno"},
+            {q: "76. Fibrinolítico natural liberado por el endotelio lesionado:", a: ["Activador Tisular del Plasminógeno (t-PA)", "Tromboxano", "Heparina", "Factor III"], c: "Activador Tisular del Plasminógeno (t-PA)"},
+            {q: "77. Sustancias vasodilatadoras secretadas por endotelio intacto:", a: ["Óxido Nítrico y Prostaciclina", "Tromboxano y ADP", "Factor Tisular", "Trombina"], c: "Óxido Nítrico y Prostaciclina"},
+            {q: "78. La Trombomodulina atrapa a la Trombina para activar a:", a: ["La Proteína C", "El Factor XIII", "La Plasmina", "El Factor Xa"], c: "La Proteína C"},
+            {q: "79. La Proteína C activada destruye a los factores:", a: ["Va y VIIIa", "IIa y Xa", "VIIa y XIIa", "Fibrina"], c: "Va y VIIIa"},
+            {q: "80. Efecto potenciado x1000 por Heparina sobre Trombina y Factor Xa:", a: ["Antitrombina III", "Proteína C", "TFPI", "Prostaciclina"], c: "Antitrombina III"},
+            {q: "81. ¿Dónde se ubican los antígenos A y B del Sistema ABO?", a: ["Glucocálix del Eritrocito", "Plasma libre", "Núcleo", "Plaquetas"], c: "Glucocálix del Eritrocito"},
+            {q: "82. ¿Por qué el 'O negativo' es Donante Universal?", a: ["No tiene antígenos A, B ni Rh", "No tiene anticuerpos", "Engaña al sistema", "Tiene vWF"], c: "No tiene antígenos A, B ni Rh"},
+            {q: "83. ¿Por qué el 'AB positivo' es Receptor Universal?", a: ["Su plasma no tiene anticuerpos anti-A, B ni Rh", "No tiene antígenos", "SRE inactivo", "Enzimas líticas"], c: "Su plasma no tiene anticuerpos anti-A, B ni Rh"},
+            {q: "84. Eritroblastosis Fetal ocurre bajo esta combinación:", a: ["Madre Rh- con feto Rh+", "Madre Rh+ con feto Rh-", "O con AB", "Ambos Rh+"], c: "Madre Rh- con feto Rh+"},
+            {q: "85. ¿Por qué ocurre el ataque en el segundo embarazo Rh+?", a: ["IgG anti-Rh cruzan la placenta", "Feto ataca madre", "Falla factor intrínseco", "Defecto saco vitelino"], c: "IgG anti-Rh cruzan la placenta"},
+            {q: "86. Sustancia preventiva en madres Rh- (Rhogam):", a: ["Inmunoglobulina Anti-D", "Vitamina K", "EPO", "Transfusión"], c: "Inmunoglobulina Anti-D"},
+            {q: "87. Pancitopenia por quimioterapia agresiva es:", a: ["Anemia Aplásica", "Falciforme", "Leucemia", "Megaloblástica"], c: "Anemia Aplásica"},
+            {q: "88. Mutación en Anemia Falciforme causa cristalización de:", a: ["Hemoglobina S (HbS)", "Acuaporinas", "Núcleo", "Hierro"], c: "Hemoglobina S (HbS)"},
+            {q: "89. Moléculas de hemoglobina en un solo glóbulo rojo:", a: ["250 a 300 millones", "5", "100.000", "1 billón"], c: "250 a 300 millones"},
+            {q: "90. Máximo de moléculas de $O_2$ por cada Hemoglobina:", a: ["4", "1", "8", "2"], c: "4"},
+            {q: "91. El término 'Sangre Periférica' se refiere a:", a: ["Sangre en vasos y capilares sistémicos", "En médula ósea", "En bazo", "En meninges"], c: "Sangre en vasos y capilares sistémicos"},
+            {q: "92. Porcentaje máximo de EPO producido por el Hígado en crisis:", a: ["10%", "50%", "100%", "0%"], c: "10%"},
+            {q: "93. Hematocrito de 55% tras vivir un mes en los Andes es:", a: ["Policitemia Secundaria Fisiológica", "Policitemia Vera", "Anemia reactiva", "Falla renal"], c: "Policitemia Secundaria Fisiológica"},
+            {q: "94. La Policitemia Vera es una aberración genética de:", a: ["La Médula Ósea", "Fumar", "Falta de hierro", "Corazón derecho"], c: "La Médula Ósea"},
+            {q: "95. El suero se diferencia del plasma in vitro porque:", a: ["No tiene Fibrinógeno ni factores", "Tiene el doble", "No tiene glóbulos rojos", "Son iguales"], c: "No tiene Fibrinógeno ni factores"},
+            {q: "96. Coágulo desprendido que viaja por la sangre:", a: ["Émbolo", "Aneurisma", "Ateroma", "Macrófago"], c: "Émbolo"},
+            {q: "97. Deficiencia de Vitamina K generará clínicamente:", a: ["Hemorragias severas", "Trombosis", "Anemia", "Parálisis"], c: "Hemorragias severas"},
+            {q: "98. Quimioatrayentes para neutrófilos en inflamación:", a: ["Citocinas y Quimiocinas", "Inmunoglobulinas", "Esteroides", "Factor Tisular"], c: "Citocinas y Quimiocinas"},
+            {q: "99. 'CEMENTERIO' de los glóbulos rojos:", a: ["Bazo (Pulpa Roja)", "Hígado", "Riñones", "Ganglios"], c: "Bazo (Pulpa Roja)"},
+            {q: "100. Desecho amarillo-verdoso final del grupo Hemo:", a: ["Bilirrubina", "Urea", "Ácido Úrico", "Amoníaco"], c: "Bilirrubina"}
         ];
 
         let cur = 0, points = 0, solved = false;
@@ -149,7 +214,6 @@
             const container = document.getElementById('opts');
             container.innerHTML = '';
             
-            // Mezclamos las opciones para que no sea siempre la A
             const shuffledOptions = shuffle([...data.a]);
             
             shuffledOptions.forEach((opt, i) => {
@@ -171,9 +235,7 @@
                 btn.classList.add('correct');
             } else {
                 btn.classList.add('incorrect');
-                btns.forEach(b => {
-                    if(b.textContent.includes(correct)) b.classList.add('correct');
-                });
+                btns.forEach(b => { if(b.textContent.includes(correct)) b.classList.add('correct'); });
             }
 
             if(explanation) {
