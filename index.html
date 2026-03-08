@@ -58,7 +58,7 @@
 </head>
 <body class="text-brand-dark-blue font-sans">
 
-    <!-- Barra de Navegación -->
+    <!-- Header Principal -->
     <header class="p-4 glass-header sticky top-0 z-50 border-b border-gray-100/50">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="hover:opacity-80 transition-opacity">
@@ -68,12 +68,12 @@
                 </div>
             </a>
             <button onclick="toggleModal(true)" class="bg-brand-yellow px-5 py-2.5 rounded-2xl font-black text-[10px] md:text-xs animate-pulseGlow shadow-xl shadow-yellow-400/20 uppercase tracking-widest text-brand-dark-blue">
-                ¡SER FUNDADOR!
+                ¡Ser Fundador!
             </button>
         </nav>
     </header>
 
-    <!-- Sección Principal (Hero) - TEXTO GENERALIZADO -->
+    <!-- Hero Section -->
     <main class="relative pt-16 pb-24 px-4 overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
             <div class="absolute top-10 left-10 w-64 h-64 bg-blue-100 rounded-full blur-3xl"></div>
@@ -86,10 +86,9 @@
             </div>
             
             <h1 class="text-6xl md:text-8xl font-black text-brand-blue leading-[0.9] mb-8 tracking-tighter animate-fadeIn">
-                Domina la <br><span class="text-brand-yellow italic">Medicina</span>
+                Domina la <br><span class="text-brand-yellow italic">Medicina.</span>
             </h1>
             
-            <!-- SUBTÍTULO GENERAL (Para todas las materias) -->
             <p class="text-gray-500 max-w-2xl mx-auto mb-16 font-medium text-lg md:text-xl animate-fadeIn" style="animation-delay: 0.1s">
                 Entrenamientos interactivos diseñados para estudiantes que buscan la excelencia. Desafía tu mente y eleva tu nivel académico hoy.
             </p>
@@ -110,7 +109,7 @@
                         </div>
                         <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Morfología I</span>
                         <h3 class="text-2xl font-black mb-4 tracking-tight">Drenaje Venoso</h3>
-                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Estudio de los senos durales y la circulación profunda del encéfalo.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Estudio exhaustivo de los senos durales y la red venosa encefálica profunda.</p>
                         <a href="quiz.html" class="block w-full bg-brand-yellow text-center py-4 rounded-[1.2rem] font-black hover:bg-yellow-400 transition-all text-brand-dark-blue shadow-lg">INICIAR RETO</a>
                     </div>
 
@@ -120,7 +119,7 @@
                         </div>
                         <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Cultura Médica</span>
                         <h3 class="text-2xl font-black mb-4 tracking-tight">Historia en Venezuela</h3>
-                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Desde la medicina indígena hasta la modernidad nacional.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Hitos, personajes y evolución de la salud pública nacional (Lapso 3).</p>
                         <div class="flex gap-3">
                             <a href="quiz-historia-150.html" class="flex-1 bg-gray-50 text-center py-4 rounded-[1.2rem] font-black text-xs hover:bg-gray-100 transition-colors uppercase">150 P.</a>
                             <a href="quiz-historia-completo.html" class="flex-1 bg-brand-yellow text-center py-4 rounded-[1.2rem] font-black text-xs hover:bg-yellow-400 shadow-lg uppercase text-brand-dark-blue">300 P.</a>
@@ -128,42 +127,44 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN 2DO AÑO - AQUÍ SÍ COLOCAMOS EL RIGOR CIENTÍFICO -->
+                <!-- SECCIÓN 2DO AÑO -->
                 <div id="y2" class="hide grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left animate-fadeIn">
+                    <!-- Fisiología I -->
                     <div class="quiz-card p-8 group h-full">
-                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors text-brand-blue">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.628.285a2 2 0 01-1.963 0l-.63-.285a6 6 0 00-3.86-.517l-2.388.477a2 2 0 00-1.022.547V18.28a2 2 0 001.1 1.79l3.352 1.676a4 4 0 003.58 0l3.352-1.676a2 2 0 001.1-1.79v-2.852z" /></svg>
-                        </div>
-                        <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 block">Unidad I</span>
+                        <span class="text-[10px] font-black text-brand-blue uppercase mb-2 block tracking-widest">Unidad I</span>
                         <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Generalidades</h3>
-                        <!-- TEXTO ESPECÍFICO DE FISIOLOGÍA AQUÍ -->
-                        <p class="text-[10px] text-gray-400 mb-6 italic">Basado en Guyton & Hall. Prepárate para el 50%.</p>
-                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">100 retos fundamentales sobre el medio interno y transporte de membrana.</p>
-                        <a href="quiz-fisiologia-100.html" class="block w-full bg-brand-blue text-white text-center py-4 rounded-[1.2rem] font-black hover:bg-brand-dark-blue shadow-lg transition-all">ABRIR 100 RETOS</a>
+                        <p class="text-[10px] text-gray-400 mb-6 italic">Basado en Guyton. Prepárate para el 50%.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Homeostasis, Membrana y Potencial de Acción.</p>
+                        <a href="quiz-fisiologia-100.html" class="block w-full bg-brand-blue text-white text-center py-4 rounded-[1.2rem] font-black hover:bg-brand-dark-blue shadow-lg transition-all">ABRIR RETO</a>
                     </div>
 
+                    <!-- Fisiología II -->
+                    <div class="quiz-card p-8 group h-full">
+                        <span class="text-[10px] font-black text-brand-blue uppercase mb-2 block tracking-widest">Unidad II</span>
+                        <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Nervio y Músculo</h3>
+                        <p class="text-[10px] text-gray-400 mb-6 italic">Sinapsis y Placa Motora.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Entrenamiento intensivo sobre la contracción y el impulso nervioso.</p>
+                        <a href="quiz-fisiologia-unidad2.html" class="block w-full bg-brand-blue text-white text-center py-4 rounded-[1.2rem] font-black hover:bg-brand-dark-blue shadow-lg transition-all">ABRIR RETO</a>
+                    </div>
+
+                    <!-- Fisiología III - NUEVA UNIDAD -->
                     <div class="quiz-card p-8 border-2 border-brand-yellow bg-yellow-50/5 group h-full">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-brand-yellow rounded-2xl flex items-center justify-center group-hover:bg-brand-dark-blue group-hover:text-brand-yellow transition-colors text-brand-dark-blue font-bold">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            </div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-black text-brand-yellow uppercase tracking-widest block bg-brand-dark-blue px-2 py-1 rounded">Unidad III</span>
                             <span class="bg-green-100 text-green-700 text-[9px] font-black px-3 py-1 rounded-full uppercase">Estreno</span>
                         </div>
-                        <span class="text-[10px] font-black text-brand-yellow uppercase tracking-widest mb-2 block tracking-tighter">Unidad II</span>
-                        <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Nervio y Músculo</h3>
-                        <p class="text-[10px] text-gray-400 mb-6 italic">Rigor científico en cada respuesta.</p>
-                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Entrenamiento sobre Sinapsis, Placa Motora y contracción muscular.</p>
-                        <a href="quiz-fisiologia-unidad2.html" class="block w-full bg-brand-yellow text-brand-dark-blue text-center py-4 rounded-[1.2rem] font-black hover:bg-yellow-400 shadow-xl transition-all">EMPEZAR RETO</a>
+                        <h3 class="text-2xl font-black mb-2 tracking-tight leading-tight">Sangre y Hematología</h3>
+                        <p class="text-[10px] text-gray-400 mb-6 italic">Hematopoyesis, Eritrocitos y Hemostasia.</p>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">100 retos nivel experto para dominar la fisiología de los elementos formes.</p>
+                        <a href="quiz-fisiologia-unidad3.html" class="block w-full bg-brand-yellow text-brand-dark-blue text-center py-4 rounded-[1.2rem] font-black hover:bg-yellow-400 shadow-xl transition-all">INICIAR RETO</a>
                     </div>
 
+                    <!-- Laboratorio -->
                     <div class="quiz-card p-8 group h-full">
-                        <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-dark-blue group-hover:text-white transition-colors text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Simulación</span>
-                        <h3 class="text-2xl font-black mb-4 tracking-tight leading-tight">Laboratorio PA</h3>
-                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Visualiza el impacto de toxinas en la gráfica iónica real.</p>
-                        <a href="fisiologia-dashboard.html" class="block w-full bg-gray-100 text-gray-400 text-center py-4 rounded-[1.2rem] font-black hover:bg-gray-200 transition-all uppercase text-[10px] tracking-widest">Abrir Dashboard</a>
+                        <span class="text-[10px] font-black text-gray-400 uppercase mb-2 block tracking-widest">Herramientas</span>
+                        <h3 class="text-2xl font-black mb-4 tracking-tight leading-tight">Simulador PA</h3>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed flex-grow">Visualiza el impacto de la Tetrodotoxina y el TEA en tiempo real.</p>
+                        <a href="fisiologia-dashboard.html" class="block w-full bg-gray-100 text-gray-400 text-center py-4 rounded-[1.2rem] font-black hover:bg-gray-200 transition-all uppercase text-[10px] tracking-widest">Abrir Simulador</a>
                     </div>
                 </div>
             </div>
@@ -174,9 +175,9 @@
     <div id="modal-registro" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
         <div onclick="toggleModal(false)" class="absolute inset-0 bg-brand-dark-blue/80 backdrop-blur-sm"></div>
         <div class="relative bg-white p-10 md:p-14 rounded-[3rem] w-full max-w-md text-center border border-white/20 shadow-2xl animate-fadeIn">
-            <div class="w-20 h-20 bg-yellow-50 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner">💎</div>
-            <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight tracking-tight">Únete a la Élite</h2>
-            <p class="text-sm text-gray-500 mb-10 font-medium leading-relaxed">Regístrate como usuario fundador para desbloquear las **guías explicativas** en tu correo.</p>
+            <div class="w-20 h-20 bg-yellow-50 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner">🧬</div>
+            <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight tracking-tight">Únete a los Fundadores</h2>
+            <p class="text-sm text-gray-500 mb-10 font-medium leading-relaxed">Conviértete en <strong>Usuario Fundador</strong> y recibe guías de estudio explicadas directamente en tu correo.</p>
             
             <form action="https://formsubmit.co/esteban.ceo@kraneao.com" method="POST" class="space-y-4 text-left">
                 <div>
@@ -185,10 +186,10 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block tracking-widest">Correo Universitario</label>
-                    <input type="email" name="email" required class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-0 outline-none focus:ring-2 focus:ring-brand-blue transition-all" placeholder="estudiante@facultad.edu">
+                    <input type="email" name="email" required class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-0 outline-none focus:ring-2 focus:ring-brand-blue transition-all" placeholder="estudiante@unerg.edu">
                 </div>
-                <button type="submit" class="w-full bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl shadow-yellow-200 text-brand-dark-blue hover:bg-yellow-400 uppercase tracking-[0.2em] transition-all transform active:scale-95">
-                    Acceso VIP
+                <button type="submit" class="w-full bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl shadow-yellow-200 text-brand-dark-blue hover:bg-yellow-400 uppercase tracking-widest transition-all">
+                    Obtener Acceso VIP
                 </button>
                 <input type="hidden" name="_next" value="https://kraneao.com/gracias.html">
             </form>
@@ -234,5 +235,4 @@
         }
     </script>
 </body>
-
 </html>

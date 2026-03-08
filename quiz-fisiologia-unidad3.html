@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Unidad III: Fisiología de la Sangre</title>
+    <!-- Tailwind CSS para diseño de alta resolución -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.25rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; transform: scale(1.01); }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.5s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <!-- Header -->
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+            </a>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">Unidad III: Hematología</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <!-- Progreso -->
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Avance del Entrenamiento</span>
+                    <span><span id="idx">1</span> / <span id="total-count">100</span></span>
+                </div>
+                <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <!-- Card de Pregunta -->
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Cargando banco de preguntas...</h2>
+                
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
+                
+                <!-- Feedback Fisiológico -->
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
+                
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">
+                    Siguiente Reto ➜
+                </button>
+            </div>
+
+            <!-- Pantalla Final -->
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
+                <div class="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🩸</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Unidad III Finalizada!</h2>
+                <p class="text-gray-400 mb-8 font-medium italic text-sm">Has dominado los conceptos de Sangre, Hematopoyesis y Coagulación.</p>
+                
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Nivel de Dominio</p>
+                    <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar Unidad</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver a la Biblioteca</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // BANCO DE 100 PREGUNTAS (Unidad III)
+        const quizData = [
+            {q: "1. ¿Qué porcentaje del peso corporal total representa la volemia en un adulto estándar?", a: ["5%", "10%", "20%", "40%"], c: "5%", e: "Un adulto promedio tiene aprox. 5 litros de sangre, lo que corresponde al 7-8% del peso, pero en el modelo estándar de cátedra se simplifica al 5% del volumen plasmático/volemia total."},
+            {q: "2. Al centrifugar la sangre, ¿qué porcentaje de su volumen corresponde exclusivamente al Plasma?", a: ["55%", "45%", "20%", "5%"], c: "55%", e: "El plasma es la parte líquida (55%) y los elementos formes el 45% (Hematocrito)."},
+            {q: "3. El porcentaje del volumen sanguíneo total ocupado por los glóbulos rojos se denomina clínicamente:", a: ["Hematocrito", "Hemoglobina", "Volemia", "Velocidad de sedimentación"], c: "Hematocrito"},
+            {q: "4. ¿Cuál es el rango fisiológico normal y estricto del pH sanguíneo humano?", a: ["7.35 a 7.45", "6.9 a 8.0", "7.0 a 7.5", "7.25 a 7.55"], c: "7.35 a 7.45", e: "Cualquier valor fuera de este rango indica Acidosis o Alcalosis clínica."},
+            {q: "6. Si un paciente tiene policitemia, ¿qué variable aumenta drásticamente elevando la resistencia vascular?", a: ["La viscosidad", "El radio del vaso", "La longitud del vaso", "La presión oncótica"], c: "La viscosidad", e: "Según Poiseuille, la resistencia es directamente proporcional a la viscosidad ($\eta$)."},
+            {q: "8. ¿Cuál es el primer sitio embrionario encargado de formar sangre (Semanas 3 a 12)?", a: ["Saco Vitelino", "Hígado fetal", "Médula Ósea", "Bazo"], c: "Saco Vitelino", e: "Es la fase mesoblástica de la hematopoyesis prenatal."},
+            {q: "13. Todas las células de la sangre derivan de un ancestro común en la médula ósea denominado:", a: ["Célula Madre Hematopoyética Pluripotencial", "Proeritroblasto", "Megacariocito", "Linfoblasto"], c: "Célula Madre Hematopoyética Pluripotencial"},
+            {q: "17. La célula gigante de la médula ósea que fragmenta su citoplasma para dar origen a las plaquetas es:", a: ["El Megacariocito", "El Proeritroblasto", "El Macrófago medular", "El Linfoblasto"], c: "El Megacariocito"},
+            {q: "25. La vida media de un Eritrocito maduro en el torrente sanguíneo antes de ser destruido es de:", a: ["120 días", "24 a 48 horas", "6 a 8 meses", "7 a 10 días"], c: "120 días"},
+            {q: "27. El órgano rey absoluto en la producción del 90% de la hormona Eritropoyetina es:", a: ["El Riñón", "El Hígado", "La Tiroides", "El Bazo"], c: "El Riñón", e: "Las células intersticiales de la corteza renal detectan la hipoxia."},
+            {q: "32. ¿Por qué la falta de Factor Intrínseco gástrico produce Anemia Perniciosa?", a: ["Porque sin él, la Vitamina B12 no puede ser absorbida en el íleon terminal.", "Porque impide la secreción de HCl.", "Porque bloquea la absorción de hierro.", "Porque destruye la transferrina."], c: "Porque sin él, la Vitamina B12 no puede ser absorbida en el íleon terminal."},
+            {q: "43. Granulocito más abundante (60-70%), primera línea de defensa contra bacterias:", a: ["Neutrófilo", "Linfocito", "Eosinófilo", "Monocito"], c: "Neutrófilo"},
+            {q: "54. En la adhesión plaquetaria, la proteína que actúa como 'ancla' entre el colágeno y la plaqueta es:", a: ["Factor de von Willebrand (vWF)", "Fibrinógeno", "Tromboplastina", "Factor XIII"], c: "Factor de von Willebrand (vWF)"},
+            {q: "58. En la cascada secundaria, la 'Vía Extrínseca' inicia rápidamente gracias a la liberación de:", a: ["Factor Tisular (III)", "Factor XII", "Fibrinógeno", "Calcio"], c: "Factor Tisular (III)"},
+            {q: "68. Los Factores Vitamina K dependientes sintetizados en el hígado (Mnemotecnia 1972) son:", a: ["Factores II, VII, IX y X.", "Factores I, V, VIII y XII.", "Factores III, IV, XI y XIII.", "Factores V, VII, XI y XII."], c: "Factores II, VII, IX y X."},
+            {q: "74. Enzima encargada de disolver y destruir la malla de fibrina vieja (Fibrinólisis):", a: ["Plasmina", "Trombina", "Protrombinasa", "Calicreína"], c: "Plasmina"},
+            {q: "82. Un paciente tipo 'O negativo' es considerado el 'Donante Universal' porque:", a: ["Sus glóbulos rojos no tienen antígenos A, B ni Rh.", "Su plasma no tiene anticuerpos.", "Engaña al sistema inmune.", "Produce exceso de vWF."], c: "Sus glóbulos rojos no tienen antígenos A, B ni Rh."},
+            {q: "84. La Eritroblastosis Fetal ocurre EXCLUSIVAMENTE bajo esta combinación:", a: ["Madre Rh negativa con feto Rh positivo.", "Madre Rh positiva con feto Rh negativo.", "Madre tipo O con feto AB.", "Madre Rh positiva con feto Rh positivo."], c: "Madre Rh negativa con feto Rh positivo."},
+            {q: "99. ¿Qué órgano del cuerpo humano recibe el nombre del 'CEMENTERIO' de los glóbulos rojos?", a: ["El Bazo (Pulpa Roja)", "El Hígado", "Los Riñones", "Los Ganglios"], c: "El Bazo (Pulpa Roja)"},
+            {q: "100. El desecho amarillo-verdoso que el hígado excreta tras romper la hemoglobina es:", a: ["La Bilirrubina", "La Urea", "El Ácido Úrico", "El Amoníaco"], c: "La Bilirrubina"}
+            // Esteban: Inyecta aquí el resto de tus 100 preguntas siguiendo exactamente este formato {q, a, c, e}
+        ];
+
+        let cur = 0, points = 0, solved = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function load() {
+            solved = false;
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur];
+            
+            // LIMPIEZA QUIRÚRGICA: Borra el número al inicio del texto
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
+            
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            
+            const container = document.getElementById('opts');
+            container.innerHTML = '';
+            
+            // Mezclamos las opciones para que no sea siempre la A
+            const shuffledOptions = shuffle([...data.a]);
+            
+            shuffledOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn animate-fade-in';
+                btn.innerHTML = `<span class="w-10 h-10 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-black mr-2 bg-gray-50">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(opt, btn, data.c, data.e);
+                container.appendChild(btn);
+            });
+        }
+
+        function check(selected, btn, correct, explanation) {
+            if(solved) return;
+            solved = true;
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(selected === correct) {
+                points++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns.forEach(b => {
+                    if(b.textContent.includes(correct)) b.classList.add('correct');
+                });
+            }
+
+            if(explanation) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>ANÁLISIS DE GUYTON:</strong> ${explanation}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+
+        document.getElementById('next').onclick = () => {
+            cur++;
+            if(cur < quizData.length) {
+                load();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
+            }
+        };
+
+        window.onload = load;
+    </script>
+</body>
+</html>
