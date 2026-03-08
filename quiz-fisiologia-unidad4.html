@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Unidad IV: Fisiología Cardiovascular</title>
+    <!-- Tailwind CSS para diseño premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.25rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; transform: scale(1.01); }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.5s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+            </a>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">Unidad IV: Cardiovascular</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Avance del Entrenamiento</span>
+                    <span><span id="idx">1</span> / <span id="total-count">100</span></span>
+                </div>
+                <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Iniciando protocolo cardiovascular...</h2>
+                
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
+                
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
+                
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">
+                    Siguiente Reto ➜
+                </button>
+            </div>
+
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
+                <div class="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">❤️</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Corazón de Hierro!</h2>
+                <p class="text-gray-400 mb-8 font-medium italic text-sm text-center">Has completado los 100 retos de Fisiología Cardiovascular del Guyton.</p>
+                
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Dominio Hemodinámico</p>
+                    <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar Entrenamiento</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver a la Biblioteca</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // BASE DE DATOS COMPLETA: 100 PREGUNTAS (ESTEBAN: NO EDITAR ESTA VARIABLE)
+        const quizData = [
+            {q: "1. ¿Cuál es el potencial de membrana en reposo típico de la fibra del músculo cardíaco ventricular?", a: ["-85 a -90 mV", "-55 a -60 mV", "-65 a -70 mV", "-100 a -110 mV"], c: "-85 a -90 mV", e: "Este valor asegura que la célula esté lista para una despolarización masiva."},
+            {q: "2. Las células del músculo cardíaco están interconectadas formando un 'sincitio' gracias a la presencia de:", a: ["Discos intercalares con uniones en hendidura (Gap junctions)", "Vainas de mielina", "Cuerpos densos", "Placas motoras"], c: "Discos intercalares con uniones en hendidura (Gap junctions)", e: "Permiten el paso libre de iones para la contracción coordinada."},
+            {q: "3. ¿Qué ion es el principal responsable de la fase de meseta (Fase 2) del potencial de acción cardíaco?", a: ["Calcio ($Ca^{2+}$) a través de canales tipo L", "Sodio", "Potasio", "Cloruro"], c: "Calcio ($Ca^{2+}$) a través de canales tipo L"},
+            {q: "4. ¿Cuánto dura aproximadamente el potencial de acción en el músculo ventricular?", a: ["250 a 300 milisegundos", "1 a 5 ms", "10 a 50 ms", "1 a 2 s"], c: "250 a 300 milisegundos"},
+            {q: "5. En el acoplamiento excitación-contracción cardíaco, la liberación de Calcio del retículo es activada por:", a: ["La entrada de Calcio extracelular (Liberación inducida por Ca)", "Acoplamiento mecánico DHP", "Entrada masiva de Sodio", "Salida de Potasio"], c: "La entrada de Calcio extracelular (Liberación inducida por Ca)"},
+            {q: "6. ¿Qué fase del ciclo ocurre tras el cierre de válvulas AV y antes de abrir las semilunares?", a: ["Contracción isovolumétrica", "Eyección rápida", "Relajación isovolumétrica", "Llenado rápido"], c: "Contracción isovolumétrica"},
+            {q: "7. ¿Cuánta presión debe generar el ventrículo izquierdo para abrir la válvula aórtica?", a: ["80 mmHg", "120 mmHg", "8 mmHg", "40 mmHg"], c: "80 mmHg"},
+            {q: "8. ¿Qué porcentaje del llenado ventricular ocurre de forma pasiva antes de la sístole auricular?", a: ["80%", "20%", "50%", "100%"], c: "80%"},
+            {q: "9. La sístole auricular aporta aproximadamente qué porcentaje adicional al llenado ventricular?", a: ["20%", "80%", "50%", "5%"], c: "20%"},
+            {q: "10. El volumen de sangre al final de la diástole (Volumen Telediastólico) es de unos:", a: ["110 a 120 ml", "40 a 50 ml", "70 ml", "20 ml"], c: "110 a 120 ml"},
+            {q: "11. El volumen de sangre bombeado en cada latido (Volumen Sistólico) es de unos:", a: ["70 ml", "120 ml", "50 ml", "5 ml"], c: "70 ml"},
+            {q: "12. El volumen que queda en el ventrículo después de la contracción (Telesistólico) es de:", a: ["40 a 50 ml", "110 a 120 ml", "70 ml", "0 ml"], c: "40 a 50 ml"},
+            {q: "13. ¿Cuál es el valor normal de la Fracción de Eyección cardíaca?", a: ["60%", "100%", "20%", "40%"], c: "60%"},
+            {q: "14. El primer ruido cardíaco (R1) es causado por:", a: ["El cierre de las válvulas auriculoventriculares", "El cierre de las semilunares", "Apertura aórtica", "Flujo auricular"], c: "El cierre de las válvulas auriculoventriculares"},
+            {q: "15. El segundo ruido cardíaco (R2) es causado por:", a: ["El cierre de las válvulas semilunares", "Cierre de válvulas AV", "Contracción auricular", "Músculos papilares"], c: "El cierre de las válvulas semilunares"},
+            {q: "16. Función principal de los músculos papilares:", a: ["Tirar de cuerdas tendinosas para evitar prolapso valvular AV", "Abrir válvulas", "Contraer aurículas", "Generar impulso"], c: "Tirar de cuerdas tendinosas para evitar prolapso valvular AV"},
+            {q: "17. El mecanismo de Frank-Starling dicta que:", a: ["A mayor estiramiento diastólico, mayor fuerza sistólica", "El corazón se cansa rápido", "La viscosidad frena el flujo", "La presión pulmonar es baja"], c: "A mayor estiramiento diastólico, mayor fuerza sistólica"},
+            {q: "18. El efecto del sistema simpático sobre el corazón es:", a: ["Inotropismo y cronotropismo positivo", "Disminuir la frecuencia", "Aumentar retraso AV", "Bajar gasto"], c: "Inotropismo y cronotropismo positivo"},
+            {q: "19. La estimulación del Nervio Vago afecta principalmente a:", a: ["Nodos SA y AV (Baja frecuencia)", "Músculo ventricular", "Válvulas", "Arterias coronarias"], c: "Nodos SA y AV (Baja frecuencia)"},
+            {q: "20. ¿Cuál es el marcapasos normal del corazón?", a: ["Nodo Sinusal", "Nodo AV", "Haz de His", "Fibras de Purkinje"], c: "Nodo Sinusal"},
+            {q: "21. Ubicación anatómica del Nodo Sinusal:", a: ["Pared posterolateral superior de la aurícula derecha", "Tabique interauricular", "Tabique interventricular", "Ápex ventricular"], c: "Pared posterolateral superior de la aurícula derecha"},
+            {q: "22. El nodo Sinusal domina porque:", a: ["Tiene la frecuencia intrínseca más rápida", "Potenciales más grandes", "Está cerca del cerebro", "Solo él tiene sodio"], c: "Tiene la frecuencia intrínseca más rápida"},
+            {q: "23. Potencial de reposo del nodo Sinusal:", a: ["-55 a -60 mV", "-85 a -90 mV", "-40 mV", "0 mV"], c: "-55 a -60 mV"},
+            {q: "24. La fase 4 automática del nodo sinusal depende de:", a: ["Canales de Sodio 'Funny' ($I_f$)", "Canales Rápidos", "Potasio", "Cloro"], c: "Canales de Sodio 'Funny' ($I_f$)"},
+            {q: "25. El impulso sufre un retraso fisiológico importante en:", a: ["El Nodo Auriculoventricular", "Fibras de Purkinje", "Bachmann", "Vértice"], c: "El Nodo Auriculoventricular"},
+            {q: "26. Tiempo total de retraso en el sistema de conducción AV:", a: ["0.13 segundos", "0.03 s", "0.30 s", "1.5 s"], c: "0.13 segundos"},
+            {q: "27. Finalidad vital del retraso en el nodo AV:", a: ["Permitir el vaciado auricular antes de la sístole ventricular", "Evitar taquicardia", "Repolarizar", "Prevenir soplos"], c: "Permitir el vaciado auricular antes de la sístole ventricular"},
+            {q: "28. Estructura que distribuye el impulso a altísima velocidad (4 m/s):", a: ["Fibras de Purkinje", "Vías internodales", "Nodo AV", "Músculo auricular"], c: "Fibras de Purkinje"},
+            {q: "29. Frecuencia intrínseca del Nodo AV si falla el sinusal:", a: ["40 a 60 lpm", "70 a 80 lpm", "15 a 40 lpm", "100 lpm"], c: "40 a 60 lpm"},
+            {q: "30. Frecuencia intrínseca de las Fibras de Purkinje:", a: ["15 a 40 lpm", "40 lpm", "70 lpm", "5 lpm"], c: "15 a 40 lpm"},
+            {q: "31. Síndrome de Stokes-Adams se refiere a:", a: ["Retraso en latido tras bloqueo AV súbito", "Fibrilación", "Infarto", "Reflejo"], c: "Retraso en latido tras bloqueo AV súbito"},
+            {q: "32. La Acetilcolina frena el corazón aumentando la permeabilidad al:", a: ["Potasio", "Sodio", "Calcio", "Cloro"], c: "Potasio", e: "Causa hiperpolarización."},
+            {q: "33. Velocidad estándar del papel de ECG:", a: ["25 mm/s", "50 mm/s", "10 mm/s", "1 mm/s"], c: "25 mm/s"},
+            {q: "34. En ECG, 1 mm horizontal (cuadrito) representa:", a: ["0.04 segundos", "0.20 s", "1.0 s", "0.10 s"], c: "0.04 segundos"},
+            {q: "35. En ECG, 1 mm vertical representa:", a: ["0.1 milivoltios", "1.0 mV", "10 mV", "0.01 mV"], c: "0.1 milivoltios"},
+            {q: "36. La Onda P representa:", a: ["Despolarización auricular", "Contracción ventricular", "Repolarización auricular", "Repolarización ventricular"], c: "Despolarización auricular"},
+            {q: "37. El complejo QRS representa:", a: ["Despolarización ventricular", "Despolarización auricular", "Repolarización ventricular", "Retraso AV"], c: "Despolarización ventricular"},
+            {q: "38. La Onda T representa:", a: ["Repolarización ventricular", "Despolarización auricular", "Despolarización ventricular", "Onda oculta"], c: "Repolarización ventricular"},
+            {q: "39. Duración normal del Intervalo P-R:", a: ["0.12 a 0.20 segundos", "0.04 s", "0.25 s", "0.40 s"], c: "0.12 a 0.20 segundos"},
+            {q: "40. Intervalo P-R mayor a 0.20 segundos indica:", a: ["Bloqueo AV de primer grado", "Fibrilación", "Infarto", "Hipertrofia"], c: "Bloqueo AV de primer grado"},
+            {q: "41. Derivación I mide diferencia entre:", a: ["Brazo Izquierdo (+) y Derecho (-)", "Pierna Izq y Brazo Der", "Pierna Izq y Brazo Izq", "Brazo Der y Pierna Der"], c: "Brazo Izquierdo (+) y Derecho (-)"},
+            {q: "42. Derivación II mide diferencia entre:", a: ["Pierna Izquierda (+) y Brazo Derecho (-)", "Brazo Izq y Der", "Pierna Izq y Brazo Izq", "Tórax y Pierna"], c: "Pierna Izquierda (+) y Brazo Derecho (-)"},
+            {q: "43. Derivación III mide diferencia entre:", a: ["Pierna Izquierda (+) y Brazo Izquierdo (-)", "Pierna Izq y Brazo Der", "Brazo Izq y Der", "Brazo Der y Brazo Izq"], c: "Pierna Izquierda (+) y Brazo Izquierdo (-)"},
+            {q: "44. Ley de Einthoven establece:", a: ["D-I + D-III = D-II", "D-I + D-II = D-III", "D-I x D-II = D-III", "Suma es cero"], c: "D-I + D-III = D-II"},
+            {q: "45. Eje eléctrico medio normal apunta a:", a: ["+59 grados", "-30 grados", "+120 grados", "0 grados"], c: "+59 grados"},
+            {q: "46. El Flujo Sanguíneo es directamente proporcional a:", a: ["La diferencia de presión ($\Delta P$)", "La resistencia", "La viscosidad", "La longitud"], c: "La diferencia de presión ($\Delta P$)"},
+            {q: "47. Factor con mayor impacto sobre la resistencia (elevado a la 4ta potencia):", a: ["El radio del vaso ($r^4$)", "Longitud", "Viscosidad", "Espesor"], c: "El radio del vaso ($r^4$)"},
+            {q: "48. Si el radio disminuye a la MITAD, la resistencia aumenta:", a: ["16 veces", "2 veces", "4 veces", "8 veces"], c: "16 veces"},
+            {q: "49. Resistencia Periférica Total en reposo:", a: ["1 PRU", "100 PRU", "0.1 PRU", "50 PRU"], c: "1 PRU"},
+            {q: "50. Flujo caótico con torbellinos:", a: ["Flujo Turbulento", "Laminar", "Electrotónico", "Fick"], c: "Flujo Turbulento"},
+            {q: "51. Número para predecir turbulencia:", a: ["Reynolds", "Avogadro", "Poiseuille", "Starling"], c: "Reynolds"},
+            {q: "52. Distensibilidad de las venas comparadas con arterias:", a: ["8 veces mayor", "Menor", "Igual", "Rígidas"], c: "8 veces mayor"},
+            {q: "53. Capacitancia venosa respecto a la arterial:", a: ["24 veces mayor", "Menor", "Igual", "Nula"], c: "24 veces mayor"},
+            {q: "54. Presión de Pulso es la diferencia entre:", a: ["Sistólica y Diastólica", "PAM y PVC", "Frecuencia", "Venas cavas"], c: "Sistólica y Diastólica"},
+            {q: "55. Determinantes de la Presión de Pulso:", a: ["Volumen Sistólico y Compliancia", "Volumen total", "Frecuencia", "Resistencia venosa"], c: "Volumen Sistólico y Compliancia"},
+            {q: "56. Presión Venosa Central (PVC) se mide en:", a: ["Aurícula Derecha", "Ventrículo Izquierdo", "Vena Cava Inferior", "Arteria Pulmonar"], c: "Aurícula Derecha"},
+            {q: "57. Evita estancamiento de sangre en piernas:", a: ["Bomba venosa y válvulas", "Presión negativa VI", "Presión oncótica", "Dilatación arterial"], c: "Bomba venosa y válvulas"},
+            {q: "58. Apertura y cierre intermitente de capilares:", a: ["Vasomotilidad", "Hiperemia", "Reflejo miógeno", "Shock"], c: "Vasomotilidad"},
+            {q: "59. Anillo muscular que decide entrada al capilar:", a: ["Esfínter precapilar", "Esfínter anal", "Válvula", "Célula Purkinje"], c: "Esfínter precapilar"},
+            {q: "60. Factor local más importante para vasomotilidad:", a: ["Hipoxia tisular", "Sodio", "Insulina", "Sistólica"], c: "Hipoxia tisular"},
+            {q: "61. Fuerza que empuja líquido fuera del capilar:", a: ["Presión Hidrostática Capilar", "Presión Oncótica plasma", "Presión Oncótica intersticial", "PVC"], c: "Presión Hidrostática Capilar"},
+            {q: "62. Fuerza que retiene líquido dentro del capilar:", a: ["Presión Oncótica del Plasma (Albúmina)", "Hidrostática", "Atmosférica", "Tensión muscular"], c: "Presión Oncótica del Plasma (Albúmina)"},
+            {q: "63. Presión Hidrostática Intersticial normal en tejido laxo:", a: ["Negativa (-3 mmHg)", "120 mmHg", "Arterial", "30 mmHg"], c: "Negativa (-3 mmHg)"},
+            {q: "64. Recoge el filtrado neto del intersticio:", a: ["Sistema Linfático", "Sistema Venoso", "Riñones", "Hígado"], c: "Sistema Linfático"},
+            {q: "65. Sustancia que solo el linfático devuelve a la sangre:", a: ["Proteínas de alto peso molecular", "Eritrocitos", "Glucosa", "Plaquetas"], c: "Proteínas de alto peso molecular"},
+            {q: "66. Efecto de la Histamina en capilares:", a: ["Vasodilatación y aumento de permeabilidad", "Vasoconstricción", "Bloqueo linfático", "Aumento oncótico"], c: "Vasodilatación y aumento de permeabilidad"},
+            {q: "67. Sustancia dilatadora coronaria principal por falta de O2:", a: ["Adenosina", "Angiotensina II", "Calcio", "Fibrinógeno"], c: "Adenosina"},
+            {q: "68. Flujo multiplicado tras soltar torniquete:", a: ["Hiperemia Reactiva", "Hiperemia Activa", "Isquemia", "Vasomotilidad"], c: "Hiperemia Reactiva"},
+            {q: "69. Flujo aumentado por actividad metabólica muscular:", a: ["Hiperemia Activa", "Reactiva", "Turbulento", "Reflejo"], c: "Hiperemia Activa"},
+            {q: "70. Gas endotelial vasodilatador de acción ultracorta:", a: ["Óxido Nítrico (NO)", "Dióxido de Carbono", "Monóxido", "Oxígeno"], c: "Óxido Nítrico (NO)"},
+            {q: "71. Péptido endotelial vasoconstrictor potente:", a: ["Endotelina", "Bradicinina", "Histamina", "Prostaciclina"], c: "Endotelina"},
+            {q: "72. Regulación del flujo a largo plazo (semanas):", a: ["Angiogénesis (VEGF)", "Taquicardia", "Grosor arterial", "Cierre esfínteres"], c: "Angiogénesis (VEGF)"},
+            {q: "73. Ubicación del Centro Vasomotor:", a: ["Bulbo Raquídeo y Protuberancia", "Lóbulo Frontal", "Médula Sacra", "Cerebelo"], c: "Bulbo Raquídeo y Protuberancia"},
+            {q: "74. Estado basal de contracción vascular simpática:", a: ["Tono Vasomotor Simpático", "Shock", "Parálisis", "Resistencia"], c: "Tono Vasomotor Simpático"},
+            {q: "75. Neurotransmisor simpático vasoconstrictor (receptores alfa):", a: ["Noradrenalina", "Acetilcolina", "Dopamina", "Óxido Nítrico"], c: "Noradrenalina"},
+            {q: "76. Ubicación de los Barorreceptores:", a: ["Senos Carotídeos y Cayado Aórtico", "Venas Cavas", "Ventrículos", "Capilares renales"], c: "Senos Carotídeos y Cayado Aórtico"},
+            {q: "77. Respuesta al reflejo barorreceptor ante subida de PA:", a: ["Inhibe simpático y excita vago", "Activa simpático", "Libera renina", "Cierra esfínteres"], c: "Inhibibe simpático y excita vago"},
+            {q: "78. Estimula quimiorreceptores para elevar PA:", a: ["Caída de $O_2$ y aumento de $CO_2$ e $H^+$", "Aumento de calcio", "Descenso glucosa", "Falta sodio"], c: "Caída de $O_2$ y aumento de $CO_2$ e $H^+$"},
+            {q: "79. Defensa simpática más potente (PA < 60 mmHg):", a: ["Respuesta isquémica del SNC", "Reflejo Barorreceptor", "Reflejo Bainbridge", "Reflejo Miotático"], c: "Respuesta isquémica del SNC"},
+            {q: "80. Reflejo de Cushing es activado por:", a: ["Aumento de Presión Intracraneal", "Hemorragia en piernas", "Infarto VD", "Falla hepática"], c: "Aumento de Presión Intracraneal"},
+            {q: "81. Taquicardia por exceso de retorno venoso (estiramiento auricular):", a: ["Reflejo de Bainbridge", "Frank-Starling", "Vasovagal", "Poiseuille"], c: "Reflejo de Bainbridge"},
+            {q: "82. Control definitivo de la PA a largo plazo:", a: ["Riñones (Natriuresis por presión)", "Cerebro", "Corazón derecho", "Pulmones"], c: "Riñones (Natriuresis por presión)"},
+            {q: "83. Enzima renal liberada por baja presión:", a: ["Renina", "Aldosterona", "EPO", "Angiotensinógeno"], c: "Renina"},
+            {q: "84. Convierte Angiotensina I en Angiotensina II en pulmones:", a: ["Enzima Convertidora de Angiotensina (ECA)", "Fosfodiesterasa", "Trombina", "Plasmina"], c: "Enzima Convertidora de Angiotensina (ECA)"},
+            {q: "85. Efectos de la Angiotensina II:", a: ["Vasoconstricción y retención de sal/agua", "Vasodilatación y orina", "Destrucción GR", "Bilis"], c: "Vasoconstricción y retención de sal/agua"},
+            {q: "86. Hormona que obliga al riñón a reabsorber Sodio y botar Potasio:", a: ["Aldosterona", "Adrenalina", "Cortisol", "Insulina"], c: "Aldosterona"},
+            {q: "87. Controla el Gasto Cardíaco en reposo:", a: ["Retorno Venoso", "Nodo sinusal solo", "Arteria pulmonar", "Válvulas"], c: "Retorno Venoso"},
+            {q: "88. Presión que empuja sangre de vuelta al corazón:", a: ["Presión Media de Llenado Sistémico", "Vena cava superior", "PAM", "Gradiente capilar"], c: "Presión Media de Llenado Sistémico"},
+            {q: "89. Si aumenta la resistencia al retorno venoso, el Gasto Cardíaco:", a: ["Disminuirá drásticamente", "Aumentará", "Igual", "Hipertensión"], c: "Disminuirá drásticamente"},
+            {q: "90. Factor que aumenta flujo coronario en ejercicio:", a: ["Necesidad de oxígeno tisular (Adenosina)", "Presión VD", "Contracción por simpático", "Llenado sistólico"], c: "Necesidad de oxígeno tisular (Adenosina)"},
+            {q: "91. Flujo coronario del ventrículo izquierdo:", a: ["Se corta en sístole y fluye en diástole", "Solo sístole", "Constante", "Solo nodo SA"], c: "Se corta en sístole y fluye en diástole"},
+            {q: "92. Insuficiencia Cardíaca Izquierda provoca:", a: ["Congestión y Edema Pulmonar", "Edema piernas", "Ceguera", "Bazo grande"], c: "Congestión y Edema Pulmonar"},
+            {q: "93. Insuficiencia Cardíaca Derecha provoca:", a: ["Edema periférico, ascitis y hepatomegalia", "Edema pulmonar", "Infarto cerebral", "Asma"], c: "Edema periférico, ascitis y hepatomegalia"},
+            {q: "94. Definición de Shock Circulatorio:", a: ["Reducción generalizada del flujo que daña tejidos", "Subida PA > 200", "Dolor pecho", "Impacto AV"], c: "Reducción generalizada del flujo que daña tejidos"},
+            {q: "95. Shock Hipovolémico es causado por:", a: ["Pérdida masiva de volumen de sangre o plasma", "Falla cardíaca", "Alergia", "Bacterias"], c: "Pérdida masiva de volumen de sangre o plasma"},
+            {q: "96. Shock Cardiogénico ocurre cuando:", a: ["El corazón dañado no tiene fuerza de bombeo", "Pierde 30% sangre", "Vasodilatación anestesia", "Falla riñón"], c: "El corazón dañado no tiene fuerza de bombeo"},
+            {q: "97. Shock Neurogénico es causado por:", a: ["Pérdida de tono vasomotor simpático", "Corte médula", "Vago detiene corazón", "Arterias cerradas"], c: "Pérdida de tono vasomotor simpático"},
+            {q: "98. El Shock Anafiláctico libera sistémicamente:", a: ["Histamina", "Adrenalina", "Acetilcolina", "EPO"], c: "Histamina"},
+            {q: "99. Vuelve al shock 'Irreversible':", a: ["Isquemia cardíaca que debilita el bombeo", "Barorreceptores", "Beber mucha agua", "Cicatriz capilar"], c: "Isquemia cardíaca que debilita el bombeo"},
+            {q: "100. Vasos cerebrales se dilatan intensamente ante aumento de:", a: ["Dióxido de Carbono ($CO_2$)", "Glucosa", "Oxígeno", "Serotonina"], c: "Dióxido de Carbono ($CO_2$)"}
+        ];
+
+        let cur = 0, points = 0, solved = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function load() {
+            solved = false;
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur];
+            
+            // LIMPIEZA AUTOMÁTICA DE NÚMEROS
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
+            
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            
+            const container = document.getElementById('opts');
+            container.innerHTML = '';
+            
+            const shuffledOptions = shuffle([...data.a]);
+            
+            shuffledOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn animate-fade-in';
+                btn.innerHTML = `<span class="w-10 h-10 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-black mr-2 bg-gray-50">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(opt, btn, data.c, data.e);
+                container.appendChild(btn);
+            });
+        }
+
+        function check(selected, btn, correct, explanation) {
+            if(solved) return;
+            solved = true;
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(selected === correct) {
+                points++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns.forEach(b => { if(b.textContent.includes(correct)) b.classList.add('correct'); });
+            }
+
+            if(explanation) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>ANÁLISIS DE GUYTON:</strong> ${explanation}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+
+        document.getElementById('next').onclick = () => {
+            cur++;
+            if(cur < quizData.length) {
+                load();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
+            }
+        };
+
+        window.onload = load;
+    </script>
+</body>
+</html>
