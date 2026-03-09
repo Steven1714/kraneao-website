@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Cardio Parte 3: ECG</title>
+    <!-- Tailwind CSS para diseño profesional -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.25rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; transform: scale(1.01); }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.5s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+            </a>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic text-center">U-IV: Electrocardiografía</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <!-- Progreso -->
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Módulo 3: Interpretación Eléctrica</span>
+                    <span><span id="idx">1</span> / <span id="total-count">...</span></span>
+                </div>
+                <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center italic text-gray-400">Calibrando electrodos...</h2>
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">Siguiente Reto ➜</button>
+            </div>
+
+            <!-- Resultados -->
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
+                <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">📉</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight italic">¡Módulo 3 Completado!</h2>
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver al Menú Maestro</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const quizData = [
+            {q: "33. En el papel milimetrado estándar del Electrocardiograma (ECG), ¿a qué velocidad corre normalmente el papel?", a: ["25 milímetros por segundo", "50 milímetros por segundo", "10 milímetros por segundo", "1 milímetro por segundo"], c: "25 milímetros por segundo", e: "Esta velocidad estandarizada permite calcular la frecuencia cardíaca y la duración de las ondas."},
+            {q: "34. En el papel del ECG a velocidad normal, cada cuadrito pequeño horizontal (1 mm) representa un tiempo de:", a: ["0.04 segundos", "0.20 segundos", "1.0 segundos", "0.10 segundos"], c: "0.04 segundos"},
+            {q: "35. En la calibración estándar del ECG, ¿cuánto voltaje representa 1 milímetro vertical (un cuadrito pequeño)?", a: ["0.1 milivoltios (mV)", "1.0 milivoltios (mV)", "10 milivoltios (mV)", "0.01 milivoltios (mV)"], c: "0.1 milivoltios (mV)", e: "Esto significa que dos cuadros grandes (10 mm) equivalen a 1 mV."},
+            {q: "36. En el Electrocardiograma normal, la Onda P representa fisiológicamente:", a: ["La despolarización de las aurículas", "La contracción de los ventrículos", "La repolarización de las aurículas", "La repolarización de los ventrículos"], c: "La despolarización de las aurículas"},
+            {q: "37. El complejo QRS del Electrocardiograma representa:", a: ["La despolarización de los ventrículos", "La despolarización de las aurículas", "La repolarización de los ventrículos", "El retraso en el nodo AV"], c: "La despolarización de los ventrículos"},
+            {q: "38. La Onda T del Electrocardiograma representa:", a: ["La repolarización de los ventrículos", "La despolarización de las aurículas", "La despolarización de los ventrículos", "La repolarización de las aurículas"], c: "La repolarización de las aurículas"},
+            {q: "39. ¿Cuál es el tiempo de duración normal del Intervalo P-R (o P-Q) en el ECG de un adulto?", a: ["0.12 a 0.20 segundos", "0.04 a 0.10 segundos", "0.25 a 0.30 segundos", "Mayor a 0.40 segundos"], c: "0.12 a 0.20 segundos", e: "Mide el tiempo desde el inicio de la despolarización auricular hasta el inicio de la ventricular."},
+            {q: "40. ¿Qué significa clínicamente un Intervalo P-R mayor a 0.20 segundos (> 5 cuadritos)?", a: ["Bloqueo Auriculoventricular de primer grado", "Fibrilación ventricular", "Infarto agudo al miocardio", "Hipertrofia auricular"], c: "Bloqueo Auriculoventricular de primer grado"},
+            {q: "41. Según la configuración de Einthoven, la Derivación Bipolar I (D-I) mide la diferencia de potencial entre:", a: ["Brazo Izquierdo (+) y Brazo Derecho (-)", "Pierna Izquierda (+) y Brazo Derecho (-)", "Pierna Izquierda (+) y Brazo Izquierdo (-)", "Brazo Derecho (+) y Pierna Derecha (-)"], c: "Brazo Izquierdo (+) y Brazo Derecho (-)"},
+            {q: "42. La Derivación Bipolar II (D-II) mide la diferencia de potencial entre:", a: ["Pierna Izquierda (+) y Brazo Derecho (-)", "Brazo Izquierdo (+) y Brazo Derecho (-)", "Pierna Izquierda (+) y Brazo Izquierdo (-)", "Tórax (+) y Pierna Izquierda (-)"], c: "Pierna Izquierda (+) y Brazo Derecho (-)"},
+            {q: "43. La Derivación Bipolar III (D-III) mide la diferencia de potencial entre:", a: ["Pierna Izquierda (+) y Brazo Izquierdo (-)", "Pierna Izquierda (+) y Brazo Derecho (-)", "Brazo Izquierdo (+) y Brazo Derecho (-)", "Brazo Derecho (+) y Pierna Izquierdo (-)"], c: "Pierna Izquierda (+) y Brazo Izquierdo (-)"},
+            {q: "44. La Ley de Einthoven establece matemáticamente que, en cualquier instante dado:", a: ["El voltaje de D-I + el voltaje de D-III = el voltaje de D-II", "El voltaje de D-I + D-II = D-III", "El voltaje de D-I x D-II = D-III", "D-I + D-II + D-III = 0"], c: "El voltaje de D-I + el voltaje de D-III = el voltaje de D-II"},
+            {q: "45. El Eje Eléctrico Medio de los ventrículos en un corazón normal y sano apunta hacia:", a: ["Aproximadamente +59 grados", "Aproximadamente -30 grados", "Aproximadamente +120 grados", "0 grados exactos"], c: "Aproximadamente +59 grados", e: "Apunta hacia abajo y a la izquierda, siguiendo la anatomía del ventrículo izquierdo."}
+        ];
+
+        let cur = 0, points = 0, solved = false;
+        function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+        function load() {
+            solved = false; document.getElementById('next').classList.add('hidden'); document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur];
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            const container = document.getElementById('opts'); container.innerHTML = '';
+            const shuffledOptions = shuffle([...data.a]);
+            shuffledOptions.forEach((opt, i) => {
+                const btn = document.createElement('button'); btn.className = 'option-btn animate-fade-in';
+                btn.innerHTML = `<span class="w-10 h-10 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-black mr-2 bg-gray-50 text-gray-400">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(opt, btn, data.c, data.e);
+                container.appendChild(btn);
+            });
+        }
+        function check(selected, btn, correct, explanation) {
+            if(solved) return; solved = true;
+            const btns = document.querySelectorAll('.option-btn');
+            if(selected === correct) {
+                points++; btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns.forEach(b => { if(b.textContent.includes(correct)) b.classList.add('correct'); });
+            }
+            if(explanation) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>ANÁLISIS CLÍNICO:</strong> ${explanation}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+            }
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+        document.getElementById('next').onclick = () => {
+            cur++; if(cur < quizData.length) { load(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            else { document.getElementById('card').classList.add('hidden'); document.getElementById('res').classList.remove('hidden'); document.getElementById('score').textContent = Math.round((points/quizData.length)*100); }
+        };
+        window.onload = load;
+    </script>
+</body>
+</html>
