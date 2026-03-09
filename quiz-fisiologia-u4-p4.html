@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Cardio Parte 4: Hemodinámica</title>
+    <!-- Tailwind CSS para diseño profesional -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Soporte para fórmulas matemáticas (KaTeX) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.1rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; transform: scale(1.01); }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.5s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+            </a>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">U-IV: Hemodinámica y Micro</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-8">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Módulo 4: Física de la Circulación</span>
+                    <span><span id="idx">1</span> / <span id="total-count">100</span></span>
+                </div>
+                <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center italic text-gray-400">Analizando flujo...</h2>
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">Siguiente Reto ➜</button>
+            </div>
+
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
+                <div class="w-24 h-24 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🕸️</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight italic">¡Intercambio Completado!</h2>
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver al Menú Maestro</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const quizData = [
+            // BLOQUE 1: HEMODINÁMICA
+            {q: "1. Según la Ley de Ohm aplicada a la hemodinámica, el Flujo Sanguíneo (Q) a través de un vaso es directamente proporcional a:", a: ["La diferencia de presión ($\Delta P$) entre los dos extremos", "La resistencia vascular periférica (R)", "La viscosidad de la sangre", "La longitud del vaso sanguíneo"], c: "La diferencia de presión ($\Delta P$) entre los dos extremos", e: "A mayor gradiente de presión, mayor flujo."},
+            {q: "2. En un adulto sano en reposo, el flujo sanguíneo global (Gasto Cardíaco) es de aproximadamente:", a: ["5.000 ml/min (5 Litros/min)", "1.000 ml/min", "10.000 ml/min", "2.500 ml/min"], c: "5.000 ml/min (5 Litros/min)"},
+            {q: "3. El flujo sanguíneo normal en un vaso largo y liso ocurre en capas concéntricas que no se mezclan. Este flujo se denomina:", a: ["Flujo Laminar", "Flujo Turbulento", "Flujo Electrotónico", "Flujo de Fick"], c: "Flujo Laminar"},
+            {q: "4. En el flujo laminar, ¿cuál es la característica de la velocidad de la sangre dentro del vaso?", a: ["La sangre en el centro viaja mucho más rápido (perfil parabólico)", "Toda viaja exactamente a la misma velocidad", "La sangre en las paredes viaja más rápido", "La sangre cambia de dirección constantemente"], c: "La sangre en el centro viaja mucho más rápido (perfil parabólico)"},
+            {q: "5. Cuando la sangre fluye en todas direcciones, formando espirales y torbellinos (soplos), el flujo se denomina:", a: ["Flujo Turbulento", "Flujo Laminar", "Flujo Diastólico", "Flujo Osmótico"], c: "Flujo Turbulento"},
+            {q: "6. La tendencia a que se produzca un flujo turbulento se calcula matemáticamente mediante:", a: ["El Número de Reynolds", "La Constante de Poiseuille", "La Ecuación de Nernst", "La Ley de Frank-Starling"], c: "El Número de Reynolds"},
+            {q: "7. Según el Número de Reynolds, la turbulencia aumenta significativamente si:", a: ["Aumenta la velocidad y disminuye la viscosidad", "Disminuye la velocidad del flujo", "Disminuye el diámetro del vaso", "Aumenta la viscosidad"], c: "Aumenta la velocidad y disminuye la viscosidad", e: "Por eso la anemia, al bajar la viscosidad, favorece soplos cardíacos."},
+            {q: "8. En un sistema vascular normal, ¿cuál es el valor aproximado de la Resistencia Periférica Total (RPT)?", a: ["1 PRU (Unidad de Resistencia Periférica)", "100 PRU", "0.1 PRU", "10 PRU"], c: "1 PRU (Unidad de Resistencia Periférica)"},
+            {q: "9. Si todos los vasos del cuerpo se contraen intensamente, la RPT puede aumentar hasta:", a: ["4 PRU", "100 PRU", "0.5 PRU", "10 PRU"], c: "4 PRU"},
+            {q: "10. La 'Conductancia' vascular es matemáticamente:", a: ["El recíproco exacto de la resistencia ($1 / R$)", "Exactamente igual a la resistencia", "El cuadrado de la resistencia", "Independiente de la resistencia"], c: "El recíproco exacto de la resistencia ($1 / R$)"},
+            {q: "11. LEY DE POISEUILLE: ¿Qué factor geométrico tiene el impacto físico más potente sobre el flujo?", a: ["El diámetro o radio del vaso ($r^4$)", "La longitud total", "El grosor de la pared", "La permeabilidad"], c: "El diámetro o radio del vaso ($r^4$)"},
+            {q: "12. Si el diámetro de una arteriola se DUPLICA, ¿qué ocurre con el flujo de sangre?", a: ["El flujo aumenta 16 veces ($2^4$)", "El flujo aumenta 2 veces", "El flujo aumenta 4 veces", "El flujo aumenta 8 veces"], c: "El flujo aumenta 16 veces ($2^4$)"},
+            {q: "13. Si el radio de una arteriola se reduce a la MITAD, la resistencia al flujo:", a: ["Aumenta 16 veces, reduciendo el flujo a 1/16", "Aumenta al doble", "Aumenta 4 veces", "Aumenta 8 veces"], c: "Aumenta 16 veces, reduciendo el flujo a 1/16"},
+            {q: "14. ¿Cuáles son los vasos que ofrecen la MAYOR resistencia al flujo en la circulación sistémica?", a: ["Las arteriolas", "Las venas cavas", "La arteria aorta", "Los capilares venosos"], c: "Las arteriolas"},
+            {q: "15. El factor principal que determina la viscosidad sanguínea es:", a: ["El Hematocrito", "La albúmina", "El nivel de plaquetas", "El sodio"], c: "El Hematocrito"},
+            {q: "16. En Policitemia Vera (hematocrito 60-70%), el flujo sanguíneo se verá:", a: ["Fuertemente disminuido por alta viscosidad", "Aumentado por más oxígeno", "Inalterado", "Disminuido por linfa"], c: "Fuertemente disminuido por alta viscosidad"},
+            {q: "17. Efecto de una Anemia severa sobre la hemodinámica:", a: ["Baja viscosidad y RPT, obligando a subir el Gasto Cardíaco", "Aumenta la RPT al máximo", "Bradicardia extrema", "Estancamiento en vénulas"], c: "Baja viscosidad y RPT, obligando a subir el Gasto Cardíaco"},
+            {q: "18. Cuando los vasos están dispuestos en SERIE, la resistencia total es:", a: ["La suma directa de resistencias ($R1 + R2 + ...$)", "Menor que la individual", "Igual al vaso más ancho", "Incalculable"], c: "La suma directa de resistencias ($R1 + R2 + ...$)"},
+            {q: "19. Beneficio hemodinámico de la disposición en PARALELO de los órganos:", a: ["Reduce la resistencia total y permite autorregulación individual", "Aumenta la resistencia", "Obliga flujo secuencial", "Evita capilares linfáticos"], c: "Reduce la resistencia total y permite autorregulación individual"},
+            {q: "20. Si se extirpa un riñón (eliminando un circuito en paralelo), la RPT general:", a: ["Aumentará", "Disminuirá drásticamente", "Se mantendrá igual", "Caerá a 0"], c: "Aumentará"},
+
+            // BLOQUE 2: DISTENSIBILIDAD
+            {q: "21. La facilidad con la que un vaso se estira físicamente al aumentar la presión es la:", a: ["Distensibilidad Vascular", "Vasomotilidad", "Resistencia", "Presión de Pulso"], c: "Distensibilidad Vascular"},
+            {q: "22. Comparando venas con arterias, las venas sistémicas son:", a: ["8 veces más distensibles", "Igual de distensibles", "8 veces menos distensibles", "Totalmente rígidas"], c: "8 veces más distensibles"},
+            {q: "23. La 'Capacitancia Vascular' (volumen almacenable) de las venas es:", a: ["24 veces mayor que la de sus arterias", "8 veces mayor", "Menor", "Igual a cero"], c: "24 veces mayor que la de sus arterias", e: "Capacitancia = Distensibilidad x Volumen."},
+            {q: "24. ¿Qué porcentaje de la volemia total se almacena en el sistema venoso?", a: ["60 al 64% (reservorio gigante)", "15%", "90%", "5%"], c: "60 al 64% (reservorio gigante)"},
+            {q: "25. Efecto simpático en venas tras una hemorragia:", a: ["Venoconstricción para mantener el retorno venoso", "Venodilatación para esconder sangre", "Destruye válvulas", "Sube capacitancia"], c: "Venoconstricción para mantener el retorno venoso"},
+            {q: "26. La 'Relajación por estrés' es un fenómeno donde:", a: ["El vaso cede y se estira ante un volumen inyectado, bajando la presión", "Las arterias se rompen a 200 mmHg", "Venas se cierran", "Corazón deja de latir"], c: "El vaso cede y se estira ante un volumen inyectado, bajando la presión"},
+            {q: "27. La 'Presión de Pulso' se calcula matemáticamente como:", a: ["Presión Sistólica - Presión Diastólica", "Suma de presiones", "Presión media x Frecuencia", "Sistólica / 2"], c: "Presión Sistólica - Presión Diastólica"},
+            {q: "28. Factores principales que determinan la amplitud de la Presión de Pulso:", a: ["Volumen Sistólico y Compliancia arterial", "Frecuencia y capacitancia venosa", "Volemia y PVC", "Hematocrito y resistencia"], c: "Volumen Sistólico y Compliancia arterial"},
+            {q: "29. En Arteriosclerosis (arterias rígidas), ¿qué ocurre con la Presión de Pulso?", a: ["Aumenta severamente por falta de amortiguación", "Disminuye a 10 mmHg", "Normal", "Baja la sistólica"], c: "Aumenta severamente por falta de amortiguación"},
+            {q: "30. En Estenosis Aórtica, la Presión de Pulso estará:", a: ["Disminuida (pulso débil y filiforme)", "Muy aumentada", "Normal", "Invertida"], c: "Disminuida (pulso débil y filiforme)"},
+            {q: "31. En Insuficiencia Aórtica, la Presión de Pulso estará:", a: ["Muy aumentada (pulso saltón)", "Muy disminuida", "Normal", "Fija"], c: "Muy aumentada (pulso saltón)"},
+            {q: "32. Fenómeno que convierte el flujo pulsátil intermitente en flujo continuo capilar:", a: ["Efecto Windkessel", "Cierre venoso", "Ventrículo derecho", "Células de Schwann"], c: "Efecto Windkessel"},
+            {q: "33. Cálculo más exacto de la Presión Arterial Media (PAM):", a: ["Diastólica + 1/3 de la Presión de Pulso", "(Sistólica + Diastólica) / 2", "Sistólica - Diastólica", "PVC x Resistencia"], c: "Diastólica + 1/3 de la Presión de Pulso", e: "Esto es porque la diástole dura más tiempo que la sístole."},
+            {q: "34. ¿A qué velocidad viaja la ONDA del pulso arterial en la aorta?", a: ["3 a 5 metros por segundo", "1 cm/min", "100 m/s", "0.05 m/s"], c: "3 a 5 metros por segundo"},
+
+            // BLOQUE 3: VENAS Y PVC
+            {q: "35. Clínicamente, la presión en la Aurícula Derecha se conoce como:", a: ["Presión Venosa Central (PVC)", "Presión en Cuña", "Presión Media de Llenado", "Presión Oncótica"], c: "Presión Venosa Central (PVC)"},
+            {q: "36. En condiciones basales normales, la PVC es de:", a: ["Aproximadamente 0 mmHg", "120 mmHg", "40 mmHg", "-20 mmHg"], c: "Aproximadamente 0 mmHg"},
+            {q: "37. En Insuficiencia Cardíaca Derecha, la PVC:", a: ["Aumentará significativamente (congestión yugular)", "Caerá a valores negativos", "Fija en 0", "Baja la sistólica"], c: "Aumentará significativamente (congestión yugular)"},
+            {q: "38. Efecto de la inspiración normal en el retorno venoso:", a: ["Presión torácica negativa que succiona la sangre al corazón", "Comprime venas", "Vacía abdomen", "Sin efecto"], c: "Presión torácica negativa que succiona la sangre al corazón"},
+            {q: "39. Presión venosa en pies de un adulto de pie inmóvil por gravedad:", a: ["+90 mmHg", "0 mmHg", "-10 mmHg", "200 mmHg"], c: "+90 mmHg"},
+            {q: "40. Mecanismo que evita que los +90 mmHg revienten los capilares del pie:", a: ["Bomba muscular venosa y válvulas", "Dilatación arteriolar", "Latido derecho", "Linfáticos"], c: "Bomba muscular venosa y válvulas"},
+            {q: "41. Consecuencia de estar de pie inmóvil 30 minutos (soldado):", a: ["Cae el retorno venoso y ocurre desmayo (síncope)", "Sube volumen sistólico", "Venas se vuelven arterias", "PA de 200 mmHg"], c: "Cae el retorno venoso y ocurre desmayo (síncope)"},
+            {q: "42. Válvulas venosas de piernas incompetentes o destruidas causan:", a: ["Venas Varicosas (Várices)", "Arterioesclerosis", "TVP idiopática", "Linfedema agudo"], c: "Venas Varicosas (Várices)"},
+            {q: "43. Presión en senos venosos durales sentado de pie (peligro de embolia aérea):", a: ["Negativa (aprox. -10 mmHg)", "Positiva (100)", "Nula", "Igual a LCR"], c: "Negativa (aprox. -10 mmHg)"},
+            {q: "44. Zona del bazo donde se almacenan glóbulos rojos concentrados:", a: ["Pulpa Roja", "Pulpa Blanca", "Cápsula", "Senos linfáticos"], c: "Pulpa Roja"},
+
+            // BLOQUE 4: MICROCIRCULACIÓN
+            {q: "45. Función más importante de la microcirculación:", a: ["Intercambio real de nutrientes y desechos con las células", "Regular frecuencia", "Almacén masivo", "Bomba de retorno"], c: "Intercambio real de nutrientes y desechos con las células"},
+            {q: "46. Vaso de transición entre arteriola y capilar verdadero:", a: ["Metaarteriola", "Vénula poscapilar", "Arteriola aferente", "Linfático terminal"], c: "Metaarteriola"},
+            {q: "47. Anillo muscular que actúa como 'llave de paso' al capilar:", a: ["Esfínter precapilar", "Válvula semilunar", "Músculo papilar", "Desmosoma"], c: "Esfínter precapilar"},
+            {q: "48. Fenómeno de flujo capilar intermitente por periodos:", a: ["Vasomotilidad (Vasomotión)", "Trombosis", "Efecto Windkessel", "Marginación"], c: "Vasomotilidad (Vasomotión)"},
+            {q: "49. Factor local tisular principal que rige la Vasomotilidad:", a: ["Concentración de Oxígeno ($O_2$)", "Presión aurícula derecha", "Glucosa en LCR", "Nervio vago"], c: "Concentración de Oxígeno ($O_2$)"},
+            {q: "50. Las paredes capilares están compuestas por:", a: ["Células endoteliales y membrana basal fina", "Músculo liso y endotelio", "Íntima, media y adventicia", "Colágeno denso"], c: "Células endoteliales y membrana basal fina"},
+            {q: "51. Los poros capilares (6-7 nm) impiden el paso de:", a: ["Albúmina", "Glucosa", "Sodio", "Agua"], c: "Albúmina", e: "Por eso la albúmina genera la presión oncótica."},
+            {q: "52. Estructura de uniones herméticas capilares en el cerebro:", a: ["Barrera Hematoencefálica", "Barrera Placentaria", "Aracnoides", "Piamadre"], c: "Barrera Hematoencefálica"},
+            {q: "53. Espacios capilares (sinusoides) inmensamente abiertos se encuentran en:", a: ["Hígado", "Riñón", "Cerebro", "Músculo"], c: "Hígado", e: "Permiten paso de proteínas sintetizadas."},
+            {q: "54. 'Ventanas' ovales capilares en el Riñón:", a: ["Fenestraciones", "Caveolas", "Uniones Gap", "Plasmodesmos"], c: "Fenestraciones"},
+            {q: "55. Mecanismo FÍSICO abrumador de intercambio de solutos capilar:", a: ["Difusión pasiva", "Filtración Starling", "Transporte activo", "Pinocitosis"], c: "Difusión pasiva"},
+            {q: "56. Sustancias LIPOSOLUBLES que cruzan directo la membrana capilar:", a: ["Oxígeno ($O_2$) y Dióxido de Carbono ($CO_2$)", "Sodio y Cloro", "Glucosa y aminoácidos", "Albúmina"], c: "Oxígeno ($O_2$) y Dióxido de Carbono ($CO_2$)"},
+            {q: "57. Sustancias HIDROSOLUBLES obligadas a cruzar por los poros:", a: ["Agua, sodio y glucosa", "Oxígeno y testosterona", "Dióxido de carbono", "Membranas viejas"], c: "Agua, sodio y glucosa"},
+            {q: "58. Nombre del espacio y líquido entre las células (1/6 del cuerpo):", a: ["Intersticio y Líquido Intersticial", "Plasma", "Líquido Transcelular", "Citoplasma"], c: "Intersticio y Líquido Intersticial"},
+            {q: "59. El líquido intersticial tiene consistencia de gel por una red de:", a: ["Proteoglucanos (Ácido Hialurónico)", "Miosina", "Colesterol", "Calcio"], c: "Proteoglucanos (Ácido Hialurónico)"},
+            {q: "60. Rapidez de difusión a través del gel intersticial:", a: ["95 a 99% comparado con agua libre", "Apenas 10%", "Cero", "Solo por linfa"], c: "95 a 99% comparado con agua libre"},
+
+            // BLOQUE 5: FUERZAS DE STARLING
+            {q: "61. ¿Cuántas fuerzas físicas rigen el intercambio de líquidos capilar?", a: ["4 fuerzas (Ecuación de Starling)", "2 fuerzas", "6 fuerzas", "1 fuerza"], c: "4 fuerzas (Ecuación de Starling)"},
+            {q: "62. Efecto neto de la Presión Hidrostática Capilar (Pc):", a: ["Empujar líquido HACIA AFUERA", "Succionar hacia adentro", "Retener proteínas", "Mover a las venas"], c: "Empujar líquido HACIA AFUERA"},
+            {q: "63. Presión Hidrostática Intersticial (Pif) normal en tejido laxo:", a: ["Negativa (-3 mmHg)", "Positiva (+10)", "Nula (0)", "Extrema (+50)"], c: "Negativa (-3 mmHg)"},
+            {q: "64. Efecto de la Presión Oncótica del Plasma:", a: ["Ómosis HACIA ADENTRO (retener agua)", "Empujar agua afuera", "Destruir GR", "Filtrar orina"], c: "Ómosis HACIA ADENTRO (retener agua)"},
+            {q: "65. Proteína responsable del 80% de la Presión Oncótica:", a: ["Albúmina", "Globulinas", "Fibrinógeno", "von Willebrand"], c: "Albúmina"},
+            {q: "66. Efecto de la Presión Oncótica del Líquido Intersticial:", a: ["Atraer líquido HACIA AFUERA", "Atraer hacia adentro", "Cristalizar gel", "Elevar PA"], c: "Atraer líquido HACIA AFUERA"},
+            {q: "67. Resultado neto en el EXTREMO ARTERIAL capilar:", a: ["Fuerza de Filtración neta (+13 mmHg)", "Fuerza de reabsorción", "Equilibrio cero", "Hemólisis"], c: "Fuerza de Filtración neta (+13 mmHg)"},
+            {q: "68. Resultado neto en el EXTREMO VENOSO capilar:", a: ["Fuerza de Reabsorción neta (-7 mmHg)", "Filtración continua", "120 mmHg", "Vasoconstricción"], c: "Fuerza de Reabsorción neta (-7 mmHg)"},
+            {q: "69. Ley de Equilibrio de Starling: ¿Todo lo filtrado regresa por las vénulas?", a: ["No, 1/10 queda como exceso (2-3 L diarios)", "Sí, 100% perfecto", "Regresa el doble", "Nada regresa"], c: "No, 1/10 queda como exceso (2-3 L diarios)"},
+            {q: "70. Sistema encargado de barrer el exceso de filtración diaria:", a: ["Sistema Linfático", "Riñones", "Venas cavas", "Colateral"], c: "Sistema Linfático"},
+
+            // BLOQUE 6: LINFÁTICO Y EDEMA
+            {q: "71. Sustancia grande que solo regresa a la sangre vía linfática:", a: ["Proteínas filtradas", "Dióxido de Carbono", "Glucosa", "Eritrocitos"], c: "Proteínas filtradas"},
+            {q: "72. Células endoteliales linfáticas actúan como:", a: ["Microválvulas de un solo sentido", "Muro de colágeno", "Bombas ATP", "Uniones estrechas"], c: "Microválvulas de un solo sentido"},
+            {q: "73. Vaso donde drena casi toda la linfa de la mitad inferior y lado izquierdo:", a: ["Conducto Torácico", "Conducto Linfático Der", "Vena Cava Inf", "Aorta"], c: "Conducto Torácico"},
+            {q: "74. Linfa intestinal 'lechosa' (quilomicrones) se debe a:", a: ["Absorción de lípidos", "Glóbulos blancos", "Jugos gástricos", "Albúmina"], c: "Absorción de lípidos"},
+            {q: "75. Factor principal que aumenta el flujo linfático:", a: ["Aumento de la Presión del Líquido Intersticial", "Menor metabolismo", "Caída de PAM", "Vasoconstricción"], c: "Aumento de la Presión del Líquido Intersticial"},
+            {q: "76. ¿Por qué el flujo linfático tiene un techo máximo a +2 mmHg?", a: ["El exceso de presión aplasta y colapsa los vasos", "Se vuelve sangre", "Cerebro lo bloquea", "Conducto estalla"], c: "El exceso de presión aplasta y colapsa los vasos"},
+            {q: "77. Mecanismo que propulsa la linfa contra gravedad:", a: ["Bomba Linfática (contracción intrínseca y muscular)", "Presión negativa pulmón", "Gravedad invertida", "Latido derecho"], c: "Bomba Linfática (contracción intrínseca y muscular)"},
+            {q: "78. Bloqueo linfático por parásitos Nemátodos causa:", a: ["Elefantiasis", "Edema agudo pulmón", "Várices", "Duchenne"], c: "Elefantiasis"},
+            {q: "79. Ascitis por desnutrición (Kwashiorkor) se debe a:", a: ["Caída de Presión Oncótica por falta de Albúmina", "PA de 200 mmHg", "Fallo renal", "Falta de hierro"], c: "Caída de Presión Oncótica por falta de Albúmina"},
+            {q: "80. Trombosis venosa en pierna causa edema por:", a: ["Aumento agudo de Presión Hidrostática Capilar", "Baja oncótica", "Bloqueo linfa", "Aumento flujo linfa"], c: "Aumento agudo de Presión Hidrostática Capilar"},
+
+            // BLOQUE 7: REGULACIÓN LOCAL
+            {q: "81. El flujo sanguíneo de un músculo en ejercicio:", a: ["Aumenta proporcionalmente a su metabolismo", "Disminuye para el cerebro", "Permanece igual", "Sube solo en piel"], c: "Aumenta proporcionalmente a su metabolismo"},
+            {q: "82. Vasodilatador local coronario más importante (subproducto de ATP):", a: ["Adenosina", "Calcio", "Tiroxina", "von Willebrand"], c: "Adenosina"},
+            {q: "83. Teoría de la 'falta de Oxígeno' para control local:", a: ["Músculo liso esfinteriano se relaja al no tener O2 para contraerse", "O2 emite ondas radio", "Nervios somáticos", "Contraer arterias"], c: "Músculo liso esfinteriano se relaja al no tener O2 para contraerse"},
+            {q: "84. Brazo enrojecido con flujo x7 tras soltar torniquete:", a: ["Hiperemia Reactiva", "Hiperemia Activa", "Shock local", "Respuesta SNC"], c: "Hiperemia Reactiva"},
+            {q: "85. Aumento de flujo por actividad normal (ej. glándulas al comer):", a: ["Hiperemia Activa", "Hiperemia Reactiva", "Largo plazo", "Vasomotilidad"], c: "Hiperemia Activa"},
+            {q: "86. Cerebro y riñón mantienen flujo constante pese a cambios de PA:", a: ["Autorregulación del flujo sanguíneo", "Windkessel", "Barorreceptor", "Escape vagal"], c: "Autorregulación del flujo sanguíneo"},
+            {q: "87. 'Teoría Miógena': El músculo liso vascular se contrae ante:", a: ["Estiramiento brusco por subida de presión", "Histamina", "Médula espinal", "Oxidación mioglobina"], c: "Estiramiento brusco por subida de presión"},
+            {q: "88. Vaso-relajante endotelial de acción ultracorta (Arginina):", a: ["Óxido Nítrico (NO)", "Monóxido (CO)", "Prostaciclina", "Tromboxano A2"], c: "Óxido Nítrico (NO)"},
+            {q: "89. Viagra (Sildenafilo) potencia el NO bloqueando la enzima:", a: ["Fosfodiesterasa tipo 5 (PDE-5)", "Sintetasa de NO", "Bomba Na/K", "Adrenalina"], c: "Fosfodiesterasa tipo 5 (PDE-5)"},
+            {q: "90. Vasoconstrictor endotelial liberado tras daño vascular (21 AA):", a: ["Endotelina", "Bradicinina", "Histamina", "Sustancia P"], c: "Endotelina"},
+            {q: "91. Regulación del flujo a LARGO PLAZO en las montañas (hipoxia crónica):", a: ["Angiogénesis (nuevos capilares)", "Taquicardia 150 lpm", "Destrucción capilar", "Solo Óxido Nítrico"], c: "Angiogénesis (nuevos capilares)"},
+            {q: "92. Factor famoso promotor de capilares en hipoxia:", a: ["Factor de Crecimiento del Endotelio Vascular (VEGF)", "EPO", "Insulina", "Angiotensina I"], c: "Factor de Crecimiento del Endotelio Vascular (VEGF)"},
+            {q: "93. Efecto de la 'Noradrenalina' liberada en el terror (Receptores Alfa-1):", a: ["Vasoconstricción extrema generalizada", "Vasodilatación piel", "Paro cardíaco", "Relajación anal"], c: "Vasoconstricción extrema generalizada"},
+            {q: "94. Principal efecto hemodinámico inmediato de la Angiotensina II:", a: ["Potente vasoconstricción arteriolar", "Bradicardia vagal", "Hemólisis", "Factor XII"], c: "Potente vasoconstricción arteriolar"},
+            {q: "95. Papel de la Vasopresina (ADH) tras hemorragia masiva:", a: ["Vasoconstrictor salvaje y retención de agua renal", "Dilatar venas", "Bajar PA a cero", "Coagulación"], c: "Vasoconstrictor salvaje y retención de agua renal"},
+            {q: "96. Cinina inflamatoria causante de rubor, edema y dolor:", a: ["Bradicinina", "Angiotensina I", "Miosina cinasa", "Aldosterona"], c: "Bradicinina"},
+            {q: "97. Única estructura de microcirculación que permite intercambio líquido real:", a: ["Capilar verdadero (y vénula poscapilar)", "Aorta", "Subclavia", "Arteriola muscular"], c: "Capilar verdadero (y vénula poscapilar)"},
+            {q: "98. Consecuencia microcirculatoria cerebral de subida de $CO_2$ o $H^+$:", a: ["Dilatación brusca y masiva de vasos cerebrales", "Isquemia letal", "Hidrocefalia", "Ningún efecto"], c: "Dilatación brusca y masiva de vasos cerebrales"},
+            {q: "99. Presión de perfusión en arterias pulmonares (Ventrículo derecho):", a: ["25/8 mmHg (sistema de baja presión)", "120/80 mmHg", "200/100 mmHg", "0 mmHg"], c: "25/8 mmHg (sistema de baja presión)"},
+            {q: "100. Objetivo principal de la hemodinámica según Guyton:", a: ["Sintonizar el flujo individual para la demanda exacta de cada célula", "Mantener PA en 150", "Alimentar solo al cerebro", "Evitar bombeo cardíaco"], c: "Sintonizar el flujo individual para la demanda exacta de cada célula"}
+        ];
+
+        let cur = 0, points = 0, solved = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Función para renderizar matemáticas de forma segura
+        function safeRenderMath(element) {
+            if (typeof renderMathInElement === 'function') {
+                try {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                } catch (e) {
+                    console.warn("KaTeX render failed", e);
+                }
+            }
+        }
+
+        function load() {
+            solved = false;
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur];
+            
+            // LIMPIEZA DINÁMICA: Borramos números y BLOQUES del texto original
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
+            
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            
+            const container = document.getElementById('opts');
+            container.innerHTML = '';
+            
+            const shuffledOptions = shuffle([...data.a]);
+            
+            shuffledOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn animate-fade-in';
+                btn.innerHTML = `<span class="w-10 h-10 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-black mr-2 bg-gray-50 text-gray-400">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(opt, btn, data.c, data.e);
+                container.appendChild(btn);
+            });
+
+            // Re-renderizar matemáticas en la pregunta y opciones
+            safeRenderMath(document.getElementById('quiz-container'));
+        }
+
+        function check(selected, btn, correct, explanation) {
+            if(solved) return;
+            solved = true;
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(selected === correct) {
+                points++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns.forEach(b => { if(b.textContent.includes(correct)) b.classList.add('correct'); });
+            }
+
+            if(explanation) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>ANÁLISIS GUYTON:</strong> ${explanation}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+                safeRenderMath(fb);
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+
+        document.getElementById('next').onclick = () => {
+            cur++;
+            if(cur < quizData.length) {
+                load();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
+            }
+        };
+
+        // Esperar a que todo cargue antes de iniciar
+        window.addEventListener('load', () => {
+            load();
+        });
+    </script>
+</body>
+</html>
