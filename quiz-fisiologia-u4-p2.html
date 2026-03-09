@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraneao - Cardio Parte 2: Excitación Rítmica</title>
+    <!-- Tailwind CSS para diseño de alta resolución -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-blue': '#0056FF',
+                        'brand-yellow': '#FFD600',
+                        'brand-dark-blue': '#021059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8FAFC; color: #021059; -webkit-tap-highlight-color: transparent; }
+        .option-btn { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #F1F5F9; background-color: white;
+            cursor: pointer; border-radius: 1.25rem; padding: 1.25rem; text-align: left;
+            font-weight: 600; display: flex; align-items: center; gap: 1rem;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #0056FF; background-color: #F0F7FF; transform: scale(1.01); }
+        .option-btn.correct { background-color: #10B981 !important; color: white !important; border-color: #059669 !important; }
+        .option-btn.incorrect { background-color: #EF4444 !important; color: white !important; border-color: #DC2626 !important; }
+        .progress-fill { background-color: #0056FF; transition: width 0.5s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen"> 
+
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-50 border-b border-gray-100"> 
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="hover:opacity-80 transition-opacity">
+                <img src="logo-final.png" alt="Kraneao" class="h-8 md:h-10" onerror="this.src='https://via.placeholder.com/120x40?text=Kraneao'">
+            </a>
+            <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter italic">U-IV: Cardio Módulo 2</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-8 md:py-12">
+        <div id="quiz-container" class="w-full max-w-2xl">
+            
+            <div class="mb-8">
+                <div class="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">
+                    <span>Progreso del Entrenamiento</span>
+                    <span><span id="idx">1</span> / <span id="total-count">100</span></span>
+                </div>
+                <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="bar" class="progress-fill h-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <div id="card" class="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100 relative animate-fade-in overflow-hidden">
+                <h2 id="q-text" class="text-xl md:text-2xl font-black mb-10 leading-tight text-brand-dark-blue tracking-tight text-center">Iniciando protocolo de conducción...</h2>
+                
+                <div id="opts" class="grid grid-cols-1 gap-4"></div>
+                
+                <div id="fb" class="hidden mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 shadow-inner transition-all duration-300"></div>
+                
+                <button id="next" class="hidden w-full mt-8 bg-brand-yellow py-5 rounded-[1.5rem] font-black shadow-xl uppercase tracking-widest text-brand-dark-blue hover:bg-yellow-300 transition-all transform active:scale-95">
+                    Siguiente Reto ➜
+                </button>
+            </div>
+
+            <div id="res" class="hidden bg-white rounded-[2.5rem] shadow-2xl p-12 text-center border border-gray-100 animate-fade-in">
+                <div class="w-24 h-24 bg-yellow-50 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">⚡</div>
+                <h2 class="text-3xl font-black text-brand-blue mb-4 leading-tight">¡Módulo 2 Dominado!</h2>
+                <p class="text-gray-400 mb-8 font-medium italic text-sm text-center">Has completado los 100 retos de Excitación y Conducción Cardíaca.</p>
+                
+                <div class="bg-gray-50 p-8 rounded-[2rem] mb-10 border border-gray-100">
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">Nivel de Conducción</p>
+                    <p class="text-7xl font-black text-brand-dark-blue text-center"><span id="score">0</span>%</p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <button onclick="location.reload()" class="w-full bg-brand-blue text-white py-5 rounded-[1.5rem] font-black shadow-lg hover:bg-brand-dark-blue transition-all uppercase tracking-widest">Reiniciar Módulo</button>
+                    <a href="index.html" class="text-brand-blue font-bold py-2 hover:underline tracking-tight">Volver al Menú</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const quizData = [
+            // 1. ANATOMÍA Y CARACTERÍSTICAS DEL NODO SINUSAL
+            {q: "1. ¿Cuál es el 'marcapasos fisiológico natural' que rige el ritmo del corazón humano en condiciones normales?", a: ["El Nodo Sinusal (Sinoauricular)", "El Nodo Auriculoventricular (AV)", "El Haz de His", "La Red de Purkinje"], c: "El Nodo Sinusal (Sinoauricular)", e: "Basado en Guyton, el nodo SA tiene la frecuencia de descarga más rápida de todos los tejidos autoexcitables."},
+            {q: "2. Anatómicamente, ¿dónde se localiza de forma exacta el Nodo Sinusal?", a: ["En la pared posterolateral superior de la aurícula derecha, inmediatamente inferior y lateral a la desembocadura de la vena cava superior", "En la porción inferior del tabique interauricular", "En el ápex del ventrículo derecho", "En el tabique interventricular superior"], c: "En la pared posterolateral superior de la aurícula derecha, inmediatamente inferior y lateral a la desembocadura de la vena cava superior"},
+            {q: "3. ¿Cuál es el tamaño aproximado de la banda elipsoide que conforma el Nodo Sinusal?", a: ["3 mm de ancho, 15 mm de longitud y 1 mm de grosor", "10 mm de ancho, 50 mm de longitud y 5 mm de grosor", "1 mm de ancho, 3 mm de longitud y 0.1 mm de grosor", "20 mm de diámetro esférico"], c: "3 mm de ancho, 15 mm de longitud y 1 mm de grosor"},
+            {q: "4. A nivel microscópico, ¿cómo difieren las fibras del Nodo Sinusal de las fibras musculares auriculares circundantes?", a: ["Las fibras del Nodo SA casi no tienen filamentos musculares contráctiles y su diámetro es de apenas 3 a 5 micrómetros", "Tienen un diámetro gigantesco para almacenar calcio", "Tienen una enorme cantidad de sarcómeros organizados", "Poseen una gruesa vaina de mielina"], c: "Las fibras del Nodo SA casi no tienen filamentos musculares contráctiles y su diámetro es de apenas 3 a 5 micrómetros"},
+            {q: "5. ¿Por qué las fibras del Nodo Sinusal logran propagar su potencial de acción inmediatamente hacia la pared de la aurícula derecha?", a: ["Porque las fibras del nodo sinusal se conectan directamente con las fibras musculares auriculares", "Porque utilizan neurotransmisores químicos", "Porque están separadas por un anillo fibroso", "Porque usan el sistema linfático"], c: "Porque las fibras del nodo sinusal se conectan directamente con las fibras musculares auriculares"},
+            {q: "6. ¿Cuál es la frecuencia de descarga rítmica en reposo intrínseca del Nodo Sinusal humano normal?", a: ["Entre 70 y 80 latidos por minuto", "Entre 40 y 60 lpm", "Entre 15 y 40 lpm", "Entre 100 y 120 lpm"], c: "Entre 70 y 80 latidos por minuto"},
+            {q: "7. ¿Qué arteria proporciona principalmente el flujo sanguíneo y los nutrientes al Nodo Sinusal?", a: ["La arteria del nodo sinusal (rama de la coronaria derecha en el 60%)", "La arteria descendente anterior", "La arteria circunfleja", "La vena cava superior"], c: "La arteria del nodo sinusal (rama de la coronaria derecha en el 60%)"},
+            {q: "8. ¿Cuál de las siguientes afirmaciones sobre la capacidad contráctil del Nodo Sinusal es correcta?", a: ["Prácticamente no se contraen, su función es la generación del impulso", "Su contracción es más fuerte que la ventricular", "Generan el primer ruido cardíaco", "Contribuyen al 50% de la eyección"], c: "Prácticamente no se contraen, su función es la generación del impulso"},
+            {q: "9. ¿Por qué el Nodo Sinusal es el que 'manda' en el corazón y no el Nodo AV u otras fibras?", a: ["Porque su frecuencia de descarga intrínseca es más rápida, despolarizando a las demás antes de que alcancen su umbral", "Porque su potencial es el más negativo", "Porque el cerebro lo controla de forma exclusiva", "Porque es la única estructura con calcio"], c: "Porque su frecuencia de descarga intrínseca es más rápida, despolarizando a las demás antes de que alcancen su umbral"},
+            {q: "10. Las fibras del nodo sinusal tienen una disposición celular y tisular que se localiza fundamentalmente:", a: ["En el plano subepicárdico", "En el endocardio profundo", "Flotando en el lumen", "Dentro de la tricúspide"], c: "En el plano subepicárdico"},
+
+            // 2. ELECTROFISIOLOGÍA DEL NODO SINUSAL
+            {q: "11. ¿Cuál es el potencial de membrana en 'reposo' típico de las fibras del Nodo Sinusal?", a: ["-55 a -60 mV", "-85 a -90 mV", "+20 a +35 mV", "-100 mV"], c: "-55 a -60 mV"},
+            {q: "12. ¿Por qué el reposo del Nodo Sinusal es mucho menos negativo (-55 mV) que el ventricular?", a: ["Porque sus membranas son naturalmente muy permeables a Sodio ($Na^+$) y Calcio ($Ca^{++}$)", "Porque no tiene bomba Na/K", "Por fuga inmensa de cloruro", "Porque el potasio es cero"], c: "Porque sus membranas son naturalmente muy permeables a Sodio ($Na^+$) y Calcio ($Ca^{++}$)"},
+            {q: "13. Debido a que el voltaje de reposo es de -55 mV, ¿qué sucede con los canales RÁPIDOS de sodio en el nodo SA?", a: ["Se encuentran permanentemente inactivos (bloqueados)", "Se abren constantemente", "Funcionan igual que en el ventrículo", "Se transforman en canales de potasio"], c: "Se encuentran permanentemente inactivos (bloqueados)", e: "Para que los canales rápidos de Na se activen, el reposo debe ser más negativo a -70mV."},
+            {q: "14. ¿Qué canales iónicos son responsables de producir el pico del potencial de acción (fase 0) en el Nodo Sinusal?", a: ["Los canales lentos de Sodio-Calcio (tipo L)", "Canales de Potasio voltaje-dependientes", "Receptores muscarínicos", "Canales de fuga de Cloro"], c: "Los canales lentos de Sodio-Calcio (tipo L)"},
+            {q: "15. ¿Qué característica temporal fundamental diferencia el potencial del Nodo Sinusal del potencial ventricular?", a: ["El potencial sinusal es más lento y redondeado", "Dura 2 segundos", "Tiene una meseta más larga", "Alcanza los +150 mV"], c: "El potencial sinusal es más lento y redondeado"},
+            {q: "16. Mecanismo biofísico de la 'Autoexcitación' (Despolarización Diastólica Espontánea) del Nodo Sinusal:", a: ["Lenta entrada continua de Sodio (Corriente 'Funny' o $I_f$)", "Cierre repentino de bomba Na/K", "Salida explosiva de Calcio mitocondrial", "Entrada rítmica de Cloruro"], c: "Lenta entrada continua de Sodio (Corriente 'Funny' o $I_f$)"},
+            {q: "17. ¿Cuál es el valor aproximado del umbral de disparo en el Nodo Sinusal?", a: ["-40 mV", "-65 mV", "0 mV", "-90 mV"], c: "-40 mV"},
+            {q: "18. Una vez alcanzado el umbral (-40 mV), ¿qué evento iónico masivo genera el potencial de acción?", a: ["Se abren repentinamente los canales de Calcio tipo L", "Se abren los canales rápidos de Sodio", "Se cierran los canales de Potasio", "Ocurre asístole"], c: "Se abren repentinamente los canales de Calcio tipo L"},
+            {q: "19. ¿Qué dos eventos biofísicos causan la REPOLARIZACIÓN de la fibra del Nodo Sinusal?", a: ["Inactivación de canales de Calcio y apertura de canales de Potasio ($K^+$)", "Cierre de sodio y entrada de cloro", "Bomba SERCA absorbiendo potasio", "Contracción auricular"], c: "Inactivación de canales de Calcio y apertura de canales de Potasio ($K^+$)"},
+            {q: "20. Tras el potencial, el nodo sinusal se hiperpolariza. ¿Por qué vuelve a subir hacia el umbral?", a: ["Porque los canales de Potasio se cierran lentamente y la filtración de Sodio ($I_f$) gana de nuevo", "Por estímulo vagal", "Por cristalización de calcio", "Por receptores nicotínicos"], c: "Porque los canales de Potasio se cierran lentamente y la filtración de Sodio ($I_f$) gana de nuevo"},
+
+            // 3. VÍAS INTERNODALES Y CONDUCCIÓN AURICULAR
+            {q: "21. ¿A qué velocidad se propaga el impulso por el músculo auricular ordinario?", a: ["0.3 m/s", "100 m/s", "4.0 m/s", "0.05 m/s"], c: "0.3 m/s"},
+            {q: "22. Velocidad de conducción en las vías internodales especializadas:", a: ["Aproximadamente 1 metro por segundo", "0.1 m/s", "5 m/s", "Velocidad de la luz"], c: "Aproximadamente 1 metro por segundo"},
+            {q: "23. ¿Cómo se llama la banda que lleva el impulso rápidamente a la aurícula izquierda?", a: ["Fascículo de Bachmann", "Vía de Wenckebach", "Vía de Thorel", "Haz de His"], c: "Fascículo de Bachmann"},
+            {q: "24. Nombre epónimo del tracto internodal MEDIO:", a: ["Tracto de Wenckebach", "Tracto de Thorel", "Tracto de Bachmann", "Haz de Kent"], c: "Tracto de Wenckebach"},
+            {q: "25. Nombre epónimo del tracto internodal POSTERIOR:", a: ["Tracto de Thorel", "Tracto de Bachmann", "Tracto de Wenckebach", "Red de Purkinje"], c: "Tracto de Thorel"},
+            {q: "26. ¿Por qué las vías internodales conducen más rápido (1 m/s) que el músculo común?", a: ["Contienen células especializadas similares a las fibras de Purkinje", "Tienen vaina de mielina", "Son nervios motores", "Carecen de membrana"], c: "Contienen células especializadas similares a las fibras de Purkinje"},
+            {q: "27. Tiempo que tarda el impulso en viajar del Nodo Sinusal al Nodo AV:", a: ["0.03 segundos", "0.13 s", "1.0 s", "0.001 s"], c: "0.03 segundos"},
+            {q: "28. Propósito primario de la Banda de Bachmann:", a: ["Asegurar la contracción simultánea de ambas aurículas", "Conducir directo a ventrículos", "Evitar contracción auricular", "Frenar el impulso"], c: "Asegurar la contracción simultánea de ambas aurículas"},
+            {q: "29. ¿Qué onda del ECG representa la despolarización auricular?", a: ["La onda P", "Complejo QRS", "Onda T", "Onda U"], c: "La onda P"},
+            {q: "30. Si se cortan las vías internodales, ¿llegaría el impulso al nodo AV?", a: ["Sí, por el músculo ordinario pero con retraso", "No, bloqueo completo", "No, el nodo AV se apaga", "Llegaría más rápido"], c: "Sí, por el músculo ordinario pero con retraso"},
+
+            // 4. NODO AURICULOVENTRICULAR (EL RETRASO)
+            {q: "31. ¿Dónde se localiza el Nodo Auriculoventricular (AV)?", a: ["Pared posterolateral aurícula derecha, tras válvula tricúspide", "Ápice VI", "Cara externa AI", "Centro del tabique"], c: "Pared posterolateral aurícula derecha, tras válvula tricúspide"},
+            {q: "32. Función fisiológica VITAL del Nodo Auriculoventricular:", a: ["Retrasar el impulso hacia los ventrículos", "Acelerar el impulso a 5 m/s", "Contraer el tabique", "Oxigenar Purkinje"], c: "Retrasar el impulso hacia los ventrículos"},
+            {q: "33. ¿Por qué es vital el retraso en el Nodo AV?", a: ["Permitir el vaciado auricular (patada auricular) antes de la sístole ventricular", "Ahorrar ATP", "Cerrar semilunares", "Relajación isométrica"], c: "Permitir el vaciado auricular (patada auricular) antes de la sístole ventricular"},
+            {q: "34. ¿Cuánto tiempo se retrasa el impulso SOLAMENTE dentro del propio Nodo AV?", a: ["0.09 segundos", "0.13 s", "0.04 s", "0.16 s"], c: "0.09 segundos"},
+            {q: "35. Retraso extra en la porción penetrante del Haz de His:", a: ["0.04 segundos", "0.09 s", "0.13 s", "0.03 s"], c: "0.04 segundos"},
+            {q: "36. Retraso TOTAL que sufre el impulso en la zona del nodo AV (Nodo + Haz):", a: ["0.13 segundos", "0.16 s", "0.09 s", "1.0 s"], c: "0.13 segundos"},
+            {q: "37. Tiempo total desde el disparo sinusal hasta que emerge en ventrículos:", a: ["0.16 segundos", "0.22 s", "0.09 s", "0.04 s"], c: "0.16 segundos", e: "0.03s (internodal) + 0.13s (AV total) = 0.16s."},
+            {q: "38. ¿Por qué la electricidad viaja tan lento (0.03 m/s) en el Nodo AV?", a: ["Disminución drástica de uniones gap, aumentando resistencia iónica", "Hiper-mielinización", "Falta de líquido intracelular", "Exceso de calcio"], c: "Disminución drástica de uniones gap, aumentando resistencia iónica"},
+            {q: "39. ¿Qué ocurriría si el nodo AV no retrasara la señal?", a: ["Vaciado ventricular ineficiente por contracción casi simultánea aurícula-ventrículo", "Gasto cardíaco doble", "Fibrilación auricular", "Nada"], c: "Vaciado ventricular ineficiente por contracción casi simultánea aurícula-ventrículo"},
+            {q: "40. ¿En qué parte del ECG se mide clínicamente este retraso?", a: ["Intervalo P-R", "Segmento ST", "Ancho QRS", "Onda T"], c: "Intervalo P-R"},
+
+            // 5. HAZ DE HIS Y SISTEMA DE PURKINJE
+            {q: "41. Característica histológica de las Fibras de Purkinje:", a: ["Son las fibras musculares cardíacas más grandes del corazón", "Son células adiposas", "Son nervios somáticos", "Son del tamaño del nodo SA"], c: "Son las fibras musculares cardíacas más grandes del corazón"},
+            {q: "42. Velocidad de conducción en las Fibras de Purkinje:", a: ["1.5 a 4.0 metros por segundo", "0.3 a 0.5 m/s", "100 m/s", "0.02 m/s"], c: "1.5 a 4.0 metros por segundo"},
+            {q: "43. ¿Cómo logran las fibras de Purkinje esta transmisión tan rápida?", a: ["Altísima permeabilidad en uniones gap, flujo iónico casi sin resistencia", "Mielina gruesa", "Noradrenalina constante", "Conductancia magnética"], c: "Altísima permeabilidad en uniones gap, flujo iónico casi sin resistencia"},
+            {q: "44. ¿Qué capacidad funcional casi NO poseen las fibras de Purkinje?", a: ["Contracción mecánica (tienen pocas miofibrillas)", "Conducción eléctrica", "Válvulas", "Eritropoyetina"], c: "Contracción mecánica (tienen pocas miofibrillas)"},
+            {q: "45. Aislante natural que impide impulsos bajar a ventrículos por otro lado que no sea el Haz His:", a: ["Esqueleto fibroso del corazón (Anillos valvulares)", "Pericardio", "Músculo papilar", "Tabique interauricular"], c: "Esqueleto fibroso del corazón (Anillos valvulares)"},
+            {q: "46. La porción penetrante del Haz permite el paso del impulso de forma:", a: ["Unidireccional: De aurículas a ventrículos", "Bidireccional", "Aleatoria", "Ventrículo Izq a Der"], c: "Unidireccional: De aurículas a ventrículos"},
+            {q: "47. Si existiera un puente muscular extra (Haz de Kent), ¿qué arritmia ocurriría?", a: ["Síndrome de Wolff-Parkinson-White", "Infarto masivo", "Estenosis aórtica", "Bloqueo 3er grado"], c: "Síndrome de Wolff-Parkinson-White"},
+            {q: "48. Divisiones principales del Haz AV tras el tabique:", a: ["Rama izquierda y derecha del haz", "Ramas superior, media e inferior", "Bachmann y Thorel", "Aórtica y pulmonar"], c: "Rama izquierda y derecha del haz"},
+            {q: "49. Las ramas del Haz corren hacia el vértice situadas debajo de:", a: ["El endocardio", "El epicardio", "Miocardio medio", "Pericardio visceral"], c: "El endocardio"},
+            {q: "50. Tiempo del impulso desde ramas del haz hasta terminar en fibras de Purkinje apicales:", a: ["0.03 segundos", "0.16 s", "1.0 s", "0.13 s"], c: "0.03 segundos"},
+
+            // 6. TRANSMISIÓN VENTRICULAR SÍNCRONA
+            {q: "51. Velocidad del impulso por el músculo ventricular ordinario:", a: ["0.3 a 0.5 metros por segundo", "4 m/s", "100 m/s", "0.01 m/s"], c: "0.3 a 0.5 metros por segundo"},
+            {q: "52. Dirección de despolarización por la pared muscular ventricular:", a: ["Endocardio (interior) a Epicardio (exterior)", "Epicardio a Endocardio", "Base a Ápex únicamente", "Coronarias a la luz"], c: "Endocardio (interior) a Epicardio (exterior)"},
+            {q: "53. Tiempo que tarda el impulso en cruzar el grosor del músculo (Endo a Epi):", a: ["0.03 segundos", "0.16 s", "1 s", "Instantáneo"], c: "0.03 segundos"},
+            {q: "54. Tiempo total para despolarizar ventrículos tras salir del Haz de His:", a: ["0.06 segundos", "0.16 s", "0.22 s", "0.10 s"], c: "0.06 segundos", e: "0.03s (Purkinje) + 0.03s (músculo) = 0.06s."},
+            {q: "55. Tiempo desde chispa en SA hasta que despolariza la última fibra ventricular:", a: ["0.22 segundos", "0.50 s", "0.13 s", "0.001 s"], c: "0.22 segundos"},
+            {q: "56. Objetivo de la alta velocidad (4 m/s) de Purkinje:", a: ["Lograr contracción síncrona para un 'exprimido' eficiente", "Retardar sístole", "Ahorrar oxígeno", "Eyección lenta"], c: "Lograr contracción síncrona para un 'exprimido' eficiente"},
+            {q: "57. ¿Qué ocurre si falla Purkinje y el impulso viaja lento por músculo?", a: ["Contracción asíncrona, cayendo gasto cardíaco un 30%", "Corazón late más fuerte", "Taquicardia curativa", "Inversión valvular"], c: "Contracción asíncrona, cayendo gasto cardíaco un 30%"},
+            {q: "58. En el ECG, la despolarización ventricular rápida se dibuja como:", a: ["Complejo QRS", "Onda T", "Onda P", "Intervalo P-R"], c: "Complejo QRS"},
+            {q: "59. Duración normal del complejo QRS:", a: ["0.06 a 0.10 segundos", "0.12 a 0.20 s", "Más de 0.20 s", "0.01 s"], c: "0.06 a 0.10 segundos"},
+            {q: "60. En un 'Bloqueo de Rama Izquierda', ¿qué veríamos en el ECG?", a: ["Complejo QRS ensanchado (> 0.12s)", "P-R alargado", "Onda P invertida", "Fibrilación auricular"], c: "Complejo QRS ensanchado (> 0.12s)"},
+
+            // 7. MARCAPASOS ECTÓPICOS Y ESCAPE VENTRICULAR
+            {q: "61. Frecuencia de disparo asuntiva del Nodo AV si falla el SA:", a: ["40 a 60 latidos por minuto", "70 a 80 lpm", "15 a 40 lpm", "120 lpm"], c: "40 a 60 latidos por minuto"},
+            {q: "62. Frecuencia de rescate de las fibras de Purkinje:", a: ["15 a 40 latidos por minuto", "40 a 60 lpm", "80 lpm", "0 lpm"], c: "15 a 40 latidos por minuto"},
+            {q: "63. ¿Por qué el Nodo SA suprime a los otros marcapasos?", a: ["Su frecuencia rápida los despolariza antes de que alcancen su propio umbral", "Libera hormonas inhibitorias", "Nervio vago lo protege", "Es el único con sodio"], c: "Su frecuencia rápida los despolariza antes de que alcancen su propio umbral"},
+            {q: "64. Definición de Marcapasos Ectópico:", a: ["Zona del corazón con frecuencia anormalmente rápida que toma el control", "El nodo SA afectado por vago", "Ventrículo hipertrofiado", "Dispositivo de titanio"], c: "Zona del corazón con frecuencia anormalmente rápida que toma el control"},
+            {q: "65. ¿Qué causa que una zona ventricular se vuelva marcapasos ectópico?", a: ["Isquemia local que inestabiliza la membrana", "Más oxígeno cerebral", "Vitamina C", "Sección vagal"], c: "Isquemia local que inestabiliza la membrana"},
+            {q: "66. Síndrome de Stokes-Adams: ¿Cuánto tarda Purkinje en 'despertar' tras bloqueo AV?", a: ["De 5 a 20 segundos", "0.5 s", "5 minutos", "Instantáneo"], c: "De 5 a 20 segundos"},
+            {q: "67. Consecuencia clínica del retraso de Stokes-Adams:", a: ["Desmayo (síncope) por asístole ventricular temporal", "Infarto agudo", "Asma severa", "Oleada de energía"], c: "Desmayo (síncope) por asístole ventricular temporal"},
+            {q: "68. ¿Qué es la 'Supresión por Sobrestimulación'?", a: ["Tejido inhibido por estímulo rápido externo, causando pausa si este cesa", "Taquicardia por adrenalina", "Freno vagal", "Fatiga por maratón"], c: "Tejido inhibido por estímulo rápido externo, causando pausa si este cesa"},
+            {q: "69. Hemodinámica de un paciente con ritmo de escape de 30 lpm:", a: ["Fatiga extrema por gasto cardíaco insuficiente", "Vida normal", "Corazón estalla", "Alcalosis"], c: "Fatiga extrema por gasto cardíaco insuficiente"},
+            {q: "70. En bloqueo AV de 3er grado, ¿qué hacen las aurículas?", a: ["Laten a su ritmo (Nodo SA) desconectadas de ventrículos", "Se atrofian", "Laten a 30 lpm", "Fibrilan"], c: "Laten a su ritmo (Nodo SA) desconectadas de ventrículos"},
+
+            // 8. CONTROL AUTONÓMICO: EL FRENO PARASIMPÁTICO (VAGAL)
+            {q: "71. ¿Qué nervios llevan la inervación parasimpática al corazón?", a: ["Nervios Vagos (X Par)", "Cadena simpática", "Nervios frénicos", "Plexo braquial"], c: "Nervios Vagos (X Par)"},
+            {q: "72. ¿Dónde se distribuye abundantemente el nervio Vago en el corazón?", a: ["Nodos SA y AV principalmente", "Músculo ventricular espeso", "Valvas aórticas", "Músculos papilares"], c: "Nodos SA y AV principalmente"},
+            {q: "73. Neurotransmisor liberado por el nervio Vago en el corazón:", a: ["Acetilcolina", "Noradrenalina", "Dopamina", "Serotonina"], c: "Acetilcolina"},
+            {q: "74. Receptores cardíacos de la Acetilcolina vagal:", a: ["Receptores Muscarínicos (M2)", "Nicotínicos musculares", "Beta-1", "Alfa-2"], c: "Receptores Muscarínicos (M2)"},
+            {q: "75. ¿Cómo logra la Acetilcolina disminuir la frecuencia?", a: ["Aumenta permeabilidad al Potasio ($K^+$), causando hiperpolarización", "Aumenta Calcio", "Bloquea bomba Na/K", "Invierte cloro"], c: "Aumenta permeabilidad al Potasio ($K^+$), causando hiperpolarización"},
+            {q: "76. Tras estímulo vagal, el reposo del nodo SA puede caer a:", a: ["-65 a -75 mV", "0 mV", "+35 mV", "-110 mV"], c: "-65 a -75 mV"},
+            {q: "77. Consecuencia de la hiperpolarización en la Fase 4 sinusal:", a: ["Toma más tiempo alcanzar el umbral (Bradicardia)", "Taquicardia paradójica", "Elimina umbral", "Fija meseta"], c: "Toma más tiempo alcanzar el umbral (Bradicardia)"},
+            {q: "78. Efecto dromotrópico negativo del Vago en el nodo AV:", a: ["Aumenta el retraso o causa Bloqueo AV", "Acelera al ventrículo", "Destruye esqueleto fibroso", "Revierte flujo"], c: "Aumenta el retraso o causa Bloqueo AV"},
+            {q: "79. ¿Por qué se sobrevive a un estímulo vagal extremo?", a: ["Por el fenómeno de 'Escape Ventricular' (Purkinje asume el mando)", "Vago agota ACh en 2s", "Adrenalina hepática", "Masaje diafragmático"], c: "Por el fenómeno de 'Escape Ventricular' (Purkinje asume el mando)"},
+            {q: "80. Efecto de la Atropina en un paciente sano en reposo:", a: ["Taquicardia (elimina el freno vagal basal)", "Asístole", "Inotropismo x5", "Nada"], c: "Taquicardia (elimina el freno vagal basal)"},
+
+            // 9. CONTROL AUTONÓMICO: EL ACELERADOR SIMPÁTICO
+            {q: "81. ¿Dónde se distribuyen las fibras simpáticas en el corazón?", a: ["En todo el corazón, incluyendo ventrículos", "Solo nodos SA y AV", "Solo pericardio", "Tabique interauricular"], c: "En todo el corazón, incluyendo ventrículos"},
+            {q: "82. Neurotransmisor simpático principal en el corazón:", a: ["Noradrenalina", "Acetilcolina", "Serotonina", "GABA"], c: "Noradrenalina"},
+            {q: "83. Dianas farmacológicas de la Noradrenalina en el corazón:", a: ["Receptores Beta-1 adrenérgicos", "Alfa-2", "Muscarínicos M3", "Nicotínicos"], c: "Receptores Beta-1 adrenérgicos"},
+            {q: "84. ¿Qué efecto iónico produce el estímulo Beta-1?", a: ["Aumenta permeabilidad a Sodio y Calcio, acelerando despolarización", "Salida de Potasio", "Bloquea Sodio 'Funny'", "Aísla el nodo SA"], c: "Aumenta permeabilidad a Sodio y Calcio, acelerando despolarización"},
+            {q: "85. Efecto Cronotrópico Positivo: La curva de fase 4 sinusal...", a: ["Asciende más rápido hacia el umbral (Taquicardia)", "Se aplana", "Cambia umbral a -10mV", "Requiere más hiperpolarización"], c: "Asciende más rápido hacia el umbral (Taquicardia)"},
+            {q: "86. ¿A qué se debe el aumento de fuerza contráctil (Inotropismo) simpático?", a: ["Aumento de entrada de Calcio ($Ca^{++}$) a la célula muscular", "Potasio irritante", "Cierre bomba Na/K", "Más titina"], c: "Aumento de entrada de Calcio ($Ca^{++}$) a la célula muscular"},
+            {q: "87. Efecto del simpático sobre el retraso del Nodo AV:", a: ["Aumenta velocidad de conducción, acortando Intervalo P-R", "Causa bloqueos sanos", "Inhibe paso a His", "Sube resistencia gap"], c: "Aumenta velocidad de conducción, acortando Intervalo P-R"},
+            {q: "88. Límite fisiológico de frecuencia bajo estímulo simpático máximo:", a: ["180 a 200 lpm", "500 lpm", "100 lpm", "Sin cambio"], c: "180 a 200 lpm"},
+            {q: "89. ¿Por qué el simpático es peligroso en un infarto agudo?", a: ["Aumenta masivamente el consumo de Oxígeno, agravando la isquemia", "Anestesia el corazón", "Causa hiperpolarización", "Cierra semilunares"], c: "Aumenta masivamente el consumo de Oxígeno, agravando la isquemia"},
+            {q: "90. Efecto de un fármaco 'Beta-bloqueante' (ej. Propranolol):", a: ["Reduce frecuencia y fuerza contráctil bajando el trabajo cardíaco", "Produce acetilcolina", "Abre canales rápidos", "Fuerza escape"], c: "Reduce frecuencia y fuerza contráctil bajando el trabajo cardíaco"},
+
+            // 10. REPASO CRÍTICO Y CASOS INTEGRADORES (DR. PALMA)
+            {q: "91. Orden bioeléctrico temporal anatómicamente perfecto del impulso:", a: ["Nodo SA → Internodales → Nodo AV → Haz His → Ramas → Purkinje → Músculo", "SA → His → Internodales → Purkinje → AV", "AV → SA → Purkinje → Músculo → His", "Internodales → Purkinje → SA → Músculo"], c: "Nodo SA → Internodales → Nodo AV → Haz His → Ramas → Purkinje → Músculo"},
+            {q: "92. ¿Qué falla en el Síndrome de Wolff-Parkinson-White?", a: ["El esqueleto fibroso aislante (hay un puente extra: Haz de Kent)", "El tabique interventricular", "El músculo papilar", "Mielina del nodo SA"], c: "El esqueleto fibroso aislante (hay un puente extra: Haz de Kent)"},
+            {q: "93. Fase del marcapasos con su ión dominante:", a: ["Ventrículo (Na+), Nodo SA (Ca++), Repolarización (K+)", "Nodo AV (Ca++), Meseta (Na+)", "Reposo (Ca++), Fase 0 Purkinje (K+)", "Fuga (Cl-), Contracción (Na+)"], c: "Ventrículo (Na+), Nodo SA (Ca++), Repolarización (K+)"},
+            {q: "94. ¿A qué región cardíaca NO llega el efecto del Vago?", a: ["Pared muscular contráctil de los Ventrículos", "Nodo Sinusal", "Nodo AV", "Pared auricular"], c: "Pared muscular contráctil de los Ventrículos", e: "Los ventrículos tienen casi exclusivamente inervación simpática."},
+            {q: "95. ¿Por qué la conducción asíncrona es ineficiente?", a: ["Unas fibras se contraen y otras no, 'peloteando' la presión", "Aumenta eyección pulmonar", "Invierte válvulas AV", "Frecuencia de 300 lpm"], c: "Unas fibras se contraen y otras no, 'peloteando' la presión"},
+            {q: "96. De los 0.16s del retraso total, ¿cuántos ocurren en el Nodo AV y Haz penetrante?", a: ["0.13 segundos", "0.03 s", "0.22 s", "0.00 s"], c: "0.13 segundos"},
+            {q: "97. ¿Qué canales se cierran al inyectar Atropina?", a: ["Poros de Potasio abiertos por el Vago", "Canales lentos L de Calcio", "Canales de Cloro", "Receptores Beta"], c: "Poros de Potasio abiertos por el Vago"},
+            {q: "98. Si pones un corazón de rana en solución Ringer aislada...", a: ["Seguirá latiendo rítmicamente (Automatismo intrínseco)", "Rigor Mortis", "Solo late con batería", "Se desarma"], c: "Seguirá latiendo rítmicamente (Automatismo intrínseco)"},
+            {q: "99. Orden de velocidad decreciente (Más veloz a más lento):", a: ["Purkinje > Internodal > Músculo > Nodo AV", "Músculo > Purkinje > AV", "AV > SA > Purkinje", "Transicional > Músculo > His"], c: "Purkinje > Internodal > Músculo > Nodo AV", e: "Purkinje: 4 m/s. Nodo AV: 0.03 m/s."},
+            {q: "100. Función biofísica de un Desfibrilador (360 Joules):", a: ["Despolariza toda la masa simultáneamente para que el Nodo SA retome el mando", "Inyecta ATP mitocondrial", "Cauteriza vías Purkinje", "Resetea memoria de células T"], c: "Despolariza toda la masa simultáneamente para que el Nodo SA retome el mando"}
+        ];
+
+        let cur = 0, points = 0, solved = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function load() {
+            solved = false;
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('fb').classList.add('hidden');
+            const data = quizData[cur];
+            
+            // Limpieza automática de números del texto original
+            document.getElementById('q-text').textContent = data.q.replace(/^[0-9]+\.\s*/, "");
+            
+            document.getElementById('idx').textContent = cur + 1;
+            document.getElementById('total-count').textContent = quizData.length;
+            document.getElementById('bar').style.width = ((cur + 1) / quizData.length * 100) + '%';
+            
+            const container = document.getElementById('opts');
+            container.innerHTML = '';
+            
+            const shuffledOptions = shuffle([...data.a]);
+            
+            shuffledOptions.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn animate-fade-in';
+                btn.innerHTML = `<span class="w-10 h-10 rounded-full border-2 border-gray-100 flex items-center justify-center text-xs font-black mr-2 bg-gray-50">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => check(opt, btn, data.c, data.e);
+                container.appendChild(btn);
+            });
+        }
+
+        function check(selected, btn, correct, explanation) {
+            if(solved) return;
+            solved = true;
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(selected === correct) {
+                points++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                btns.forEach(b => { if(b.textContent.includes(correct)) b.classList.add('correct'); });
+            }
+
+            if(explanation) {
+                const fb = document.getElementById('fb');
+                fb.innerHTML = `<strong>ANÁLISIS GUYTON:</strong> ${explanation}`;
+                fb.className = "mt-10 p-6 rounded-3xl text-sm font-bold border-l-8 " + (selected===correct ? "bg-green-50 border-green-500 text-green-700" : "bg-red-50 border-red-500 text-red-700");
+                fb.classList.remove('hidden');
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('next').classList.remove('hidden');
+        }
+
+        document.getElementById('next').onclick = () => {
+            cur++;
+            if(cur < quizData.length) {
+                load();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.getElementById('card').classList.add('hidden');
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('score').textContent = Math.round((points/quizData.length)*100);
+            }
+        };
+
+        window.onload = load;
+    </script>
+</body>
+</html>
